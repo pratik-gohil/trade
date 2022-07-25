@@ -1,0 +1,58 @@
+:root {
+  --primary: #444444;
+  --secondary: #a9a9a9;
+  --neutral: "#666666";
+  --success: #4caf50;
+  --failure: #df514c;
+  --highlight: 21, 84, 146;
+  --border: #e6e6e6;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .selected-tab {
+    @apply text-highlightText bg-highlight font-medium;
+  }
+}
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #d6d6d6;
+  border-radius: 1rem;
+}
+
+*::-webkit-scrollbar-thumb:hover {}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
