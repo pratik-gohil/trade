@@ -114,7 +114,7 @@ export function WatchList() {
           <div
             className={`${
               stockSearch
-                ? "bg-highlight border-highlightText text-primary"
+                ? "bg-highlight border-highlight-blue-gradient text-primary"
                 : "bg-inherit border-secondary text-secondary"
             } flex items-center px-2 py-2 gap-2 text-sm outline-blue-100 w-full bg-gray-100 rounded border`}
           >
@@ -123,7 +123,7 @@ export function WatchList() {
               value={stockSearch}
               onChange={(e) => setStockSearch(e.target.value)}
               placeholder="Search eg: infy bse, nifty fut, nifty weekly"
-              className="w-full outline-none bg-trasparent"
+              className="w-full outline-none bg-transparent"
             />
             {stockSearch ? (
               <CancelOutlined
@@ -160,10 +160,10 @@ export function WatchList() {
             </div>
 
             <div className="absolute right-0 top-0 h-full items-center gap-2 pr-2 hidden group-hover:flex">
-              <div className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center text-white bg-success">
+              <div className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center text-white bg-highlight-green-gradient">
                 B
               </div>
-              <div className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center text-white bg-failure">
+              <div className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center text-white bg-highlight-red-gradient">
                 S
               </div>
               <div className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center bg-white text-primary border border-primary">
@@ -286,7 +286,7 @@ export function WatchList() {
             <div className="flex justify-between mb-4">
               <div>Sort By</div>
               <div>
-                <button className="py-1 px-3 bg-highlightText text-white rounded">
+                <button className="py-1 px-3 bg-highlight-blue-gradient text-white rounded">
                   Save
                 </button>
               </div>
@@ -393,7 +393,7 @@ export function WatchList() {
           </div>
         </div>
         {/* )} */}
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center text-secondary">
           <div className="flex rounded overflow-hidden max-w-[90%] w-[90%]">
             {watchListTabs.map((tab, i) => (
               <div
@@ -414,7 +414,7 @@ export function WatchList() {
             } cursor-pointer text-primary transition`}
           />
         </div>
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center text-secondary">
           <div className="flex rounded overflow-hidden max-w-[90%] w-[90%]">
             {tradeBoxes.map((tradeBox) => (
               <div

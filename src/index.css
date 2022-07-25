@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
 :root {
   --primary: #444444;
   --secondary: #a9a9a9;
@@ -15,6 +17,23 @@
 @layer components {
   .selected-tab {
     @apply text-highlightText bg-highlight font-medium;
+  }
+
+  .bg-highlight-green-gradient {
+    @apply bg-gradient-to-r from-[#17cc7fd9] to-[#139e63];
+  }
+
+  .bg-highlight-red-gradient {
+    @apply bg-gradient-to-r from-[#dc241db3] to-[#dc241d];
+  }
+
+  .bg-highlight-blue-gradient {
+    @apply bg-gradient-to-r from-[#155492] to-[#0d3c6b];
+  }
+
+  .text-highlight-blue-gradient {
+    @apply bg-gradient-to-r from-[#155492] to-[#0d3c6b] bg-clip-text;
+    -webkit-text-fill-color: transparent;
   }
 }
 
@@ -45,9 +64,7 @@ html {
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
