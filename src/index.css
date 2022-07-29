@@ -1,13 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 :root {
-  --primary: #444444;
-  --secondary: #a9a9a9;
-  --neutral: "#666666";
-  --success: #4caf50;
-  --failure: #df514c;
-  --highlight: 21, 84, 146;
-  --border: #e6e6e6;
+  --primary: 68, 68, 68;
+  --secondary: 169, 169, 169;
+  --neutral: 140, 140, 140;
+  --success: 76, 175, 80;
+  --failure: 223, 81, 76;
+  --blue: 21, 84, 146;
+  --border: 230, 230, 230;
 }
 
 @tailwind base;
@@ -15,23 +15,35 @@
 @tailwind utilities;
 
 @layer components {
-  .selected-tab {
-    @apply text-highlightText bg-highlight font-medium;
+  .nav-link>span {
+    color: current;
   }
 
-  .bg-highlight-green-gradient {
+  .selected-tab {
+    @apply bg-blueHighlight font-medium text-blue;
+  }
+
+  .bg-green-gradient {
     @apply bg-gradient-to-r from-[#17cc7fd9] to-[#139e63];
   }
 
-  .bg-highlight-red-gradient {
+  .bg-light-green-gradient {
+    @apply bg-gradient-to-r from-[#d6edd9] to-[#9cd7a3];
+  }
+
+  .bg-red-gradient {
     @apply bg-gradient-to-r from-[#dc241db3] to-[#dc241d];
   }
 
-  .bg-highlight-blue-gradient {
+  .bg-pink-gradient {
+    @apply bg-gradient-to-r from-[#f9e5e4] to-[#eeb5b2];
+  }
+
+  .bg-blue-gradient {
     @apply bg-gradient-to-r from-[#155492] to-[#0d3c6b];
   }
 
-  .text-highlight-blue-gradient {
+  .text-blue-gradient {
     @apply bg-gradient-to-r from-[#155492] to-[#0d3c6b] bg-clip-text;
     -webkit-text-fill-color: transparent;
   }
@@ -39,6 +51,7 @@
 
 html {
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 *,
@@ -62,6 +75,16 @@ html {
 
 *::-webkit-scrollbar-thumb:hover {}
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
@@ -72,4 +95,12 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+.input-disabled {
+  background: repeating-linear-gradient(45deg,
+      transparent,
+      transparent 2px,
+      #ccc 2px,
+      #ccc 4px)
 }

@@ -12,7 +12,7 @@ export function Main() {
             path="/"
             element={
               <div
-                style={{ width: "100%", height: "100%", background: "#eee" }}
+                style={{ width: "100%", height: "200vh", background: "#eee" }}
               >
                 Home
               </div>

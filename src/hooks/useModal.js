@@ -36,7 +36,7 @@ export default function useModal(refModal, refToggleButton) {
         document.removeEventListener("click", handleOutsideClick, false);
       }
     };
-  }, []);
+  }, [refModal, refToggleButton]);
 
   return [showWatchListFilters];
 }

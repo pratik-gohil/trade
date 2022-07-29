@@ -64,9 +64,9 @@ export const Header = () => {
             <NavLink
               key={link.path}
               className={({ isActive }) =>
-                isActive
-                  ? "text-highlightText underline decoration-2 font-medium underline-offset-8"
-                  : "text-primary"
+                (isActive
+                  ? "text-blue underline decoration-2 underline-offset-8 nav-link"
+                  : "text-primary nav-link") + " font-medium hover:text-blue"
               }
               to={link.path}
             >
