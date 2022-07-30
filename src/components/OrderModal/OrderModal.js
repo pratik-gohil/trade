@@ -1,20 +1,25 @@
 import React, { useEffect, useRef, useState } from "react";
 import Draggable from "react-draggable";
+import { useDispatch, useSelector } from "react-redux";
+import { visiblityReducer } from "../../features/orderModal/orderModal";
 import { NumberInput } from "../NumberInput";
 
-let margin = 70;
+let margin = 50;
 
-export function OrderModal({ isOpen }) {
+export function OrderModal() {
   const modalRef = useRef();
   const [vh, setVh] = useState(0);
   const [vw, setVw] = useState(0);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [orderType, setOrderType] = useState("SELL");
+  const [orderType, setOrderType] = useState("Regular");
+  const [BuySell, setBuySell] = useState("BUY");
 
   const [price, setPrice] = useState(0);
   const [triggerPrice, setTriggerPrice] = useState(0);
   const [QTY, setQTY] = useState(0);
   const [disclosedQTY, setDisclosedQTY] = useState(0);
+  const isOpen = useSelector((state: RootState) => state.orderModal.visible);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     let document_height = Math.max(
@@ -26,8 +31,10 @@ export function OrderModal({ isOpen }) {
       window.innerWidth || 0
     );
 
-    setVh(document_height - modalRef.current.clientHeight);
-    setVw(document_width - modalRef.current.clientWidth);
+    if (modalRef.current) {
+      setVh(document_height - modalRef.current.clientHeight);
+      setVw(document_width - modalRef.current.clientWidth);
+    }
   }, []);
 
   useEffect(() => {
@@ -72,12 +79,10 @@ export function OrderModal({ isOpen }) {
         >
           <div
             className={`${
-              orderType === "BUY"
-                ? "bg-light-green-gradient"
-                : "bg-pink-gradient"
+              BuySell === "BUY" ? "bg-light-green-gradient" : "bg-pink-gradient"
             } flex justify-between items-center handle cursor-move p-4`}
           >
-            <div>
+            <div className="flex flex-col gap-1">
               <div className="text-md">ADANIPOWER</div>
               <div className="text-xs text-blue font-medium flex justify-center items-center gap-8">
                 <div
@@ -105,13 +110,43 @@ export function OrderModal({ isOpen }) {
                 </div>
               </div>
             </div>
+            <div>
+              <button className="bg-success py-1 px-3 rounded-md font-medium text-white">
+                Buy
+              </button>
+            </div>
           </div>
           <div className="flex items-center gap-4 border-b-2 border-border text-sm font-medium">
-            <div className="text-blue underline underline-offset-8 decoration-2 p-4 pb-1 cursor-pointer">
+            <div
+              onClick={() => setOrderType("Regular")}
+              className={`${
+                orderType === "Regular"
+                  ? "text-blue underline underline-offset-8 decoration-2"
+                  : ""
+              } p-4 pb-1 cursor-pointer`}
+            >
               Regular
             </div>
-            <div className="p-4 pb-1 cursor-pointer">Cover</div>
-            <div className="p-4 pb-1 cursor-pointer">AMO</div>
+            <div
+              onClick={() => setOrderType("Cover")}
+              className={`${
+                orderType === "Cover"
+                  ? "text-blue underline underline-offset-8 decoration-2"
+                  : ""
+              } p-4 pb-1 cursor-pointer`}
+            >
+              Cover
+            </div>
+            <div
+              onClick={() => setOrderType("AMO")}
+              className={`${
+                orderType === "AMO"
+                  ? "text-blue underline underline-offset-8 decoration-2"
+                  : ""
+              } p-4 pb-1 cursor-pointer`}
+            >
+              AMO
+            </div>
           </div>
           <div className="p-4 flex flex-col gap-4 border-b-2 border-border">
             <div className="text-xs text-primary font-medium flex items-center gap-8">
@@ -142,22 +177,25 @@ export function OrderModal({ isOpen }) {
                 </label>
               </div>
             </div>
-            <div className="flex justify-between items-center gap-10">
+            <div className="flex justify-between items-center gap-8">
               <NumberInput
                 label="QTY"
                 value={QTY}
                 onChange={(value) => setQTY(value)}
+                className="flex-1"
               />
               <NumberInput
                 label="Price"
                 value={price}
                 onChange={(value) => setPrice(value)}
+                className="flex-1"
               />
               <NumberInput
                 disabled
                 label="Trigger price"
                 value={triggerPrice}
                 onChange={(value) => setTriggerPrice(value)}
+                className="flex-1"
               />
               {/* <input
                 type="text"
@@ -230,7 +268,7 @@ export function OrderModal({ isOpen }) {
           </div>
           <div className="flex gap-8 p-4 border-b-2 border-border">
             <div className="flex flex-col gap-4">
-              <div>Validity</div>
+              <div className="text-sm">Validity</div>
               <div className="text-xs text-primary font-medium flex items-center gap-8">
                 <div
                   className="
@@ -238,12 +276,10 @@ export function OrderModal({ isOpen }) {
                 >
                   <input
                     name="radio-order-modal-validity"
-                    id="radio-order-modal-validity-limit"
+                    id="radio-order-modal-validity-day"
                     type="radio"
                   />
-                  <label htmlFor="radio-order-modal-validity-limit">
-                    Limit
-                  </label>
+                  <label htmlFor="radio-order-modal-validity-day">Day</label>
                 </div>
                 <div
                   className="
@@ -260,11 +296,13 @@ export function OrderModal({ isOpen }) {
                 </div>
               </div>
             </div>
-            <NumberInput
-              label="Disclosed QTY."
-              value={disclosedQTY}
-              onChange={(value) => setDisclosedQTY(value)}
-            />
+            <div className="mt-auto">
+              <NumberInput
+                label="Disclosed QTY."
+                value={disclosedQTY}
+                onChange={(value) => setDisclosedQTY(value)}
+              />
+            </div>
             {/* <fieldset class="border border-solid border-gray-300 px-3 rounded-lg w-fit">
               <legend class="text-sm px-2">Disclosed QTY</legend>
               <div>
@@ -293,11 +331,14 @@ export function OrderModal({ isOpen }) {
               <div>Approx. Margin</div>
               <div>Approx. Margin</div>
             </div>
-            <div className="flex gap-8">
+            <div className="flex gap-6">
               <button className="bg-green-gradient py-1.5 px-4 rounded-lg w-28 font-medium text-white">
                 Buy
               </button>
-              <button className="bg-white py-1.5 px-4 rounded-lg w-28 font-medium text-neutral border-2 border-secondary">
+              <button
+                onClick={() => dispatch(visiblityReducer(false))}
+                className="bg-white py-1.5 px-4 rounded-lg w-28 font-medium text-neutral border-2 border-secondary"
+              >
                 Cancel
               </button>
             </div>

@@ -10,7 +10,7 @@ function App() {
       <Header />
       <Main />
 
-      <OrderModal isOpen={true} />
+      <OrderModal />
     </Router>
   );
 }

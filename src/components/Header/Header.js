@@ -40,7 +40,7 @@ const links = [
 export const Header = () => {
   return (
     <div className="px-4 max-h-16 h-16 flex justify-between items-center shadow-sm">
-      <div className="flex justify-between items-center gap-4 w-[50%] overflow-hidden">
+      <div className="flex justify-between items-center gap-4 w-[45vw] overflow-hidden">
         <span className="text-xl font-medium text-primary">TRADE.COM</span>
         <div className="flex text-right gap-4 text-xs font-medium mr-4">
           <div>

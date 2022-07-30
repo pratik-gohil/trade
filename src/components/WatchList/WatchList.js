@@ -10,6 +10,8 @@ import {
   Add,
 } from "@mui/icons-material";
 import useModal from "../../hooks/useModal";
+import { visiblityReducer } from "../../features/orderModal/orderModal";
+import { useDispatch } from "react-redux";
 
 export function WatchList() {
   const [selectedIndice, setSelectedIndice] = useState("Indian");
@@ -21,6 +23,7 @@ export function WatchList() {
     filterModalRef,
     filterModalToggleButton
   );
+  const dispatch = useDispatch();
 
   const [watchList, setWatchList] = useState([
     {
@@ -172,7 +175,7 @@ export function WatchList() {
     },
   ]);
 
-  const watchListTabs = ["Indices", "1", "2", "3", "4", "5", "Predefined"];
+  const watchListTabs = ["Indices", "1", "2", "3", "4", "Predefined"];
 
   const tradeBoxes = ["TradeBox 1", "TradeBox 2", "TradeBox 3", "TradeBox 4"];
 
@@ -190,7 +193,7 @@ export function WatchList() {
 
   return (
     <>
-      <div className="relative h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] overflow-y-auto w-[50%] flex flex-col items-center">
+      <div className="relative h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] overflow-y-auto w-[45vw] flex flex-col items-center">
         {selectedWatchListTab === "Indices" ? (
           <div className="flex gap-2 w-full px-4 py-3">
             {indices.map((indice) => (
@@ -250,10 +253,16 @@ export function WatchList() {
                 </div>
 
                 <div className="absolute right-0 top-0 h-full items-center gap-2 pr-2 hidden group-hover:flex">
-                  <div className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center text-white bg-green-gradient">
+                  <div
+                    onClick={() => dispatch(visiblityReducer(true))}
+                    className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center text-white bg-green-gradient"
+                  >
                     B
                   </div>
-                  <div className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center text-white bg-red-gradient">
+                  <div
+                    onClick={() => dispatch(visiblityReducer(true))}
+                    className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center text-white bg-red-gradient"
+                  >
                     S
                   </div>
                   <div className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center bg-white text-primary border border-primary">
@@ -289,10 +298,16 @@ export function WatchList() {
                   </div>
 
                   <div className="absolute right-0 top-0 h-full items-center gap-2 pr-2 hidden group-hover:flex">
-                    <div className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center text-white bg-green-gradient">
+                    <div
+                      onClick={() => dispatch(visiblityReducer(true))}
+                      className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center text-white bg-green-gradient"
+                    >
                       B
                     </div>
-                    <div className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center text-white bg-red-gradient">
+                    <div
+                      onClick={() => dispatch(visiblityReducer(true))}
+                      className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center text-white bg-red-gradient"
+                    >
                       S
                     </div>
                     <div

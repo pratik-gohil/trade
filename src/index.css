@@ -8,6 +8,14 @@
   --failure: 223, 81, 76;
   --blue: 21, 84, 146;
   --border: 230, 230, 230;
+
+  --form-control-color: rgba(var(--blue), 1);
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
 }
 
 @tailwind base;
@@ -98,9 +106,9 @@ code {
 }
 
 .input-disabled {
-  background: repeating-linear-gradient(45deg,
+  background: repeating-linear-gradient(135deg,
       transparent,
       transparent 2px,
-      #ccc 2px,
-      #ccc 4px)
+      rgba(var(--secondary), .2) 2px,
+      rgba(var(--secondary), .2) 4px)
 }
