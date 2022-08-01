@@ -15,7 +15,7 @@
 *,
 *:before,
 *:after {
-  box-sizing: border-box;
+  box-sizing: border-box !important;
 }
 
 @tailwind base;
@@ -55,6 +55,11 @@
     @apply bg-gradient-to-r from-[#155492] to-[#0d3c6b] bg-clip-text;
     -webkit-text-fill-color: transparent;
   }
+
+  .sidebar-width {
+    min-width: 428px;
+    width: 428px;
+  }
 }
 
 html {
@@ -69,16 +74,16 @@ html {
 }
 
 *::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 
 *::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: transparent !important;
 }
 
 *::-webkit-scrollbar-thumb {
   background: #d6d6d6;
-  border-radius: 1rem;
+  border-radius: 4px;
 }
 
 *::-webkit-scrollbar-thumb:hover {}
@@ -94,8 +99,9 @@ input[type=number] {
 }
 
 body {
+  padding: 0;
   margin: 0;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

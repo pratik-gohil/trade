@@ -8,7 +8,7 @@ export function NumberInput({ label, value, onChange, disabled = false }) {
         disabled ? "input-disabled cursor-not-allowed" : ""
       }`}
     >
-      <span className="text-xs px-2 bg-white text-secondary absolute -top-3 left-3">
+      <span className="text-xs bg-white text-secondary absolute -top-2 left-2.5">
         {label}
       </span>
       <div className="flex py-1.5">
@@ -28,7 +28,6 @@ export function NumberInput({ label, value, onChange, disabled = false }) {
           autoCorrect="off"
           min="1"
           autoFocus="autofocus"
-          label="Qty."
           className={`${
             disabled ? "cursor-not-allowed" : ""
           } outline-0 text-center bg-transparent text-primary font-medium max-w-[100px]`}

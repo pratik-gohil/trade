@@ -1,5 +1,6 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
+import { Orders } from "../Orders";
 import { WatchList } from "../WatchList";
 
 export function Main() {
@@ -29,7 +30,7 @@ export function Main() {
             }
           />
           <Route
-            path="/basket"
+            path="/baskets"
             element={
               <div
                 style={{ width: "100%", height: "100%", background: "#eee" }}
@@ -38,6 +39,7 @@ export function Main() {
               </div>
             }
           />
+          <Route path="/orders" element={<Orders />} />
         </Routes>
       </div>
     </div>

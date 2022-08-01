@@ -91,7 +91,7 @@ export function WatchList() {
     },
     {
       id: 7,
-      name: "GOLD",
+      name: "GOLD-",
       exchange: "MCX",
       price: "16726.2",
       trends: "64.15 (0.32%)",
@@ -166,7 +166,7 @@ export function WatchList() {
     },
     {
       id: 7,
-      name: "GOLD",
+      name: "GOLD-",
       exchange: "MCX",
       price: "16726.2",
       trends: "64.15 (0.32%)",
@@ -175,7 +175,7 @@ export function WatchList() {
     },
   ]);
 
-  const watchListTabs = ["Indices", "1", "2", "3", "4", "Predefined"];
+  const watchListTabs = ["Indices", "1", "2", "3", "4", "5", "6", "Predefined"];
 
   const tradeBoxes = ["TradeBox 1", "TradeBox 2", "TradeBox 3", "TradeBox 4"];
 
@@ -193,7 +193,7 @@ export function WatchList() {
 
   return (
     <>
-      <div className="relative h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] overflow-y-auto w-[45vw] flex flex-col items-center">
+      <div className="relative h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] overflow-y-auto sidebar-width flex flex-col items-center border-r border-border">
         {selectedWatchListTab === "Indices" ? (
           <div className="flex gap-2 w-full px-4 py-3">
             {indices.map((indice) => (
@@ -201,7 +201,7 @@ export function WatchList() {
                 key={indice}
                 className={`${
                   indice === selectedIndice ? "selected-tab" : "text-secondary"
-                } py-1 px-2 rounded cursor-pointer text-md`}
+                } py-1 px-2 rounded cursor-pointer text-lg`}
                 onClick={() => setSelectedIndice(indice)}
               >
                 {indice}
@@ -209,13 +209,13 @@ export function WatchList() {
             ))}
           </div>
         ) : (
-          <div className="px-4 py-3 w-full">
+          <div className="px-5 py-3 w-full">
             <div
               className={`${
                 stockSearch
                   ? "bg-blueHighlight border-blue text-primary"
                   : "bg-inherit border-secondary text-secondary"
-              } flex items-center px-2 py-2 gap-2 text-sm outline-blue-100 w-full bg-gray-100 rounded border`}
+              } flex items-center px-2 py-2 gap-2 text-sm outline-blue-100 w-full bg-gray-100 rounded-md border`}
             >
               <Search color="inherit" fontSize="small" />
               <input
@@ -241,7 +241,7 @@ export function WatchList() {
         {stockSearch
           ? searchResult.map((stock) => (
               <div key={stock.id} className="w-full relative group">
-                <div className="w-full  border-border border-b p-4 flex justify-between items-center">
+                <div className="w-full  border-border border-b p-5 flex justify-between items-center">
                   <div>
                     <div className="text-primary text-sm">{stock.name}</div>
                   </div>
@@ -254,13 +254,27 @@ export function WatchList() {
 
                 <div className="absolute right-0 top-0 h-full items-center gap-2 pr-2 hidden group-hover:flex">
                   <div
-                    onClick={() => dispatch(visiblityReducer(true))}
+                    onClick={() =>
+                      dispatch(
+                        visiblityReducer({
+                          visible: true,
+                          order: { type: "BUY" },
+                        })
+                      )
+                    }
                     className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center text-white bg-green-gradient"
                   >
                     B
                   </div>
                   <div
-                    onClick={() => dispatch(visiblityReducer(true))}
+                    onClick={() =>
+                      dispatch(
+                        visiblityReducer({
+                          visible: true,
+                          order: { type: "SELL" },
+                        })
+                      )
+                    }
                     className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center text-white bg-red-gradient"
                   >
                     S
@@ -278,15 +292,17 @@ export function WatchList() {
           : watchList.map((stock) => (
               <Fragment key={stock.id}>
                 <div className="w-full relative group">
-                  <div className="w-full  border-border border-b p-4 flex justify-between items-center">
+                  <div className="w-full border-border border-b p-5 flex justify-between items-center">
                     <div>
-                      <div className="text-primary text-sm">{stock.name}</div>
+                      <div className="text-primary text-base">{stock.name}</div>
                       <div className="text-secondary text-xs">
                         {stock.exchange}
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-primary text-sm">{stock.price}</div>
+                      <div className="text-primary text-base">
+                        {stock.price}
+                      </div>
                       <div
                         className={`text-xs ${
                           stock.isUpTrend ? "text-success" : "text-failure"
@@ -297,29 +313,43 @@ export function WatchList() {
                     </div>
                   </div>
 
-                  <div className="absolute right-0 top-0 h-full items-center gap-2 pr-2 hidden group-hover:flex">
+                  <div className="absolute right-0 top-0 h-full items-center gap-2 pr-2 hidden group-hover:flex text-base">
                     <div
-                      onClick={() => dispatch(visiblityReducer(true))}
-                      className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center text-white bg-green-gradient"
+                      onClick={() =>
+                        dispatch(
+                          visiblityReducer({
+                            visible: true,
+                            order: { type: "BUY" },
+                          })
+                        )
+                      }
+                      className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center text-white bg-green-gradient"
                     >
                       B
                     </div>
                     <div
-                      onClick={() => dispatch(visiblityReducer(true))}
-                      className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center text-white bg-red-gradient"
+                      onClick={() =>
+                        dispatch(
+                          visiblityReducer({
+                            visible: true,
+                            order: { type: "SELL" },
+                          })
+                        )
+                      }
+                      className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center text-white bg-red-gradient"
                     >
                       S
                     </div>
                     <div
                       onClick={() => handleStockExpand(stock.id)}
-                      className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center bg-white text-primary border border-primary"
+                      className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center bg-white text-primary border border-primary"
                     >
                       5
                     </div>
-                    <div className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center border border-primary text-primary bg-white">
+                    <div className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center border border-primary text-primary bg-white">
                       <Delete />
                     </div>
-                    <div className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center border border-primary text-primary bg-white">
+                    <div className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center border border-primary text-primary bg-white">
                       <MoreVert />
                     </div>
                   </div>
@@ -424,7 +454,7 @@ export function WatchList() {
               </Fragment>
             ))}
 
-        <div className="text-md sticky mt-auto h-fit w-full bottom-0 left-0 right-0 bg-white px-4 py-3 shadow-sm  border-border border gap-2 flex flex-col">
+        <div className="text-md fixed mt-auto h-fit bottom-0 left-0 right-0 bg-white p-[10px] border-border border-t gap-2 flex flex-col sidebar-width">
           <div
             ref={filterModalRef}
             className={`${
@@ -543,14 +573,18 @@ export function WatchList() {
               </div>
             </div>
           </div>
-          <div className="flex justify-between items-center text-secondary">
-            <div className="flex rounded overflow-hidden max-w-[90%] w-[90%]">
+          <div className="flex justify-between items-center text-secondary gap-2">
+            <div className="flex rounded overflow-hidden w-full border border-border">
               {watchListTabs.map((tab, i) => (
                 <div
                   key={tab}
                   className={`${
+                    i + 1 !== watchListTabs.length
+                      ? "border-r border-border"
+                      : ""
+                  } ${
                     tab === selectedWatchListTab ? "selected-tab" : ""
-                  } flex-1 text-center py-1 px-3 border border-border cursor-pointer`}
+                  } flex-1 text-center py-1 px-[9.5px] cursor-pointer text-lg`}
                   onClick={() => setSelectedWatchListTab(tab)}
                 >
                   <span>{tab}</span>
@@ -564,13 +598,15 @@ export function WatchList() {
               } cursor-pointer text-primary transition`}
             />
           </div>
-          <div className="flex justify-between items-center text-secondary">
-            <div className="flex rounded overflow-hidden max-w-[90%] w-[90%]">
-              {tradeBoxes.map((tradeBox) => (
+          <div className="flex justify-between items-center text-secondary gap-2">
+            <div className="flex rounded overflow-hidden w-full border border-border">
+              {tradeBoxes.map((tradeBox, i) => (
                 <div
                   key={tradeBox}
-                  className={`flex-1 text-center
-                py-1 px-2 border border-border cursor-pointer whitespace-nowrap overflow-hidden text-ellipsis`}
+                  className={`${
+                    i + 1 !== tradeBoxes.length ? "border-r" : ""
+                  } flex-1 text-center
+                py-1 px-[5px] border-border cursor-pointer whitespace-nowrap overflow-hidden text-lg`}
                 >
                   {tradeBox}
                 </div>
@@ -579,6 +615,7 @@ export function WatchList() {
             <EditOutlined className="cursor-pointer text-primary" />
           </div>
         </div>
+        <div className="mb-[86px]"></div>
       </div>
     </>
   );

@@ -5,7 +5,7 @@ export default function useModal(refModal, refToggleButton) {
 
   useEffect(() => {
     const modal = refModal.current;
-    const toggleButton = refToggleButton.current;
+    const toggleButton = refToggleButton.current || null;
 
     const toggle = () => {
       setShowWatchListFilters((prev) => {

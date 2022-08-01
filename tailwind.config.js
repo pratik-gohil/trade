@@ -1,7 +1,20 @@
+const pxToRem = (px, oneRemPx = 16) => `${px / oneRemPx}rem`;
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}", "./src/**/**/*.{js,jsx,ts,tsx}"],
   theme: {
+    fontSize: {
+      xxxs: pxToRem(10), //10
+      xxs: pxToRem(11), //11
+      xs: pxToRem(12), //12
+      sm: pxToRem(13), //13
+      base: pxToRem(13.5), //13.5
+      lg: pxToRem(14), //14
+      xl: pxToRem(16), //16
+      "2xl": pxToRem(18), //18
+      "3xl": pxToRem(24), //24
+    },
     extend: {
       colors: {
         primary: "rgba(var(--primary), 1)",
@@ -14,10 +27,6 @@ module.exports = {
         blueHighlight: "rgba(var(--blue), 0.1)",
         neutral: "rgba(var(--neutral), 1)",
         border: "rgba(var(--border), 1)",
-      },
-      fontSize: {
-        sm: ["13px", "20px"],
-        md: ["14px", "20px"],
       },
     },
   },

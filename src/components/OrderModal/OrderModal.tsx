@@ -1,18 +1,28 @@
-import React, { useEffect, useRef, useState } from "react";
+import { Replay } from "@mui/icons-material";
+import React, { ReactElement, useEffect, useRef, useState } from "react";
 import Draggable from "react-draggable";
 import { useDispatch, useSelector } from "react-redux";
-import { visiblityReducer } from "../../features/orderModal/orderModal";
+import {
+  orderTypeReducer,
+  visiblityReducer,
+} from "../../features/orderModal/orderModal";
 import { NumberInput } from "../NumberInput";
+import { CustomSwitch } from "../Switch";
+import { RootState } from "../../app/store";
+import { useTheme, Theme } from "@mui/material";
 
 let margin = 50;
 
 export function OrderModal() {
-  const modalRef = useRef();
+  const theme: Theme = useTheme();
+  const modalRef = useRef<HTMLDivElement>(null);
   const [vh, setVh] = useState(0);
   const [vw, setVw] = useState(0);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [orderType, setOrderType] = useState("Regular");
-  const [BuySell, setBuySell] = useState("BUY");
+  const BuySell = useSelector(
+    (state: RootState) => state.orderModal.order.type
+  );
 
   const [price, setPrice] = useState(0);
   const [triggerPrice, setTriggerPrice] = useState(0);
@@ -35,7 +45,7 @@ export function OrderModal() {
       setVh(document_height - modalRef.current.clientHeight);
       setVw(document_width - modalRef.current.clientWidth);
     }
-  }, []);
+  }, [isOpen]);
 
   useEffect(() => {
     setPosition({ y: vh, x: vw / 2 });
@@ -80,10 +90,10 @@ export function OrderModal() {
           <div
             className={`${
               BuySell === "BUY" ? "bg-light-green-gradient" : "bg-pink-gradient"
-            } flex justify-between items-center handle cursor-move p-4`}
+            } flex justify-between items-center handle cursor-move px-5 py-[10px]`}
           >
             <div className="flex flex-col gap-1">
-              <div className="text-md">ADANIPOWER</div>
+              <div className="text-md font-medium">ADANIPOWER</div>
               <div className="text-xs text-blue font-medium flex justify-center items-center gap-8">
                 <div
                   className="
@@ -111,19 +121,33 @@ export function OrderModal() {
               </div>
             </div>
             <div>
-              <button className="bg-success py-1 px-3 rounded-md font-medium text-white">
-                Buy
+              <button
+                className={`${
+                  BuySell === "BUY" ? "bg-success" : "bg-failure"
+                } w-11 h-7 text-xs rounded-md font-medium text-white`}
+              >
+                {BuySell === "BUY" ? "Buy" : "Sell"}
               </button>
+              <CustomSwitch
+                color={
+                  BuySell === "BUY"
+                    ? theme.palette.success.main
+                    : theme.palette.failure.main
+                }
+                onChange={(e) => {
+                  dispatch(orderTypeReducer(e.target.checked ? "SELL" : "BUY"));
+                }}
+              />
             </div>
           </div>
-          <div className="flex items-center gap-4 border-b-2 border-border text-sm font-medium">
+          <div className="flex items-center gap-14 border-b-2 border-border text-sm font-medium px-5 pt-2 pb-1">
             <div
               onClick={() => setOrderType("Regular")}
               className={`${
                 orderType === "Regular"
-                  ? "text-blue underline underline-offset-8 decoration-2"
+                  ? "text-blue underline underline-offset-[8px] decoration-2"
                   : ""
-              } p-4 pb-1 cursor-pointer`}
+              } cursor-pointer`}
             >
               Regular
             </div>
@@ -131,9 +155,9 @@ export function OrderModal() {
               onClick={() => setOrderType("Cover")}
               className={`${
                 orderType === "Cover"
-                  ? "text-blue underline underline-offset-8 decoration-2"
+                  ? "text-blue underline underline-offset-[8px] decoration-2"
                   : ""
-              } p-4 pb-1 cursor-pointer`}
+              } cursor-pointer`}
             >
               Cover
             </div>
@@ -141,14 +165,14 @@ export function OrderModal() {
               onClick={() => setOrderType("AMO")}
               className={`${
                 orderType === "AMO"
-                  ? "text-blue underline underline-offset-8 decoration-2"
+                  ? "text-blue underline underline-offset-[8px] decoration-2"
                   : ""
-              } p-4 pb-1 cursor-pointer`}
+              } cursor-pointer`}
             >
               AMO
             </div>
           </div>
-          <div className="p-4 flex flex-col gap-4 border-b-2 border-border">
+          <div className="px-5 py-[10px] flex flex-col gap-4 border-b-2 border-border">
             <div className="text-xs text-primary font-medium flex items-center gap-8">
               <div
                 className="
@@ -182,36 +206,18 @@ export function OrderModal() {
                 label="QTY"
                 value={QTY}
                 onChange={(value) => setQTY(value)}
-                className="flex-1"
               />
               <NumberInput
                 label="Price"
                 value={price}
                 onChange={(value) => setPrice(value)}
-                className="flex-1"
               />
               <NumberInput
                 disabled
                 label="Trigger price"
                 value={triggerPrice}
                 onChange={(value) => setTriggerPrice(value)}
-                className="flex-1"
               />
-              {/* <input
-                type="text"
-                className="border border-border rounded-lg p-2 w-fit text-center grow-0 shrink-1"
-                value={1}
-              />
-              <input
-                type="text"
-                className="border border-border rounded-lg p-2 w-fit text-center grow-0 shrink-1"
-                value={280}
-              />
-              <input
-                type="text"
-                className="border border-border rounded-lg p-2 w-fit text-center grow-0 shrink-1"
-                value={0}
-              /> */}
             </div>
             <div className="text-xs text-primary font-medium flex items-center gap-8">
               <div
@@ -266,8 +272,8 @@ export function OrderModal() {
               </div>
             </div>
           </div>
-          <div className="flex gap-8 p-4 border-b-2 border-border">
-            <div className="flex flex-col gap-4">
+          <div className="flex gap-8 px-5 py-[10px] border-b-2 border-border">
+            <div className="flex flex-col ">
               <div className="text-sm">Validity</div>
               <div className="text-xs text-primary font-medium flex items-center gap-8">
                 <div
@@ -291,7 +297,7 @@ export function OrderModal() {
                     type="radio"
                   />
                   <label htmlFor="radio-order-modal-validity-intermidiate">
-                    Intermidiate
+                    Immediate
                   </label>
                 </div>
               </div>
@@ -303,40 +309,35 @@ export function OrderModal() {
                 onChange={(value) => setDisclosedQTY(value)}
               />
             </div>
-            {/* <fieldset class="border border-solid border-gray-300 px-3 rounded-lg w-fit">
-              <legend class="text-sm px-2">Disclosed QTY</legend>
-              <div>
-                <Add fontSize="inherit" className="cursor-pointer" />
-                <input
-                  type="number"
-                  placeholder=""
-                  autocorrect="off"
-                  min="1"
-                  autofocus="autofocus"
-                  label="Qty."
-                  className="outline-0 text-center w-20 appearance-[textfield]"
-                />
-                <Remove fontSize="inherit" className="cursor-pointer" />
-              </div>
-            </fieldset> */}
-            {/* <input
-              type="text"
-              className="border border-border rounded-lg p-2 w-fit text-center grow-0 shrink-1"
-              value={0}
-            /> */}
           </div>
 
-          <div className="flex justify-between items-center p-4">
-            <div className="flex flex-col gap-4 text-xs text-neutral">
-              <div>Approx. Margin</div>
-              <div>Approx. Margin</div>
+          <div className="flex justify-between items-center px-5 py-[10px]">
+            <div className="flex flex-col text-xs text-neutral">
+              <div className="flex gap-6">
+                <div>Approx. Margin</div>
+                <div className="flex gap-2 translate-x-[32px]">
+                  <div>280.00</div>
+                  <Replay className="text-blue cursor-pointer" />
+                </div>
+              </div>
+              <div className="flex justify-between">
+                <div>Available</div>
+                <div>280.00</div>
+              </div>
             </div>
             <div className="flex gap-6">
               <button className="bg-green-gradient py-1.5 px-4 rounded-lg w-28 font-medium text-white">
                 Buy
               </button>
               <button
-                onClick={() => dispatch(visiblityReducer(false))}
+                onClick={() =>
+                  dispatch(
+                    visiblityReducer({
+                      visible: false,
+                      order: {},
+                    })
+                  )
+                }
                 className="bg-white py-1.5 px-4 rounded-lg w-28 font-medium text-neutral border-2 border-secondary"
               >
                 Cancel

@@ -39,33 +39,33 @@ const links = [
 
 export const Header = () => {
   return (
-    <div className="px-4 max-h-16 h-16 flex justify-between items-center shadow-sm">
-      <div className="flex justify-between items-center gap-4 w-[45vw] overflow-hidden">
+    <div className="max-h-16 h-16 flex justify-between items-center shadow-sm">
+      <div className="flex justify-between items-center gap-4 sidebar-width overflow-hidden px-5">
         <span className="text-xl font-medium text-primary">TRADE.COM</span>
-        <div className="flex text-right gap-4 text-xs font-medium mr-4">
+        <div className="flex text-right gap-4 text-xs font-medium mr-[10px]">
           <div>
-            <div>
+            <div className="flex gap-2">
               <span>NIFTY 50</span>{" "}
               <span className="text-failure">54878.88</span>
             </div>
             <div className="text-secondary">-167.25(-0.01%)</div>
           </div>
           <div>
-            <div>
+            <div className="flex gap-2">
               <span>SENSEX</span> <span className="text-success">54878.88</span>
             </div>
             <div className="text-secondary">+167.25(+0.01%)</div>
           </div>
         </div>
       </div>
-      <div className="flex justify-between items-center gap-4 w-full">
+      <div className="flex justify-between items-center gap-4 w-full px-5">
         <div className="text-sm flex gap-4 justify-between w-full ml-4">
           {links.map((link) => (
             <NavLink
               key={link.path}
               className={({ isActive }) =>
                 (isActive
-                  ? "text-blue underline decoration-2 underline-offset-8 nav-link"
+                  ? "text-blue !underline !decoration-2 underline-offset-[5px] nav-link"
                   : "text-primary nav-link") + " font-medium hover:text-blue"
               }
               to={link.path}
