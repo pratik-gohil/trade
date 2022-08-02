@@ -1,6 +1,7 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import { Orders } from "../Orders";
+import { Positions } from "../Positions";
 import { WatchList } from "../WatchList";
 
 export function Main() {
@@ -40,6 +41,7 @@ export function Main() {
             }
           />
           <Route path="/orders" element={<Orders />} />
+          <Route path="/positions" element={<Positions />} />
         </Routes>
       </div>
     </div>

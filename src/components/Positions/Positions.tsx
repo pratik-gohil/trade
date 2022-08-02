@@ -15,159 +15,157 @@ import { visuallyHidden } from "@mui/utils";
 
 interface Data {
   id: string;
-  time: string;
-  action: string;
   scrips: string;
   qty: string;
   product: string;
-  orderPrice: number;
+  avgPrice: number;
   ltp: number;
+  mtm: string;
+  perChg: string;
 }
 
 function createData(
   id: string,
-  time: string,
-  action: string,
   scrips: string,
   qty: string,
   product: string,
-  orderPrice: number,
-  ltp: number
+  avgPrice: number,
+  ltp: number,
+  mtm: string,
+  perChg: string
 ): Data {
   return {
     id,
-    time,
-    action,
     scrips,
     qty,
     product,
-    orderPrice,
+    avgPrice,
     ltp,
+    mtm,
+    perChg,
   };
 }
 
 const rows = [
-  {
-    ...createData(
-      "1",
-      "12:25:05",
-      "BUY",
-      "TECHM",
-      "0 / 1000",
-      "DEL",
-      422.75,
-      422.75
-    ),
-  },
   createData(
-    "2",
-    "12:25:05",
-    "BUY",
+    "1",
     "TECHM",
-    "0 / 1000",
+    "1000",
     "DEL",
     422.75,
-    422.75
+    422.75,
+    "+9,00,000.0",
+    "3.1%"
+  ),
+  createData(
+    "2",
+    "TECHM",
+    "1000",
+    "DEL",
+    422.75,
+    422.75,
+    "+9,00,000.0",
+    "3.1%"
   ),
   createData(
     "3",
-    "12:25:05",
-    "BUY",
     "TECHM",
-    "0 / 1000",
+    "1000",
     "DEL",
     422.75,
-    422.75
+    422.75,
+    "+9,00,000.0",
+    "3.1%"
   ),
   createData(
     "4",
-    "12:25:05",
-    "BUY",
     "TECHM",
-    "0 / 1000",
+    "1000",
     "DEL",
     422.75,
-    422.75
+    422.75,
+    "+9,00,000.0",
+    "3.1%"
   ),
   createData(
     "5",
-    "12:25:05",
-    "BUY",
     "TECHM",
-    "0 / 1000",
+    "1000",
     "DEL",
     422.75,
-    422.75
+    422.75,
+    "+9,00,000.0",
+    "3.1%"
   ),
   createData(
     "6",
-    "12:25:05",
-    "BUY",
     "TECHM",
-    "0 / 1000",
+    "1000",
     "DEL",
     422.75,
-    422.75
+    422.75,
+    "+9,00,000.0",
+    "3.1%"
   ),
   createData(
     "7",
-    "12:25:05",
-    "BUY",
     "TECHM",
-    "0 / 1000",
+    "1000",
     "DEL",
     422.75,
-    422.75
+    422.75,
+    "+9,00,000.0",
+    "3.1%"
   ),
   createData(
     "8",
-    "12:25:05",
-    "BUY",
     "TECHM",
-    "0 / 1000",
+    "1000",
     "DEL",
     422.75,
-    422.75
+    422.75,
+    "+9,00,000.0",
+    "3.1%"
   ),
   createData(
     "9",
-    "12:25:05",
-    "BUY",
     "TECHM",
-    "0 / 1000",
+    "1000",
     "DEL",
     422.75,
-    422.75
+    422.75,
+    "+9,00,000.0",
+    "3.1%"
   ),
   createData(
     "10",
-    "12:25:05",
-    "BUY",
     "TECHM",
-    "0 / 1000",
+    "1000",
     "DEL",
     422.75,
-    422.75
+    422.75,
+    "+9,00,000.0",
+    "3.1%"
   ),
   createData(
     "11",
-    "12:25:05",
-    "BUY",
     "TECHM",
-    "0 / 1000",
+    "1000",
     "DEL",
     422.75,
-    422.75
+    422.75,
+    "+9,00,000.0",
+    "3.1%"
   ),
   createData(
     "12",
-    "12:25:05",
-    "BUY",
     "TECHM",
-    "0 / 1000",
+    "1000",
     "DEL",
     422.75,
-    422.75
+    422.75,
+    "+9,00,000.0",
+    "3.1%"
   ),
 ];
 
@@ -199,18 +197,6 @@ interface HeadCell {
 
 const headCells: readonly HeadCell[] = [
   {
-    id: "time",
-    numeric: false,
-    disablePadding: true,
-    label: "Time",
-  },
-  {
-    id: "action",
-    numeric: true,
-    disablePadding: false,
-    label: "Action",
-  },
-  {
     id: "scrips",
     numeric: true,
     disablePadding: false,
@@ -229,16 +215,29 @@ const headCells: readonly HeadCell[] = [
     label: "Product",
   },
   {
-    id: "orderPrice",
-    numeric: true,
-    disablePadding: false,
-    label: "Order Price",
+    id: "avgPrice",
+    numeric: false,
+    disablePadding: true,
+    label: "Time",
   },
   {
     id: "ltp",
     numeric: true,
     disablePadding: false,
     label: "LTP",
+  },
+  {
+    id: "mtm",
+    numeric: true,
+    disablePadding: false,
+    label: "Action",
+  },
+
+  {
+    id: "perChg",
+    numeric: true,
+    disablePadding: false,
+    label: "Order Price",
   },
 ];
 
@@ -316,43 +315,56 @@ interface EnhancedTableToolbarProps {
   numSelected: number;
   allowSelection: boolean;
   setAllowSelection: Dispatch<SetStateAction<boolean>>;
+  filter: string;
 }
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
-  const { numSelected, allowSelection, setAllowSelection } = props;
+  const { numSelected, allowSelection, setAllowSelection, filter } = props;
 
   return (
-    <div className="flex justify-between items-center mb-6">
+    <div className="flex justify-between items-stretch mb-6">
       <div className="flex items-center gap-4">
-        <div className="text-primary text-2xl font-semibold">Open Orders</div>
-        <div
-          onClick={() => setAllowSelection((prev) => !prev)}
-          className={`${
-            numSelected
-              ? "text-blue border-blue"
-              : "text-secondary border-secondary"
-          } border rounded px-2 cursor-pointer text-lg font-medium`}
-        >
-          Select {allowSelection && `(${numSelected})`}
+        <div className="flex flex-col gap-2">
+          <div className="text-primary text-2xl font-semibold">
+            {filter} Positions
+          </div>
+          <div className="flex items-center gap-4">
+            {filter !== "Close" && (
+              <div
+                onClick={() => setAllowSelection((prev) => !prev)}
+                className={`${
+                  numSelected
+                    ? "text-blue border-blue"
+                    : "text-secondary border-secondary"
+                } border rounded px-2 py-0.5 cursor-pointer text-base font-medium flex items-center`}
+              >
+                Select {allowSelection && `(${numSelected})`}
+              </div>
+            )}
+            <div className="border border-secondary py-1 rounded text-base text-secondary">
+              <Search className="text-inherit mx-1.5" fontSize="small" />
+              <input
+                type="text"
+                className="outline-none"
+                placeholder="Search in Positions"
+              />
+            </div>
+          </div>
         </div>
       </div>
-      <div className="border border-secondary py-1 rounded text-base text-secondary">
-        <Search className="text-inherit mx-1.5" fontSize="small" />
-        <input
-          type="text"
-          className="outline-none"
-          placeholder="Search in Open Orders"
-        />
+      <div className="bg-green-50 flex items-center p-2 text-xl gap-4 rounded-[4px]">
+        {filter} P&L{" "}
+        <span className="text-3xl text-success font-medium">+9,79,817.70</span>
       </div>
     </div>
   );
 };
 
-export function Orders() {
+export function Positions() {
   const [allowSelection, setAllowSelection] = useState(false);
 
   const [order, setOrder] = React.useState<Order>("asc");
-  const [orderBy, setOrderBy] = React.useState<keyof Data>("time");
+  const [orderBy, setOrderBy] = React.useState<keyof Data>("scrips");
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -408,9 +420,19 @@ export function Orders() {
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
+  const [filterType, setFilterType] = useState("All");
+  const filters = [
+    { name: "All", filter: "All" },
+    { name: "Open", filter: "Open" },
+    { name: "Close", filter: "Close" },
+    { name: "Today's trades", filter: "Today's" },
+    { name: "TradeBox", filter: "TradeBox" },
+  ];
+
   return (
-    <div className="p-5">
-      {/* <div style={{ height: 400, width: "100%" }}>
+    <>
+      <div className="p-5">
+        {/* <div style={{ height: 400, width: "100%" }}>
         <DataGrid
           rows={rows}
           columns={columns}
@@ -419,95 +441,102 @@ export function Orders() {
           checkboxSelection={allowSelection}
         />
       </div> */}
-      <Box sx={{ width: "100%" }}>
-        {/* <Paper sx={{ width: "100%", mb: 2 }}> */}
-        <EnhancedTableToolbar
-          allowSelection={allowSelection}
-          setAllowSelection={setAllowSelection}
-          numSelected={selected.length}
-        />
-        <TableContainer>
-          <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
-            <EnhancedTableHead
-              allowSelection={allowSelection}
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
-            />
-            <TableBody className="max-h-28 overflow-auto">
-              {rows
-                .sort()
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.id);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+        <Box sx={{ width: "100%" }}>
+          {/* <Paper sx={{ width: "100%", mb: 2 }}> */}
+          <EnhancedTableToolbar
+            filter={filterType}
+            allowSelection={allowSelection}
+            setAllowSelection={setAllowSelection}
+            numSelected={selected.length}
+          />
+          <TableContainer>
+            <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
+              <EnhancedTableHead
+                allowSelection={allowSelection}
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onSelectAllClick={handleSelectAllClick}
+                onRequestSort={handleRequestSort}
+                rowCount={rows.length}
+              />
+              <TableBody className="max-h-28 overflow-auto">
+                {rows
+                  .sort()
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => {
+                    const isItemSelected = isSelected(row.id);
+                    const labelId = `enhanced-table-checkbox-${index}`;
 
-                  return (
-                    <TableRow
-                      hover
-                      onClick={(event) => {
-                        setAllowSelection(true);
-                        handleClick(event, row.id);
-                      }}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.id}
-                      selected={isItemSelected}
-                    >
-                      {allowSelection && (
-                        <TableCell padding="checkbox">
-                          <Checkbox
-                            color="primary"
-                            checked={isItemSelected}
-                            inputProps={{
-                              "aria-labelledby": labelId,
-                            }}
-                          />
-                        </TableCell>
-                      )}
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        padding="none"
+                    return (
+                      <TableRow
+                        hover
+                        onClick={(event) => {
+                          setAllowSelection(true);
+                          handleClick(event, row.id);
+                        }}
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row.id}
+                        selected={isItemSelected}
                       >
-                        {row.time}
-                      </TableCell>
-                      <TableCell align="right">{row.action}</TableCell>
-                      <TableCell align="right">{row.scrips}</TableCell>
-                      <TableCell align="right">{row.qty}</TableCell>
-                      <TableCell align="right">{row.product}</TableCell>
-                      <TableCell align="right">{row.orderPrice}</TableCell>
-                      <TableCell align="right">{row.ltp}</TableCell>
-                    </TableRow>
-                  );
-                })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-        {/* </Paper> */}
-      </Box>
-      <div className="flex gap-[10px]">
-        <button className="text-white bg-red-gradient px-2 py-1 rounded-md text-lg font-medium">
-          Cancel Orders
-        </button>
-        <button className="text-white bg-green-gradient px-2 py-1 rounded-md text-lg font-medium">
-          Push to Market
-        </button>
+                        {allowSelection && (
+                          <TableCell padding="checkbox">
+                            <Checkbox
+                              color="primary"
+                              checked={isItemSelected}
+                              inputProps={{
+                                "aria-labelledby": labelId,
+                              }}
+                            />
+                          </TableCell>
+                        )}
+                        <TableCell
+                          component="th"
+                          id={labelId}
+                          scope="row"
+                          padding="none"
+                        >
+                          {row.scrips}
+                        </TableCell>
+                        <TableCell align="right">{row.qty}</TableCell>
+                        <TableCell align="right">{row.product}</TableCell>
+                        <TableCell align="right">{row.avgPrice}</TableCell>
+                        <TableCell align="right">{row.ltp}</TableCell>
+                        <TableCell align="right">{row.mtm}</TableCell>
+                        <TableCell align="right">{row.perChg}</TableCell>
+                      </TableRow>
+                    );
+                  })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={rows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+          {/* </Paper> */}
+        </Box>
       </div>
-    </div>
+      <div className="fixed flex gap-4 bottom-0 w-full border-t px-5 py-2 bg-white">
+        {filters.map((filter) => (
+          <div
+            key={filter.name}
+            className={`${
+              filter.filter === filterType ? "selected-tab" : "text-secondary"
+            } py-1 px-2 rounded cursor-pointer text-lg`}
+            onClick={() => setFilterType(filter.filter)}
+          >
+            {filter.name}
+          </div>
+        ))}
+      </div>
+    </>
   );
 }

@@ -6,7 +6,7 @@ import {
   Search,
   MoreVert,
   CancelOutlined,
-  Done,
+  // Done,
   Add,
 } from "@mui/icons-material";
 import useModal from "../../hooks/useModal";
@@ -459,7 +459,7 @@ export function WatchList() {
             ref={filterModalRef}
             className={`${
               showWatchListFilters ? "block" : "hidden"
-            } absolute m-4 bottom-full right-0 bg-white shadow rounded overflow-hidden w-fit`}
+            } absolute bottom-full mb-4 mr-[6px] right-4 bg-white shadow rounded overflow-hidden w-fit text-base`}
           >
             <div className="border-b border-border p-4">
               <div className="flex justify-between mb-4">

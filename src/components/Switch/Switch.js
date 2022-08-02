@@ -3,10 +3,16 @@ import { Switch, useTheme } from "@mui/material";
 import { useCustomSwitch } from "./Switch.styles";
 import { makeStyles } from "@mui/styles";
 
-export function CustomSwitch({ onChange, color }) {
+export function CustomSwitch({ onChange, color, checked }) {
   const theme = useTheme();
   const useStyles = makeStyles(useCustomSwitch(theme, color));
   const customSwitchClasses = useStyles();
 
-  return <Switch classes={customSwitchClasses} onChange={onChange} />;
+  return (
+    <Switch
+      classes={customSwitchClasses}
+      onChange={onChange}
+      checked={checked}
+    />
+  );
 }

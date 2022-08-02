@@ -137,6 +137,7 @@ export function OrderModal() {
                 onChange={(e) => {
                   dispatch(orderTypeReducer(e.target.checked ? "SELL" : "BUY"));
                 }}
+                checked={BuySell === "SELL"}
               />
             </div>
           </div>
@@ -326,8 +327,12 @@ export function OrderModal() {
               </div>
             </div>
             <div className="flex gap-6">
-              <button className="bg-green-gradient py-1.5 px-4 rounded-lg w-28 font-medium text-white">
-                Buy
+              <button
+                className={`${
+                  BuySell === "BUY" ? "bg-green-gradient" : "bg-red-gradient"
+                } py-1.5 px-4 rounded-lg w-28 font-medium text-white`}
+              >
+                {BuySell === "BUY" ? "Buy" : "Sell"}
               </button>
               <button
                 onClick={() =>
