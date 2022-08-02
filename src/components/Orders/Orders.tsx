@@ -62,7 +62,7 @@ const rows = [
   createData(
     "2",
     "12:25:05",
-    "BUY",
+    "SELL",
     "TECHM",
     "0 / 1000",
     "DEL",
@@ -72,17 +72,17 @@ const rows = [
   createData(
     "3",
     "12:25:05",
-    "BUY",
+    "SELL",
     "TECHM",
     "0 / 1000",
-    "DEL",
+    "MIS",
     422.75,
     422.75
   ),
   createData(
     "4",
     "12:25:05",
-    "BUY",
+    "CNC",
     "TECHM",
     "0 / 1000",
     "DEL",
@@ -477,10 +477,32 @@ export function Orders() {
                       >
                         {row.time}
                       </TableCell>
-                      <TableCell align="right">{row.action}</TableCell>
+                      <TableCell align="right">
+                        <span
+                          className={`${
+                            row.action === "BUY"
+                              ? "text-success bg-successHighlight"
+                              : "text-failure bg-failureHighlight"
+                          } text-xs rounded-[4px] py-[5px] px-[6px]`}
+                        >
+                          {row.action}
+                        </span>
+                      </TableCell>
                       <TableCell align="right">{row.scrips}</TableCell>
-                      <TableCell align="right">{row.qty}</TableCell>
-                      <TableCell align="right">{row.product}</TableCell>
+                      <TableCell align="right">
+                        <span className="text-secondary">{row.qty}</span>
+                      </TableCell>
+                      <TableCell align="right">
+                        <span
+                          className={`${
+                            row.product === "MIS" || row.product === "INTRA"
+                              ? "text-purple bg-purpleHighlight"
+                              : "text-blue bg-blueHighlight"
+                          } text-xs rounded-[4px] py-[5px] px-[6px]`}
+                        >
+                          {row.product}
+                        </span>
+                      </TableCell>
                       <TableCell align="right">{row.orderPrice}</TableCell>
                       <TableCell align="right">{row.ltp}</TableCell>
                     </TableRow>

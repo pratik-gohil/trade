@@ -198,8 +198,8 @@ interface HeadCell {
 const headCells: readonly HeadCell[] = [
   {
     id: "scrips",
-    numeric: true,
-    disablePadding: false,
+    numeric: false,
+    disablePadding: true,
     label: "Scrips",
   },
   {
@@ -501,7 +501,17 @@ export function Positions() {
                           {row.scrips}
                         </TableCell>
                         <TableCell align="right">{row.qty}</TableCell>
-                        <TableCell align="right">{row.product}</TableCell>
+                        <TableCell align="right">
+                          <span
+                            className={`${
+                              row.product === "MIS" || row.product === "INTRA"
+                                ? "text-purple bg-purpleHighlight"
+                                : "text-blue bg-blueHighlight"
+                            } text-xs rounded-[4px] py-[5px] px-[6px]`}
+                          >
+                            {row.product}
+                          </span>
+                        </TableCell>
                         <TableCell align="right">{row.avgPrice}</TableCell>
                         <TableCell align="right">{row.ltp}</TableCell>
                         <TableCell align="right">{row.mtm}</TableCell>
