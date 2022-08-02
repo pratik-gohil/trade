@@ -1,13 +1,14 @@
 import React from "react";
 import { Header } from "./components/Header";
 import { Main } from "./components/Main";
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { OrderModal } from "./components/OrderModal";
 import {
   createTheme,
   SimplePaletteColorOptions,
   ThemeProvider,
 } from "@mui/material";
+import { Login } from "./components/Login";
 
 declare module "@mui/material/styles" {
   interface Palette {
@@ -52,10 +53,19 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <Router>
-        <Header />
-        <Main />
-
-        <OrderModal />
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <Header />
+                <Main />
+                <OrderModal />
+              </>
+            }
+          />
+          <Route path="/login" element={<Login />} />
+        </Routes>
       </Router>
     </ThemeProvider>
   );

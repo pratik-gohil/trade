@@ -13,7 +13,8 @@ module.exports = {
       lg: pxToRem(14), //14
       xl: pxToRem(16), //16
       "2xl": pxToRem(18), //18
-      "3xl": pxToRem(24), //24
+      "3xl": pxToRem(20), //18
+      "4xl": pxToRem(24), //24
     },
     extend: {
       colors: {
