@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import OtpInput from "react-otp-input";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { setUserReducer } from "src/features/Auth/Auth";
+import { setUserReducer } from "../../features/Auth/Auth";
 import { PasswordInput } from "../PasswordInput/PasswordInput";
 
 export default function ClientLogin({

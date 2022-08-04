@@ -5,9 +5,14 @@
     "module": "esnext",
     "noImplicitAny": false,
     "preserveConstEnums": true,
-    "baseUrl": ".",
-    "jsx": "react",
-    "lib": ["dom", "es5", "es6", "es7", "es2017"],
+    "jsx": "preserve",
+    "lib": [
+      "dom",
+      "es5",
+      "es6",
+      "es7",
+      "es2017"
+    ],
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "allowJs": true,
@@ -25,8 +30,15 @@
     "strictFunctionTypes": false,
     "pretty": true,
     "removeComments": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

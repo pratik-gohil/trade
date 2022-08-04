@@ -5,16 +5,16 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}", "./src/**/**/*.{js,jsx,ts,tsx}"],
   theme: {
     fontSize: {
-      xxxs: pxToRem(10), //10
-      xxs: pxToRem(11), //11
-      xs: pxToRem(12), //12
-      sm: pxToRem(13), //13
-      base: pxToRem(13.5), //13.5
-      lg: pxToRem(14), //14
-      xl: pxToRem(16), //16
-      "2xl": pxToRem(18), //18
-      "3xl": pxToRem(20), //18
-      "4xl": pxToRem(24), //24
+      xxxs: pxToRem(10),
+      xxs: pxToRem(11),
+      xs: pxToRem(12),
+      sm: pxToRem(13),
+      base: pxToRem(13.5),
+      lg: pxToRem(14),
+      xl: pxToRem(16),
+      "2xl": pxToRem(18),
+      "3xl": pxToRem(20),
+      "4xl": pxToRem(24),
     },
     extend: {
       colors: {
