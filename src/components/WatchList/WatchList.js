@@ -15,13 +15,14 @@ import { useDispatch } from "react-redux";
 import { getMaster } from "../../http/master/master";
 // import { getGroups } from "../../http/getGroups/getGroups";
 // import { getGroupSymbols } from "../../http/getGroupSymbols/getGroupSymbols";
+import master from "../../json/master.json";
 
 export function WatchList() {
   const [selectedIndice, setSelectedIndice] = useState("Indian");
   const [selectedWatchListTab, setSelectedWatchListTab] = useState("Indices");
   const [stockSearch, setStockSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
-  const [master, setMaster] = useState([]);
+  // const [master, setMaster] = useState([]);
   const [watchList, setWatchList] = useState([
     {
       id: 0,
@@ -144,43 +145,44 @@ export function WatchList() {
     // return () => clearTimeout(debounce);
   }, [master, stockSearch]);
 
-  useEffect(() => {
-    const keys = [
-      "exchangeSegment",
-      "exchangeInstrumentID",
-      "instrumentType",
-      "name",
-      "description",
-      "series",
-      "nameWithSeries",
-      "instrumentID",
-      "highPriceBand",
-      "lowPriceBand",
-      "freezeQty",
-      "tickSize",
-      "lotSize",
-      "multiplier",
-      "underlyingInstrumentId",
-      "contractExpiration",
-      "strikePrice",
-      "optionType",
-      "underlyingIndexName",
-      "DisplayName",
-      "ISIN",
-      "Numerator",
-      "Denominator",
-    ];
-    (async () => {
-      const response = await getMaster();
-      if (response.type === "success") {
-        let master = response.result
-          .split("\n")
-          .map((s) => s.split("|"))
-          .map((s) => s.reduce((o, k, i) => ({ ...o, [keys[i]]: k }), {}));
-        setMaster(master);
-      }
-    })();
-  }, []);
+  // useEffect(() => {
+  //   const keys = [
+  //     "exchangeSegment",
+  //     "exchangeInstrumentID",
+  //     "instrumentType",
+  //     "name",
+  //     "description",
+  //     "series",
+  //     "nameWithSeries",
+  //     "instrumentID",
+  //     "highPriceBand",
+  //     "lowPriceBand",
+  //     "freezeQty",
+  //     "tickSize",
+  //     "lotSize",
+  //     "multiplier",
+  //     "underlyingInstrumentId",
+  //     "contractExpiration",
+  //     "strikePrice",
+  //     "optionType",
+  //     "underlyingIndexName",
+  //     "DisplayName",
+  //     "ISIN",
+  //     "Numerator",
+  //     "Denominator",
+  //   ];
+  //   (async () => {
+  //     const response = await getMaster();
+  //     if (response.type === "success") {
+  //       let master = response.result
+  //         .split("\n")
+  //         .map((s) => s.split("|"))
+  //         .map((s) => s.reduce((o, k, i) => ({ ...o, [keys[i]]: k }), {}));
+  //       console.log(master);
+  //       setMaster(master);
+  //     }
+  //   })();
+  // }, []);
 
   const tradeBoxes = ["TradeBox 1", "TradeBox 2", "TradeBox 3", "TradeBox 4"];
   const watchListTabs = ["Indices", "1", "2", "3", "4", "5", "6", "Predefined"];
@@ -252,8 +254,8 @@ export function WatchList() {
                     <div className="text-primary text-sm">{stock.name}</div>
                   </div>
                   <div className="text-right">
-                    <div className="text-secondary text-xs">
-                      {stock.exchange}
+                    <div className="text-secondary bg-secondaryHighlight text-xs p-1 rounded-[4px]">
+                      {stock.exchangeSegment}
                     </div>
                   </div>
                 </div>

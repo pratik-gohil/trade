@@ -68,7 +68,6 @@ export default function App() {
   useEffect(() => {
     const socket = io("https://devtrade.lkp.net.in", {
       path: "/marketdata/socket.io",
-      // reconnection: false,
       query: {
         token: localStorage.getItem("token"),
         userID: localStorage.getItem("userID"),
@@ -76,33 +75,32 @@ export default function App() {
         broadcastMode: "Full",
       },
       transports: ["websocket"],
-      // upgrade: true,
     });
 
-    console.log(socket);
+    // console.log(socket);
 
     socket.on("connect", () => {
       console.log("connected");
-      console.log(socket);
     });
 
     socket.on("1501-json-full", (data) => {
-      console.log("data is " + data);
+      console.log("1501-json-full " + data);
     });
 
     socket.on("1502-json-full", (data) => {
-      console.log("data is " + data);
+      console.log("1502-json-full " + data);
     });
 
     socket.on("disconnect", () => {
-      console.log("dc");
+      console.log("disconnected");
     });
 
-    // return () => {
-    //   socket.off("connect");
-    //   socket.off("1502-json-full");
-    //   socket.off("disconnect");
-    // };
+    return () => {
+      socket.off("connect");
+      socket.off("1501-json-full");
+      socket.off("1502-json-full");
+      socket.off("disconnect");
+    };
   }, []);
 
   useEffect(() => {

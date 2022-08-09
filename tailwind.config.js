@@ -20,6 +20,7 @@ module.exports = {
       colors: {
         primary: "rgba(var(--primary), 1)",
         secondary: "rgba(var(--secondary), 1)",
+        secondaryHighlight: "rgba(var(--secondary), 0.1)",
         success: "rgba(var(--success), 1)",
         successHighlight: "rgba(var(--success), 0.1)",
         failure: "rgba(var(--failure), 1)",

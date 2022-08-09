@@ -60,7 +60,6 @@ export const ClientLoginPIN = ({ setLoginFlowCurrentState }) => {
         placeholder="Enter PIN"
         value={PIN}
         onChange={(e) => {
-          console.log(e.target.value);
           setPIN(e.target.value);
         }}
       />
