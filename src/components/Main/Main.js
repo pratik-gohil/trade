@@ -13,9 +13,7 @@ export function Main() {
           <Route
             path="/"
             element={
-              <div
-                style={{ width: "100%", height: "200vh", background: "#eee" }}
-              >
+              <div className="p-5" style={{ width: "100%", height: "200vh" }}>
                 Home
               </div>
             }
@@ -23,9 +21,7 @@ export function Main() {
           <Route
             path="/markets"
             element={
-              <div
-                style={{ width: "100%", height: "100%", background: "#eee" }}
-              >
+              <div className="p-5" style={{ width: "100%", height: "100%" }}>
                 Market
               </div>
             }
@@ -33,9 +29,7 @@ export function Main() {
           <Route
             path="/baskets"
             element={
-              <div
-                style={{ width: "100%", height: "100%", background: "#eee" }}
-              >
+              <div className="p-5" style={{ width: "100%", height: "200vh" }}>
                 Basket
               </div>
             }

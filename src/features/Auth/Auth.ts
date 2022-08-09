@@ -1,8 +1,22 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
 
 const initialState = {
-  user: null,
+  user: {
+    userID: "",
+    firstName: "",
+    lastName: "",
+    ClientId: "",
+    ClientName: "",
+    EmailId: "",
+    IncludeInAutoSquareoff: false,
+    IncludeInAutoSquareoffBlocked: false,
+    IsInvestorClient: true,
+    IsProClient: false,
+    MobileNo: "",
+    OfficeAddress: "",
+    PAN: "",
+    ResidentialAddress: "",
+  },
 };
 
 export const authSlice = createSlice({

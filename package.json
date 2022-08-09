@@ -11,13 +11,15 @@
     "@mui/styles": "^5.9.2",
     "@mui/x-data-grid": "^5.15.0",
     "@reduxjs/toolkit": "^1.8.3",
-    "react-otp-input": "^2.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-draggable": "^4.4.5",
+    "react-otp-input": "^2.4.0",
     "react-redux": "^8.0.2",
     "react-router-dom": "^6.3.0",
-    "react-scripts": "5.0.1"
+    "react-scripts": "5.0.1",
+    "socket.io-client": "^4.5.1",
+    "xts-marketdata-api": "^3.0.7"
   },
   "scripts": {
     "start": "react-scripts start",

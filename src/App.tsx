@@ -1,14 +1,23 @@
-import React from "react";
-import { Header } from "./components/Header";
+import React, { useEffect } from "react";
 import { Main } from "./components/Main";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import { OrderModal } from "./components/OrderModal";
 import {
   createTheme,
   SimplePaletteColorOptions,
   ThemeProvider,
 } from "@mui/material";
+import { useDispatch } from "react-redux";
 import { Login } from "./components/Login";
+import { Header } from "./components/Header";
+import { getUserProfile } from "./http/getUserProfile/getUserProfile";
+import { setUserReducer } from "./features/Auth/Auth";
+import { io } from "socket.io-client";
 
 declare module "@mui/material/styles" {
   interface Palette {
@@ -50,19 +59,76 @@ const theme = createTheme({
 });
 
 export default function App() {
+  const isLoggedIn = localStorage.getItem("token");
+  const loginRequired = (Element) => {
+    return isLoggedIn ? Element : <Navigate to="/login" />;
+  };
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const socket = io("https://devtrade.lkp.net.in", {
+      path: "/marketdata/socket.io",
+      // reconnection: false,
+      query: {
+        token: localStorage.getItem("token"),
+        userID: localStorage.getItem("userID"),
+        publishFormat: "JSON",
+        broadcastMode: "Full",
+      },
+      transports: ["websocket"],
+      // upgrade: true,
+    });
+
+    console.log(socket);
+
+    socket.on("connect", () => {
+      console.log("connected");
+      console.log(socket);
+    });
+
+    socket.on("1501-json-full", (data) => {
+      console.log("data is " + data);
+    });
+
+    socket.on("1502-json-full", (data) => {
+      console.log("data is " + data);
+    });
+
+    socket.on("disconnect", () => {
+      console.log("dc");
+    });
+
+    // return () => {
+    //   socket.off("connect");
+    //   socket.off("1502-json-full");
+    //   socket.off("disconnect");
+    // };
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      if (localStorage.getItem("token")) {
+        const userProfile = await getUserProfile();
+        if (userProfile.type === "success") {
+          dispatch(setUserReducer(userProfile.result));
+        }
+      }
+    })();
+  }, [dispatch]);
+
   return (
     <ThemeProvider theme={theme}>
       <Router>
         <Routes>
           <Route
             path="*"
-            element={
+            element={loginRequired(
               <>
                 <Header />
                 <Main />
                 <OrderModal />
               </>
-            }
+            )}
           />
           <Route path="/login" element={<Login />} />
         </Routes>

@@ -330,7 +330,7 @@ export function OrderModal() {
               <button
                 className={`${
                   BuySell === "BUY" ? "bg-green-gradient" : "bg-red-gradient"
-                } py-1.5 px-4 rounded-lg w-28 font-medium text-white`}
+                } w-[105px] h-[45px] rounded-lg font-medium text-white`}
               >
                 {BuySell === "BUY" ? "Buy" : "Sell"}
               </button>
@@ -343,7 +343,7 @@ export function OrderModal() {
                     })
                   )
                 }
-                className="bg-white py-1.5 px-4 rounded-lg w-28 font-medium text-neutral border-2 border-secondary"
+                className="bg-white w-[105px] h-[45px] rounded-lg font-medium text-neutral border-2 border-secondary"
               >
                 Cancel
               </button>

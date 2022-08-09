@@ -1,4 +1,4 @@
-import React, { Fragment, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import {
   SettingsOutlined,
   EditOutlined,
@@ -12,11 +12,17 @@ import {
 import useModal from "../../hooks/useModal";
 import { visiblityReducer } from "../../features/orderModal/orderModal";
 import { useDispatch } from "react-redux";
+import { getMaster } from "../../http/master/master";
+import { getGroups } from "../../http/getGroups/getGroups";
+import { getGroupSymbols } from "../../http/getGroupSymbols/getGroupSymbols";
 
 export function WatchList() {
   const [selectedIndice, setSelectedIndice] = useState("Indian");
   const [selectedWatchListTab, setSelectedWatchListTab] = useState("Indices");
+  const [selectedGroup, setSelectedGroup] = useState("");
   const [stockSearch, setStockSearch] = useState("");
+  const [searchResult, setSearchResult] = useState([]);
+  const [master, setMaster] = useState([]);
   const filterModalRef = useRef(null);
   const filterModalToggleButton = useRef(null);
   const [showWatchListFilters] = useModal(
@@ -24,6 +30,83 @@ export function WatchList() {
     filterModalToggleButton
   );
   const dispatch = useDispatch();
+
+  // useEffect(() => {
+  //   (async () => {
+  //     const response = await getGroups();
+
+  //     setGroups(response.result.groupList);
+  //     if (!selectedGroup) {
+  //       setSelectedGroup(response.result.groupList[0].groupName);
+  //     }
+  //   })();
+  // }, []);
+
+  // useEffect(() => {
+  //   (async () => {
+  //     if (selectedGroup) {
+  //       const response = await getGroupSymbols({ groupName: selectedGroup });
+  //       if (response.type === "success") {
+  //         setGroupSymbols(response.result.instruments);
+  //       }
+  //     }
+  //   })();
+  // }, [selectedGroup]);
+
+  useEffect(() => {
+    // const search = () => {
+    if (stockSearch) {
+      const result = master.filter(
+        (s) =>
+          s.name.includes(stockSearch.toUpperCase()) ||
+          s.description.includes(stockSearch.toUpperCase())
+      );
+      setSearchResult(result);
+    }
+    // };
+
+    // const debounce = setTimeout(search, 100);
+
+    // return () => clearTimeout(debounce);
+  }, [master, stockSearch]);
+
+  useEffect(() => {
+    const keys = [
+      "exchangeSegment",
+      "exchangeInstrumentID",
+      "instrumentType",
+      "name",
+      "description",
+      "series",
+      "nameWithSeries",
+      "instrumentID",
+      "highPriceBand",
+      "lowPriceBand",
+      "freezeQty",
+      "tickSize",
+      "lotSize",
+      "multiplier",
+      "underlyingInstrumentId",
+      "contractExpiration",
+      "strikePrice",
+      "optionType",
+      "underlyingIndexName",
+      "DisplayName",
+      "ISIN",
+      "Numerator",
+      "Denominator",
+    ];
+    (async () => {
+      const response = await getMaster();
+      if (response.type === "success") {
+        let master = response.result
+          .split("\n")
+          .map((s) => s.split("|"))
+          .map((s) => s.reduce((o, k, i) => ({ ...o, [keys[i]]: k }), {}));
+        setMaster(master);
+      }
+    })();
+  }, []);
 
   const [watchList, setWatchList] = useState([
     {
@@ -99,86 +182,10 @@ export function WatchList() {
       isExpanded: false,
     },
   ]);
-
-  const [searchResult, setSearchResult] = useState([
-    {
-      id: 0,
-      name: "GOLD",
-      exchange: "MCX",
-      price: "16726.2",
-      trends: "64.15 (0.32%)",
-      isUpTrend: true,
-      isExpanded: false,
-    },
-    {
-      id: 1,
-      name: "GOLD",
-      exchange: "MCX",
-      price: "16726.2",
-      trends: "64.15 (0.32%)",
-      isUpTrend: true,
-      isExpanded: false,
-    },
-    {
-      id: 2,
-      name: "GOLD",
-      exchange: "MCX",
-      price: "16726.2",
-      trends: "64.15 (0.32%)",
-      isUpTrend: true,
-      isExpanded: false,
-    },
-    {
-      id: 3,
-      name: "GOLD",
-      exchange: "MCX",
-      price: "16726.2",
-      trends: "64.15 (0.32%)",
-      isUpTrend: true,
-      isExpanded: false,
-    },
-    {
-      id: 4,
-      name: "GOLD",
-      exchange: "MCX",
-      price: "16726.2",
-      trends: "64.15 (0.32%)",
-      isUpTrend: true,
-      isExpanded: false,
-    },
-    {
-      id: 5,
-      name: "GOLD",
-      exchange: "MCX",
-      price: "16726.2",
-      trends: "64.15 (0.32%)",
-      isUpTrend: true,
-      isExpanded: false,
-    },
-    {
-      id: 6,
-      name: "GOLD",
-      exchange: "MCX",
-      price: "16726.2",
-      trends: "64.15 (0.32%)",
-      isUpTrend: true,
-      isExpanded: false,
-    },
-    {
-      id: 7,
-      name: "GOLD-",
-      exchange: "MCX",
-      price: "16726.2",
-      trends: "64.15 (0.32%)",
-      isUpTrend: true,
-      isExpanded: false,
-    },
-  ]);
-
-  const watchListTabs = ["Indices", "1", "2", "3", "4", "5", "6", "Predefined"];
+  const [groupSymbols, setGroupSymbols] = useState([]);
 
   const tradeBoxes = ["TradeBox 1", "TradeBox 2", "TradeBox 3", "TradeBox 4"];
-
+  const watchListTabs = ["Indices", "1", "2", "3", "4", "5", "6", "Predefined"];
   const indices = ["Indian", "Global", "Commodity", "Currency"];
 
   const handleStockExpand = (id) => {
@@ -219,6 +226,7 @@ export function WatchList() {
             >
               <Search color="inherit" fontSize="small" />
               <input
+                autoFocus
                 value={stockSearch}
                 onChange={(e) => setStockSearch(e.target.value)}
                 placeholder="Search eg: infy bse, nifty fut, nifty weekly"
@@ -240,7 +248,7 @@ export function WatchList() {
 
         {stockSearch
           ? searchResult.map((stock) => (
-              <div key={stock.id} className="w-full relative group">
+              <div key={stock.instrumentID} className="w-full relative group">
                 <div className="w-full  border-border border-b p-5 flex justify-between items-center">
                   <div>
                     <div className="text-primary text-sm">{stock.name}</div>
@@ -595,25 +603,27 @@ export function WatchList() {
               ref={filterModalToggleButton}
               className={`${
                 showWatchListFilters ? "rotate-90" : "rotate-0"
-              } cursor-pointer text-primary transition`}
+              } cursor-pointer text-primary transition !w-[20px] !h-[20px]`}
             />
           </div>
-          <div className="flex justify-between items-center text-secondary gap-2">
-            <div className="flex rounded overflow-hidden w-full border border-border">
-              {tradeBoxes.map((tradeBox, i) => (
-                <div
-                  key={tradeBox}
-                  className={`${
-                    i + 1 !== tradeBoxes.length ? "border-r" : ""
-                  } flex-1 text-center
+          {tradeBoxes && (
+            <div className="flex justify-between items-center text-secondary gap-2">
+              <div className="flex rounded overflow-hidden w-full border border-border">
+                {tradeBoxes.map((tradeBox, i) => (
+                  <div
+                    key={tradeBox}
+                    className={`${
+                      i + 1 !== tradeBoxes.length ? "border-r" : ""
+                    } flex-1 text-center
                 py-1 px-[5px] border-border cursor-pointer whitespace-nowrap overflow-hidden text-lg`}
-                >
-                  {tradeBox}
-                </div>
-              ))}
+                  >
+                    {tradeBox}
+                  </div>
+                ))}
+              </div>
+              <EditOutlined className="cursor-pointer text-primary !w-[20px] !h-[20px]" />
             </div>
-            <EditOutlined className="cursor-pointer text-primary" />
-          </div>
+          )}
         </div>
         <div className="mb-[86px]"></div>
       </div>

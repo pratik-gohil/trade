@@ -1,0 +1,66 @@
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { setUserReducer } from "../../features/Auth/Auth";
+import { validateUser } from "../../http/validateUser/validateUser";
+import { PasswordInput } from "../PasswordInput/PasswordInput";
+
+export function ClientLoginPassword({ setLoginFlowCurrentState }) {
+  const dispatch = useDispatch();
+  const [userID, setUserID] = useState("TEST03");
+  const [password, setPassword] = useState("Jul@2022");
+
+  const handlevalidateUser = async () => {
+    const data = await validateUser({
+      userID: userID,
+      password: password,
+    });
+
+    if (data.type === "success") {
+      dispatch(setUserReducer(data.result));
+      setLoginFlowCurrentState("clientLoginPIN");
+    }
+  };
+
+  return (
+    <>
+      <h1 className="text-3xl text-[#41414e] font-semibold">
+        Login to Trade.com
+      </h1>
+
+      <input
+        placeholder="User ID"
+        className="outline-none border border-border rounded-lg p-3 text-xl"
+        value={userID}
+        onChange={(e) => setUserID(e.target.value)}
+      />
+      <PasswordInput
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <div className="flex gap-1">
+        <input type="checkbox" id="login-page-save-account" />
+        <label
+          htmlFor="login-page-save-account"
+          className="text-xs text-[#41414e] cursor-pointer"
+        >
+          Save Account
+        </label>
+      </div>
+      <div className="flex flex-col gap-[30px] justify-center items-center mt-auto">
+        <button
+          onClick={handlevalidateUser}
+          className="bg-blue-gradient rounded-lg p-[10px] text-white font-semibold w-[360px]"
+        >
+          LOGIN
+        </button>
+        <span
+          onClick={() => setLoginFlowCurrentState("forgotPassword")}
+          className="text-lg underline text-[#41414e] cursor-pointer"
+        >
+          Forgot Password?
+        </span>
+      </div>
+    </>
+  );
+}

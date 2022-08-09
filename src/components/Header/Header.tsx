@@ -1,6 +1,8 @@
 import React from "react";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../../app/store";
 
 const links = [
   {
@@ -38,6 +40,7 @@ const links = [
 ];
 
 export const Header = () => {
+  const user = useSelector((state: RootState) => state.auth.user);
   return (
     <div className="max-h-16 h-16 flex justify-between items-center shadow-sm">
       <div className="flex justify-between items-center gap-4 sidebar-width overflow-hidden px-5">
@@ -74,11 +77,11 @@ export const Header = () => {
             </NavLink>
           ))}
         </div>
-        <div className="text-neutral text-sm flex gap-2 border-border border-l pl-2">
+        <div className="text-neutral text-sm flex items-center gap-2 border-border border-l pl-2">
           <span className="rounded-full">
             <AccountCircleIcon />
           </span>
-          <span>LK43001</span>
+          <span>{user.userID || user.ClientId}</span>
         </div>
       </div>
     </div>
