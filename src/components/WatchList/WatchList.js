@@ -13,16 +13,90 @@ import useModal from "../../hooks/useModal";
 import { visiblityReducer } from "../../features/orderModal/orderModal";
 import { useDispatch } from "react-redux";
 import { getMaster } from "../../http/master/master";
-import { getGroups } from "../../http/getGroups/getGroups";
-import { getGroupSymbols } from "../../http/getGroupSymbols/getGroupSymbols";
+// import { getGroups } from "../../http/getGroups/getGroups";
+// import { getGroupSymbols } from "../../http/getGroupSymbols/getGroupSymbols";
 
 export function WatchList() {
   const [selectedIndice, setSelectedIndice] = useState("Indian");
   const [selectedWatchListTab, setSelectedWatchListTab] = useState("Indices");
-  const [selectedGroup, setSelectedGroup] = useState("");
   const [stockSearch, setStockSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
   const [master, setMaster] = useState([]);
+  const [watchList, setWatchList] = useState([
+    {
+      id: 0,
+      name: "GOLD",
+      exchange: "MCX",
+      price: "16726.2",
+      trends: "64.15 (0.32%)",
+      isUpTrend: true,
+      isExpanded: false,
+    },
+    {
+      id: 1,
+      name: "GOLD",
+      exchange: "MCX",
+      price: "16726.2",
+      trends: "64.15 (0.32%)",
+      isUpTrend: true,
+      isExpanded: false,
+    },
+    {
+      id: 2,
+      name: "GOLD",
+      exchange: "MCX",
+      price: "16726.2",
+      trends: "64.15 (0.32%)",
+      isUpTrend: true,
+      isExpanded: false,
+    },
+    {
+      id: 3,
+      name: "GOLD",
+      exchange: "MCX",
+      price: "16726.2",
+      trends: "64.15 (0.32%)",
+      isUpTrend: true,
+      isExpanded: false,
+    },
+    {
+      id: 4,
+      name: "GOLD",
+      exchange: "MCX",
+      price: "16726.2",
+      trends: "64.15 (0.32%)",
+      isUpTrend: true,
+      isExpanded: false,
+    },
+    {
+      id: 5,
+      name: "GOLD",
+      exchange: "MCX",
+      price: "16726.2",
+      trends: "64.15 (0.32%)",
+      isUpTrend: true,
+      isExpanded: false,
+    },
+    {
+      id: 6,
+      name: "GOLD",
+      exchange: "MCX",
+      price: "16726.2",
+      trends: "64.15 (0.32%)",
+      isUpTrend: true,
+      isExpanded: false,
+    },
+    {
+      id: 7,
+      name: "GOLD-",
+      exchange: "MCX",
+      price: "16726.2",
+      trends: "64.15 (0.32%)",
+      isUpTrend: true,
+      isExpanded: false,
+    },
+  ]);
+  // const [groupSymbols, setGroupSymbols] = useState([]);
   const filterModalRef = useRef(null);
   const filterModalToggleButton = useRef(null);
   const [showWatchListFilters] = useModal(
@@ -107,82 +181,6 @@ export function WatchList() {
       }
     })();
   }, []);
-
-  const [watchList, setWatchList] = useState([
-    {
-      id: 0,
-      name: "GOLD",
-      exchange: "MCX",
-      price: "16726.2",
-      trends: "64.15 (0.32%)",
-      isUpTrend: true,
-      isExpanded: false,
-    },
-    {
-      id: 1,
-      name: "GOLD",
-      exchange: "MCX",
-      price: "16726.2",
-      trends: "64.15 (0.32%)",
-      isUpTrend: true,
-      isExpanded: false,
-    },
-    {
-      id: 2,
-      name: "GOLD",
-      exchange: "MCX",
-      price: "16726.2",
-      trends: "64.15 (0.32%)",
-      isUpTrend: true,
-      isExpanded: false,
-    },
-    {
-      id: 3,
-      name: "GOLD",
-      exchange: "MCX",
-      price: "16726.2",
-      trends: "64.15 (0.32%)",
-      isUpTrend: true,
-      isExpanded: false,
-    },
-    {
-      id: 4,
-      name: "GOLD",
-      exchange: "MCX",
-      price: "16726.2",
-      trends: "64.15 (0.32%)",
-      isUpTrend: true,
-      isExpanded: false,
-    },
-    {
-      id: 5,
-      name: "GOLD",
-      exchange: "MCX",
-      price: "16726.2",
-      trends: "64.15 (0.32%)",
-      isUpTrend: true,
-      isExpanded: false,
-    },
-    {
-      id: 6,
-      name: "GOLD",
-      exchange: "MCX",
-      price: "16726.2",
-      trends: "64.15 (0.32%)",
-      isUpTrend: true,
-      isExpanded: false,
-    },
-    {
-      id: 7,
-      name: "GOLD-",
-      exchange: "MCX",
-      price: "16726.2",
-      trends: "64.15 (0.32%)",
-      isUpTrend: true,
-      isExpanded: false,
-    },
-  ]);
-  const [groupSymbols, setGroupSymbols] = useState([]);
 
   const tradeBoxes = ["TradeBox 1", "TradeBox 2", "TradeBox 3", "TradeBox 4"];
   const watchListTabs = ["Indices", "1", "2", "3", "4", "5", "6", "Predefined"];
