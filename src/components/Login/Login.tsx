@@ -5,12 +5,13 @@ import { ClientLoginPassword } from "./ClientLoginPassword";
 import { useNavigate } from "react-router-dom";
 import { ClientLoginPIN } from "./ClientLoginPIN";
 import SwitchAccount from "./SwitchAccount";
+import { TOKEN } from "../../constants/global";
 
 export function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    localStorage.getItem("token") && navigate("/");
+    localStorage.getItem(TOKEN) && navigate("/");
   }, [navigate]);
 
   const [loginFlowCurrentState, setLoginFlowCurrentState] = useState(

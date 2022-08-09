@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../../app/store";
+import { CLIENT_CODES, TOKEN } from "../../constants/global";
 import { validatePIN } from "../../http/validatePIN/validatePIN";
 import { PasswordInput } from "../PasswordInput/PasswordInput";
 
@@ -18,9 +19,9 @@ export const ClientLoginPIN = ({ setLoginFlowCurrentState }) => {
     });
 
     if (data.type === "success") {
-      localStorage.setItem("token", data.result.token);
-      localStorage.setItem("clientCodes", data.result.clientCodes);
-      localStorage.setItem("userID", data.result.userID);
+      localStorage.setItem(TOKEN, data.result.token);
+      localStorage.setItem(CLIENT_CODES, data.result.clientCodes);
+      localStorage.setItem(TOKEN, data.result.userID);
       navigate("/");
     }
   };

@@ -18,6 +18,7 @@ import { Header } from "./components/Header";
 import { getUserProfile } from "./http/getUserProfile/getUserProfile";
 import { setUserReducer } from "./features/Auth/Auth";
 import { io } from "socket.io-client";
+import { TOKEN } from "./constants/global";
 
 declare module "@mui/material/styles" {
   interface Palette {
@@ -59,7 +60,7 @@ const theme = createTheme({
 });
 
 export default function App() {
-  const isLoggedIn = localStorage.getItem("token");
+  const isLoggedIn = localStorage.getItem(TOKEN);
   const loginRequired = (Element) => {
     return isLoggedIn ? Element : <Navigate to="/login" />;
   };
@@ -69,7 +70,7 @@ export default function App() {
     const socket = io("https://devtrade.lkp.net.in", {
       path: "/marketdata/socket.io",
       query: {
-        token: localStorage.getItem("token"),
+        token: localStorage.getItem(TOKEN),
         userID: localStorage.getItem("userID"),
         publishFormat: "JSON",
         broadcastMode: "Full",
@@ -105,7 +106,7 @@ export default function App() {
 
   useEffect(() => {
     (async () => {
-      if (localStorage.getItem("token")) {
+      if (localStorage.getItem(TOKEN)) {
         const userProfile = await getUserProfile();
         if (userProfile.type === "success") {
           dispatch(setUserReducer(userProfile.result));
