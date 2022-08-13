@@ -27,6 +27,7 @@ import { subscribeInstruments } from "../../http/subscribeInstruments/subscribeI
 import { unsubscribeInstruments } from "../../http/unsubscribeInstruments/unsubscribeInstruments";
 import { searchInstruments } from "../../http/searchInstruments/searchInstruments";
 import { Segments } from "../../types/enums/segment.enums.types";
+import IInstrument from "../../types/interfaces/instrument.interfaces.types";
 
 export function WatchList() {
   const [selectedIndice, setSelectedIndice] = useState("Indian");
@@ -78,14 +79,9 @@ export function WatchList() {
 
   const [liveInstrumentsData, setLiveInstrumentsData] = useState({});
 
-  // useEffect(() => {
-  //   console.log(liveInstrumentsData);
-  // }, [liveInstrumentsData]);
-
   useEffect(() => {
     socket.on("1502-json-full", (res) => {
       const data = JSON.parse(res);
-      // console.log("1502-json-full", data);
       setLiveInstrumentsData((prev) => ({
         ...prev,
         [data.ExchangeInstrumentID]: data,
@@ -110,15 +106,17 @@ export function WatchList() {
 
   useEffect(() => {
     (async () => {
-      if (selectedIndice === "Indian") {
-        const response = await searchInstruments(indianIndicesList);
-        if (response.type === "success") {
-          setInstruments(response.result);
-          await subscribeInstruments(indianIndicesList);
+      if (selectedGroup === "Indices") {
+        if (selectedIndice === "Indian") {
+          const response = await searchInstruments(indianIndicesList);
+          if (response.type === "success") {
+            setInstruments(response.result);
+            await subscribeInstruments(indianIndicesList);
+          }
+        } else {
+          setInstruments([]);
+          await unsubscribeInstruments(indianIndicesList);
         }
-      } else {
-        setInstruments([]);
-        await unsubscribeInstruments(indianIndicesList);
       }
     })();
   }, [selectedGroup, selectedIndice]);
@@ -211,15 +209,15 @@ export function WatchList() {
     })();
   }, []);
 
-  // const handleStockExpand = (id) => {
-  //   setWatchList((prev) =>
-  //     prev.map((stock) => {
-  //       return stock.id === id
-  //         ? { ...stock, isExpanded: !stock.isExpanded }
-  //         : stock;
-  //     })
-  //   );
-  // };
+  const handleStockExpand = (id) => {
+    setInstruments((prev) =>
+      prev.map((instrument) => {
+        return instrument.ExchangeInstrumentID === id
+          ? { ...instrument, isExpanded: !instrument.isExpanded }
+          : instrument;
+      })
+    );
+  };
 
   return (
     <>
@@ -341,10 +339,27 @@ export function WatchList() {
                       </div>
                       <div
                         className={`text-xs ${
-                          true ? "text-success" : "text-failure"
+                          liveInstrumentsData?.[instrument.ExchangeInstrumentID]
+                            ?.Touchline?.PercentChange > 0
+                            ? "text-success"
+                            : "text-failure"
                         }`}
                       >
-                        {/* {instrument.trends} */}
+                        {parseFloat(
+                          (liveInstrumentsData?.[
+                            instrument.ExchangeInstrumentID
+                          ]?.Touchline?.LastTradedPrice *
+                            liveInstrumentsData?.[
+                              instrument.ExchangeInstrumentID
+                            ]?.Touchline?.PercentChange) /
+                            100
+                        ).toFixed(2)}{" "}
+                        (
+                        {parseFloat(
+                          liveInstrumentsData?.[instrument.ExchangeInstrumentID]
+                            ?.Touchline?.PercentChange
+                        ).toFixed(2)}
+                        %)
                       </div>
                     </div>
                   </div>
@@ -355,7 +370,13 @@ export function WatchList() {
                         dispatch(
                           visiblityReducer({
                             visible: true,
-                            order: { type: "BUY", instrument },
+                            order: {
+                              type: "BUY",
+                              instrument,
+                              data: liveInstrumentsData?.[
+                                instrument.ExchangeInstrumentID
+                              ],
+                            },
                           })
                         )
                       }
@@ -368,7 +389,13 @@ export function WatchList() {
                         dispatch(
                           visiblityReducer({
                             visible: true,
-                            order: { type: "SELL", instrument },
+                            order: {
+                              type: "SELL",
+                              instrument,
+                              data: liveInstrumentsData?.[
+                                instrument.ExchangeInstrumentID
+                              ],
+                            },
                           })
                         )
                       }
@@ -377,7 +404,9 @@ export function WatchList() {
                       S
                     </div>
                     <div
-                      // onClick={() => handleStockExpand(stock.id)}
+                      onClick={() =>
+                        handleStockExpand(instrument.ExchangeInstrumentID)
+                      }
                       className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center bg-white text-primary border border-primary"
                     >
                       5
@@ -390,10 +419,10 @@ export function WatchList() {
                     </div>
                   </div>
                 </div>
-                {/* {instrument.isExpanded && (
+                {instrument.isExpanded && (
                   <div className="w-full">
                     <table className="w-full text-center">
-                      <tr className="text-xs text-secondary border border-border">
+                      <tr className="text-xs text-secondary border border-border border-t-0 border-r-0">
                         <th className="p-2 font-normal">QTY.</th>
                         <th className="p-2 font-normal">ORDERS</th>
                         <th className="p-2 font-normal">BID</th>
@@ -458,35 +487,82 @@ export function WatchList() {
                           <th className="p-2 font-normal">Prev.Close</th>
                         </tr>
                         <tr className="text-xs text-primary">
-                          <td>451</td>
-                          <td>451</td>
-                          <td>451</td>
-                          <td>451</td>
+                          {console.log(
+                            liveInstrumentsData?.[
+                              instrument.ExchangeInstrumentID
+                            ]
+                          )}
+                          <td>
+                            {
+                              liveInstrumentsData?.[
+                                instrument.ExchangeInstrumentID
+                              ].Touchline.Open
+                            }
+                          </td>
+                          <td>
+                            {
+                              liveInstrumentsData?.[
+                                instrument.ExchangeInstrumentID
+                              ].Touchline.High
+                            }
+                          </td>
+                          <td>
+                            {
+                              liveInstrumentsData?.[
+                                instrument.ExchangeInstrumentID
+                              ].Touchline.Low
+                            }
+                          </td>
+                          <td>
+                            {
+                              liveInstrumentsData?.[
+                                instrument.ExchangeInstrumentID
+                              ].Touchline.Close
+                            }
+                          </td>
                         </tr>
                       </table>
                       <div className="w-full flex justify-between py-2 text-sm">
                         <div className="flex justify-between w-full px-8">
                           <span className="text-secondary">Volume</span>
-                          <span className="text-primary">1000</span>
+                          <span className="text-primary">NA</span>
                         </div>
                         <div className="flex justify-between w-full px-8">
                           <span className="text-secondary">Avg. Price</span>
-                          <span className="text-primary">1000</span>
+                          <span className="text-primary">
+                            {
+                              liveInstrumentsData?.[
+                                instrument.ExchangeInstrumentID
+                              ].Touchline.AverageTradedPrice
+                            }
+                          </span>
                         </div>
                       </div>
                       <div className="w-full flex justify-between py-2 text-sm">
                         <div className="flex justify-between w-full px-8">
                           <span className="text-secondary">LTT</span>
-                          <span className="text-primary">1000</span>
+                          <span className="text-primary">
+                            {new Date(
+                              liveInstrumentsData?.[
+                                instrument.ExchangeInstrumentID
+                              ].Touchline.LastTradedTime
+                            )
+                              .toLocaleDateString("en", {
+                                year: "2-digit",
+                                month: "2-digit",
+                                day: "2-digit",
+                              })
+                              .replace(/\//g, ":")}
+                          </span>
                         </div>
                         <div className="flex justify-between w-full px-8">
                           <span className="text-secondary">LO/Up Cir.</span>
-                          <span className="text-primary">1000</span>
+                          <span className="text-primary">NA</span>
                         </div>
                       </div>
                     </div>
                   </div>
-                )} */}
+                )}
               </Fragment>
             ))}
 

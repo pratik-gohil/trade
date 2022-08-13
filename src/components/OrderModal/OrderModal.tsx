@@ -1,5 +1,5 @@
 import { Replay } from "@mui/icons-material";
-import React, { ReactElement, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Draggable from "react-draggable";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -20,16 +20,20 @@ export function OrderModal() {
   const [vw, setVw] = useState(0);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [orderType, setOrderType] = useState("Regular");
-  const { type, instrument } = useSelector(
+  const { type, instrument, data } = useSelector(
     (state: RootState) => state.orderModal.order
   );
 
   const [price, setPrice] = useState(0);
   const [triggerPrice, setTriggerPrice] = useState(0);
-  const [QTY, setQTY] = useState(0);
+  const [QTY, setQTY] = useState(1);
   const [disclosedQTY, setDisclosedQTY] = useState(0);
   const isOpen = useSelector((state: RootState) => state.orderModal.visible);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    setPrice(data?.Touchline?.LastTradedPrice);
+  }, [data]);
 
   useEffect(() => {
     let document_height = Math.max(

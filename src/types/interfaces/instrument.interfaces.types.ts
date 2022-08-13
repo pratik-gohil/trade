@@ -1,4 +1,4 @@
-export interface Instrument {
+export interface IInstrument {
   AGM: boolean;
   AllOrNone: boolean;
   Bonus: boolean;
