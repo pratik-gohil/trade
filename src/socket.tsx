@@ -27,8 +27,10 @@ const SocketProvider = ({ children }) => {
       });
     }
     return () => {
-      socket.off("connect");
-      socket.off("disconnect");
+      if (socket) {
+        socket.off("connect");
+        socket.off("disconnect");
+      }
     };
   }, []);
 

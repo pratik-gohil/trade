@@ -76,9 +76,20 @@ export function WatchList() {
   const dispatch = useDispatch();
   const { socket } = useContext(SocketContext);
 
+  const [liveInstrumentsData, setLiveInstrumentsData] = useState({});
+
+  // useEffect(() => {
+  //   console.log(liveInstrumentsData);
+  // }, [liveInstrumentsData]);
+
   useEffect(() => {
-    socket.on("1502-json-full", (data) => {
-      // console.log("1502-json-full " + data);
+    socket.on("1502-json-full", (res) => {
+      const data = JSON.parse(res);
+      // console.log("1502-json-full", data);
+      setLiveInstrumentsData((prev) => ({
+        ...prev,
+        [data.ExchangeInstrumentID]: data,
+      }));
     });
 
     return () => {
@@ -323,7 +334,10 @@ export function WatchList() {
                     </div>
                     <div className="text-right">
                       <div className="text-primary text-base">
-                        {/* {instrument.price} */}
+                        {
+                          liveInstrumentsData?.[instrument.ExchangeInstrumentID]
+                            ?.Touchline?.LastTradedPrice
+                        }
                       </div>
                       <div
                         className={`text-xs ${
