@@ -1,4 +1,10 @@
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import React, {
+  Fragment,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   SettingsOutlined,
   EditOutlined,
@@ -12,92 +18,55 @@ import {
 import useModal from "../../hooks/useModal";
 import { visiblityReducer } from "../../features/orderModal/orderModal";
 import { useDispatch } from "react-redux";
+// import master from "../../json/master.json";
 import { getMaster } from "../../http/master/master";
-// import { getGroups } from "../../http/getGroups/getGroups";
-// import { getGroupSymbols } from "../../http/getGroupSymbols/getGroupSymbols";
-import master from "../../json/master.json";
+import { getGroups } from "../../http/getGroups/getGroups";
+import { getGroupSymbols } from "../../http/getGroupSymbols/getGroupSymbols";
+import { SocketContext } from "../../socket";
+import { subscribeInstruments } from "../../http/subscribeInstruments/subscribeInstruments";
+import { unsubscribeInstruments } from "../../http/unsubscribeInstruments/unsubscribeInstruments";
+import { searchInstruments } from "../../http/searchInstruments/searchInstruments";
+import { Segments } from "../../types/enums/segment.enums.types";
 
 export function WatchList() {
   const [selectedIndice, setSelectedIndice] = useState("Indian");
-  const [selectedWatchListTab, setSelectedWatchListTab] = useState("Indices");
+  const [selectedGroup, setSelectedGroup] = useState("Indices");
   const [stockSearch, setStockSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
-  // const [master, setMaster] = useState([]);
-  const [watchList, setWatchList] = useState([
-    {
-      id: 0,
-      name: "GOLD",
-      exchange: "MCX",
-      price: "16726.2",
-      trends: "64.15 (0.32%)",
-      isUpTrend: true,
-      isExpanded: false,
-    },
-    {
-      id: 1,
-      name: "GOLD",
-      exchange: "MCX",
-      price: "16726.2",
-      trends: "64.15 (0.32%)",
-      isUpTrend: true,
-      isExpanded: false,
-    },
-    {
-      id: 2,
-      name: "GOLD",
-      exchange: "MCX",
-      price: "16726.2",
-      trends: "64.15 (0.32%)",
-      isUpTrend: true,
-      isExpanded: false,
-    },
-    {
-      id: 3,
-      name: "GOLD",
-      exchange: "MCX",
-      price: "16726.2",
-      trends: "64.15 (0.32%)",
-      isUpTrend: true,
-      isExpanded: false,
-    },
-    {
-      id: 4,
-      name: "GOLD",
-      exchange: "MCX",
-      price: "16726.2",
-      trends: "64.15 (0.32%)",
-      isUpTrend: true,
-      isExpanded: false,
-    },
-    {
-      id: 5,
-      name: "GOLD",
-      exchange: "MCX",
-      price: "16726.2",
-      trends: "64.15 (0.32%)",
-      isUpTrend: true,
-      isExpanded: false,
-    },
-    {
-      id: 6,
-      name: "GOLD",
-      exchange: "MCX",
-      price: "16726.2",
-      trends: "64.15 (0.32%)",
-      isUpTrend: true,
-      isExpanded: false,
-    },
-    {
-      id: 7,
-      name: "GOLD-",
-      exchange: "MCX",
-      price: "16726.2",
-      trends: "64.15 (0.32%)",
-      isUpTrend: true,
-      isExpanded: false,
-    },
-  ]);
-  // const [groupSymbols, setGroupSymbols] = useState([]);
+  const [master, setMaster] = useState([]);
+  const [instruments, setInstruments] = useState([]);
+  const [groupSymbols, setGroupSymbols] = useState([]);
+  const [groups, setGroups] = useState([]);
+  const tradeBoxes = ["TradeBox 1", "TradeBox 2", "TradeBox 3", "TradeBox 4"];
+  const indices = ["Indian", "Global", "Commodity", "Currency"];
+  const indianIndicesList = [
+    { exchangeSegment: 1, exchangeInstrumentID: 26000 },
+    { exchangeSegment: 1, exchangeInstrumentID: 26065 },
+    { exchangeSegment: 1, exchangeInstrumentID: 26001 },
+    { exchangeSegment: 1, exchangeInstrumentID: 26002 },
+    { exchangeSegment: 1, exchangeInstrumentID: 26005 },
+    { exchangeSegment: 1, exchangeInstrumentID: 26031 },
+    { exchangeSegment: 1, exchangeInstrumentID: 26003 },
+    { exchangeSegment: 1, exchangeInstrumentID: 26052 },
+    { exchangeSegment: 1, exchangeInstrumentID: 26009 },
+    { exchangeSegment: 1, exchangeInstrumentID: 26014 },
+    { exchangeSegment: 1, exchangeInstrumentID: 26007 },
+    { exchangeSegment: 1, exchangeInstrumentID: 26041 },
+    { exchangeSegment: 1, exchangeInstrumentID: 26032 },
+    { exchangeSegment: 1, exchangeInstrumentID: 26036 },
+    { exchangeSegment: 1, exchangeInstrumentID: 26040 },
+    { exchangeSegment: 1, exchangeInstrumentID: 26047 },
+    { exchangeSegment: 1, exchangeInstrumentID: 26054 },
+    { exchangeSegment: 1, exchangeInstrumentID: 26053 },
+    { exchangeSegment: 1, exchangeInstrumentID: 26012 },
+    { exchangeSegment: 1, exchangeInstrumentID: 26057 },
+    { exchangeSegment: 1, exchangeInstrumentID: 26015 },
+    { exchangeSegment: 1, exchangeInstrumentID: 26018 },
+    { exchangeSegment: 1, exchangeInstrumentID: 26055 },
+    { exchangeSegment: 1, exchangeInstrumentID: 26042 },
+    { exchangeSegment: 1, exchangeInstrumentID: 26027 },
+    { exchangeSegment: 1, exchangeInstrumentID: 26060 },
+  ];
   const filterModalRef = useRef(null);
   const filterModalToggleButton = useRef(null);
   const [showWatchListFilters] = useModal(
@@ -105,103 +74,146 @@ export function WatchList() {
     filterModalToggleButton
   );
   const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   (async () => {
-  //     const response = await getGroups();
-
-  //     setGroups(response.result.groupList);
-  //     if (!selectedGroup) {
-  //       setSelectedGroup(response.result.groupList[0].groupName);
-  //     }
-  //   })();
-  // }, []);
-
-  // useEffect(() => {
-  //   (async () => {
-  //     if (selectedGroup) {
-  //       const response = await getGroupSymbols({ groupName: selectedGroup });
-  //       if (response.type === "success") {
-  //         setGroupSymbols(response.result.instruments);
-  //       }
-  //     }
-  //   })();
-  // }, [selectedGroup]);
+  const { socket } = useContext(SocketContext);
 
   useEffect(() => {
-    // const search = () => {
-    if (stockSearch) {
-      const result = master.filter(
-        (s) =>
-          s.name.includes(stockSearch.toUpperCase()) ||
-          s.description.includes(stockSearch.toUpperCase())
-      );
-      setSearchResult(result);
+    socket.on("1502-json-full", (data) => {
+      // console.log("1502-json-full " + data);
+    });
+
+    return () => {
+      socket.off("1502-json-full");
+    };
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const response = await getGroups();
+
+      setGroups(response.result.groupList);
+      if (!selectedGroup) {
+        setSelectedGroup(response.result.groupList[0].groupName);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      if (selectedIndice === "Indian") {
+        const response = await searchInstruments(indianIndicesList);
+        if (response.type === "success") {
+          setInstruments(response.result);
+          await subscribeInstruments(indianIndicesList);
+        }
+      } else {
+        setInstruments([]);
+        await unsubscribeInstruments(indianIndicesList);
+      }
+    })();
+  }, [selectedGroup, selectedIndice]);
+
+  useEffect(() => {
+    (async () => {
+      if (selectedGroup) {
+        if (selectedGroup === "Indices" || selectedGroup === "Predefined") {
+          return;
+        }
+        const response = await getGroupSymbols({ groupName: selectedGroup });
+        if (response.type === "success") {
+          setGroupSymbols((prevGroupsSymbols) => {
+            if (prevGroupsSymbols.length) {
+              (async () => await unsubscribeInstruments(prevGroupsSymbols))();
+            }
+            return response.result.instruments;
+          });
+        }
+      }
+    })();
+  }, [selectedGroup]);
+
+  useEffect(() => {
+    if (groupSymbols.length) {
+      (async () => {
+        await subscribeInstruments(groupSymbols);
+        const response = await searchInstruments(groupSymbols);
+        if (response.type === "success") {
+          setInstruments(response.result);
+        }
+      })();
+    } else {
+      setInstruments([]);
     }
-    // };
+  }, [groupSymbols]);
 
-    // const debounce = setTimeout(search, 100);
+  useEffect(() => {
+    const search = () => {
+      if (stockSearch) {
+        const result = master.filter(
+          (s) =>
+            s.name.includes(stockSearch.toUpperCase()) ||
+            s.description.includes(stockSearch.toUpperCase())
+        );
+        setSearchResult(result);
+      }
+    };
 
-    // return () => clearTimeout(debounce);
+    const debounce = setTimeout(search, 500);
+
+    return () => clearTimeout(debounce);
   }, [master, stockSearch]);
 
-  // useEffect(() => {
-  //   const keys = [
-  //     "exchangeSegment",
-  //     "exchangeInstrumentID",
-  //     "instrumentType",
-  //     "name",
-  //     "description",
-  //     "series",
-  //     "nameWithSeries",
-  //     "instrumentID",
-  //     "highPriceBand",
-  //     "lowPriceBand",
-  //     "freezeQty",
-  //     "tickSize",
-  //     "lotSize",
-  //     "multiplier",
-  //     "underlyingInstrumentId",
-  //     "contractExpiration",
-  //     "strikePrice",
-  //     "optionType",
-  //     "underlyingIndexName",
-  //     "DisplayName",
-  //     "ISIN",
-  //     "Numerator",
-  //     "Denominator",
-  //   ];
-  //   (async () => {
-  //     const response = await getMaster();
-  //     if (response.type === "success") {
-  //       let master = response.result
-  //         .split("\n")
-  //         .map((s) => s.split("|"))
-  //         .map((s) => s.reduce((o, k, i) => ({ ...o, [keys[i]]: k }), {}));
-  //       console.log(master);
-  //       setMaster(master);
-  //     }
-  //   })();
-  // }, []);
+  useEffect(() => {
+    const keys = [
+      "exchangeSegment",
+      "exchangeInstrumentID",
+      "instrumentType",
+      "name",
+      "description",
+      "series",
+      "nameWithSeries",
+      "instrumentID",
+      "highPriceBand",
+      "lowPriceBand",
+      "freezeQty",
+      "tickSize",
+      "lotSize",
+      "multiplier",
+      "underlyingInstrumentId",
+      "contractExpiration",
+      "strikePrice",
+      "optionType",
+      "underlyingIndexName",
+      "DisplayName",
+      "ISIN",
+      "Numerator",
+      "Denominator",
+    ];
+    (async () => {
+      const response = await getMaster();
+      if (response.type === "success") {
+        let master = response.result
+          .split("\n")
+          .map((s) => s.split("|"))
+          .map((s) => s.reduce((o, k, i) => ({ ...o, [keys[i]]: k }), {}));
+        setMaster(master);
+      }
+    })();
+  }, []);
 
-  const tradeBoxes = ["TradeBox 1", "TradeBox 2", "TradeBox 3", "TradeBox 4"];
-  const watchListTabs = ["Indices", "1", "2", "3", "4", "5", "6", "Predefined"];
-  const indices = ["Indian", "Global", "Commodity", "Currency"];
-
-  const handleStockExpand = (id) => {
-    setWatchList((prev) =>
-      prev.map((stock) => {
-        return stock.id === id
-          ? { ...stock, isExpanded: !stock.isExpanded }
-          : stock;
-      })
-    );
-  };
+  // const handleStockExpand = (id) => {
+  //   setWatchList((prev) =>
+  //     prev.map((stock) => {
+  //       return stock.id === id
+  //         ? { ...stock, isExpanded: !stock.isExpanded }
+  //         : stock;
+  //     })
+  //   );
+  // };
 
   return (
     <>
       <div className="relative h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] overflow-y-auto sidebar-width flex flex-col items-center border-r border-border">
-        {selectedWatchListTab === "Indices" ? (
+        {selectedGroup === "Indices" ? (
           <div className="flex gap-2 w-full px-4 py-3">
             {indices.map((indice) => (
               <span
@@ -297,26 +309,28 @@ export function WatchList() {
                 </div>
               </div>
             ))
-          : watchList.map((stock) => (
-              <Fragment key={stock.id}>
+          : instruments.map((instrument) => (
+              <Fragment key={instrument.ExchangeInstrumentID}>
                 <div className="w-full relative group">
                   <div className="w-full border-border border-b p-5 flex justify-between items-center">
                     <div>
-                      <div className="text-primary text-base">{stock.name}</div>
+                      <div className="text-primary text-base">
+                        {instrument.DisplayName}
+                      </div>
                       <div className="text-secondary text-xs">
-                        {stock.exchange}
+                        {Segments[instrument.ExchangeSegment]}
                       </div>
                     </div>
                     <div className="text-right">
                       <div className="text-primary text-base">
-                        {stock.price}
+                        {/* {instrument.price} */}
                       </div>
                       <div
                         className={`text-xs ${
-                          stock.isUpTrend ? "text-success" : "text-failure"
+                          true ? "text-success" : "text-failure"
                         }`}
                       >
-                        {stock.trends}
+                        {/* {instrument.trends} */}
                       </div>
                     </div>
                   </div>
@@ -327,7 +341,7 @@ export function WatchList() {
                         dispatch(
                           visiblityReducer({
                             visible: true,
-                            order: { type: "BUY" },
+                            order: { type: "BUY", instrument },
                           })
                         )
                       }
@@ -340,7 +354,7 @@ export function WatchList() {
                         dispatch(
                           visiblityReducer({
                             visible: true,
-                            order: { type: "SELL" },
+                            order: { type: "SELL", instrument },
                           })
                         )
                       }
@@ -349,7 +363,7 @@ export function WatchList() {
                       S
                     </div>
                     <div
-                      onClick={() => handleStockExpand(stock.id)}
+                      // onClick={() => handleStockExpand(stock.id)}
                       className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center bg-white text-primary border border-primary"
                     >
                       5
@@ -362,7 +376,7 @@ export function WatchList() {
                     </div>
                   </div>
                 </div>
-                {stock.isExpanded && (
+                {/* {instrument.isExpanded && (
                   <div className="w-full">
                     <table className="w-full text-center">
                       <tr className="text-xs text-secondary border border-border">
@@ -458,7 +472,7 @@ export function WatchList() {
                       </div>
                     </div>
                   </div>
-                )}
+                )} */}
               </Fragment>
             ))}
 
@@ -583,21 +597,38 @@ export function WatchList() {
           </div>
           <div className="flex justify-between items-center text-secondary gap-2">
             <div className="flex rounded overflow-hidden w-full border border-border">
-              {watchListTabs.map((tab, i) => (
-                <div
-                  key={tab}
-                  className={`${
-                    i + 1 !== watchListTabs.length
-                      ? "border-r border-border"
-                      : ""
-                  } ${
-                    tab === selectedWatchListTab ? "selected-tab" : ""
-                  } flex-1 text-center py-1 px-[9.5px] cursor-pointer text-lg`}
-                  onClick={() => setSelectedWatchListTab(tab)}
-                >
-                  <span>{tab}</span>
-                </div>
-              ))}
+              <div
+                className={`${"border-r border-border"} ${
+                  "Indices" === selectedGroup ? "selected-tab" : ""
+                } flex-1 text-center py-1 px-[9.5px] cursor-pointer text-lg`}
+                onClick={() => setSelectedGroup("Indices")}
+              >
+                <span>Indices</span>
+              </div>
+              {groups.map(
+                (group, i) =>
+                  group.isEditable && (
+                    <div
+                      key={group.groupName}
+                      className={`${
+                        i + 1 !== groups.length ? "border-r border-border" : ""
+                      } ${
+                        group.groupName === selectedGroup ? "selected-tab" : ""
+                      } flex-1 text-center py-1 px-[9.5px] cursor-pointer text-lg`}
+                      onClick={() => setSelectedGroup(group.groupName)}
+                    >
+                      <span>{i}</span>
+                    </div>
+                  )
+              )}
+              <div
+                className={`${"border-r border-border"} ${
+                  "Predefined" === selectedGroup ? "selected-tab" : ""
+                } flex-1 text-center py-1 px-[9.5px] cursor-pointer text-lg`}
+                onClick={() => setSelectedGroup("Predefined")}
+              >
+                <span>Predefined</span>
+              </div>
             </div>
             <SettingsOutlined
               ref={filterModalToggleButton}

@@ -1,10 +1,20 @@
+import { Instrument } from "./../../types/interfaces/instrument.interfaces.types";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-const initialState = {
+interface IOrderModal {
+  visible: boolean;
+  order: {
+    type: string | null;
+    instrument: Instrument | null;
+  };
+}
+
+const initialState: IOrderModal = {
   visible: false,
   order: {
-    type: "BUY",
+    type: null,
+    instrument: null,
   },
 };
 

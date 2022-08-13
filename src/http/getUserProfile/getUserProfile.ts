@@ -3,7 +3,9 @@ import HTTP from "../http";
 
 export const getUserProfile = async () => {
   return await HTTP.get({
-    url: `https://devtrade.lkp.net.in/enterprise/user/profile?clientID=${localStorage.getItem(
+    url: `${
+      process.env.REACT_APP_API_BASE_URL
+    }/enterprise/user/profile?clientID=${localStorage.getItem(
       CLIENT_ID
     )}&userID=${localStorage.getItem(USER_ID)}`,
     requestOptions: {
@@ -12,17 +14,4 @@ export const getUserProfile = async () => {
       },
     },
   });
-  // return await fetch(
-  //   `https://devtrade.lkp.net.in/enterprise/user/profile?clientID=${localStorage.getItem(
-  //     CLIENT_ID
-  //   )}&userID=${localStorage.getItem(USER_ID)}`,
-  //   {
-  // headers: {
-  //   Authorization: localStorage.getItem(TOKEN) || "",
-  // },
-  //   }
-  // )
-  //   .then((response) => response.json())
-  //   .then((data) => data)
-  //   .catch((err) => err);
 };

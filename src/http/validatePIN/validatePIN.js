@@ -2,7 +2,7 @@ import HTTP from "../http";
 
 export const validatePIN = async (data) => {
   const response = await HTTP.post(
-    "https://devtrade.lkp.net.in/enterprise/auth/validatepin",
+    `${process.env.REACT_APP_API_BASE_URL}/enterprise/auth/validatepin`,
     {
       body: JSON.stringify(data),
       method: "POST",

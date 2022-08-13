@@ -6,6 +6,7 @@ import {
   Routes,
   Navigate,
 } from "react-router-dom";
+import WebSocketProvider from "./socket";
 import { OrderModal } from "./components/OrderModal";
 import {
   createTheme,
@@ -17,7 +18,6 @@ import { Login } from "./components/Login";
 import { Header } from "./components/Header";
 import { getUserProfile } from "./http/getUserProfile/getUserProfile";
 import { setUserReducer } from "./features/Auth/Auth";
-import { io } from "socket.io-client";
 import { TOKEN } from "./constants/global";
 
 declare module "@mui/material/styles" {
@@ -67,44 +67,6 @@ export default function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const socket = io("https://devtrade.lkp.net.in", {
-      path: "/marketdata/socket.io",
-      query: {
-        token: localStorage.getItem(TOKEN),
-        userID: localStorage.getItem("userID"),
-        publishFormat: "JSON",
-        broadcastMode: "Full",
-      },
-      transports: ["websocket"],
-    });
-
-    // console.log(socket);
-
-    socket.on("connect", () => {
-      console.log("connected");
-    });
-
-    socket.on("1501-json-full", (data) => {
-      console.log("1501-json-full " + data);
-    });
-
-    socket.on("1502-json-full", (data) => {
-      console.log("1502-json-full " + data);
-    });
-
-    socket.on("disconnect", () => {
-      console.log("disconnected");
-    });
-
-    return () => {
-      socket.off("connect");
-      socket.off("1501-json-full");
-      socket.off("1502-json-full");
-      socket.off("disconnect");
-    };
-  }, []);
-
-  useEffect(() => {
     (async () => {
       if (localStorage.getItem(TOKEN)) {
         const userProfile = await getUserProfile();
@@ -117,21 +79,23 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Router>
-        <Routes>
-          <Route
-            path="*"
-            element={loginRequired(
-              <>
-                <Header />
-                <Main />
-                <OrderModal />
-              </>
-            )}
-          />
-          <Route path="/login" element={<Login />} />
-        </Routes>
-      </Router>
+      <WebSocketProvider>
+        <Router>
+          <Routes>
+            <Route
+              path="*"
+              element={loginRequired(
+                <>
+                  <Header />
+                  <Main />
+                  <OrderModal />
+                </>
+              )}
+            />
+            <Route path="/login" element={<Login />} />
+          </Routes>
+        </Router>
+      </WebSocketProvider>
     </ThemeProvider>
   );
 }
