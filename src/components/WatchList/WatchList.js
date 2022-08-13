@@ -422,105 +422,108 @@ export function WatchList() {
                 {instrument.isExpanded && (
                   <div className="w-full">
                     <table className="w-full text-center">
-                      <tr className="text-xs text-secondary border border-border border-t-0 border-r-0">
-                        <th className="p-2 font-normal">QTY.</th>
-                        <th className="p-2 font-normal">ORDERS</th>
-                        <th className="p-2 font-normal">BID</th>
-                        <th className="p-2 font-normal">OFFER</th>
-                        <th className="p-2 font-normal">ORDERS</th>
-                        <th className="p-2 font-normal">QTY.</th>
-                      </tr>
-                      <tr className="text-success text-xs">
-                        <td className="p-1.5">100</td>
-                        <td className="p-1.5">1</td>
-                        <td className="p-1.5">100</td>
-                        <td className="p-1.5">100</td>
-                        <td className="p-1.5">1</td>
-                        <td className="p-1.5">100</td>
-                      </tr>
-                      <tr className="text-success text-xs">
-                        <td className="p-1.5">100</td>
-                        <td className="p-1.5">1</td>
-                        <td className="p-1.5">100</td>
-                        <td className="p-1.5">100</td>
-                        <td className="p-1.5">1</td>
-                        <td className="p-1.5">100</td>
-                      </tr>
-                      <tr className="text-success text-xs">
-                        <td className="p-1.5">100</td>
-                        <td className="p-1.5">1</td>
-                        <td className="p-1.5">100</td>
-                        <td className="p-1.5">100</td>
-                        <td className="p-1.5">1</td>
-                        <td className="p-1.5">100</td>
-                      </tr>
-                      <tr className="text-success text-xs">
-                        <td className="p-1.5">100</td>
-                        <td className="p-1.5">1</td>
-                        <td className="p-1.5">100</td>
-                        <td className="p-1.5">100</td>
-                        <td className="p-1.5">1</td>
-                        <td className="p-1.5">100</td>
-                      </tr>
-                      <tr className="text-success text-xs">
-                        <td className="p-1.5">100</td>
-                        <td className="p-1.5">1</td>
-                        <td className="p-1.5">100</td>
-                        <td className="p-1.5">100</td>
-                        <td className="p-1.5">1</td>
-                        <td className="p-1.5">100</td>
-                      </tr>
-                      <tr className="text-xs">
-                        <td className="p-1.5 text-success">100</td>
-                        <td className="p-1.5 text-secondary" colSpan="4">
-                          Total
-                        </td>
-                        <td className="p-1.5 text-success">100</td>
-                      </tr>
+                      <thead>
+                        <tr className="text-xs text-secondary border border-border border-t-0 border-r-0">
+                          <th className="p-2 font-normal">QTY.</th>
+                          <th className="p-2 font-normal">ORDERS</th>
+                          <th className="p-2 font-normal">BID</th>
+                          <th className="p-2 font-normal">OFFER</th>
+                          <th className="p-2 font-normal">ORDERS</th>
+                          <th className="p-2 font-normal">QTY.</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="text-success text-xs">
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">1</td>
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">1</td>
+                          <td className="p-1.5">100</td>
+                        </tr>
+                        <tr className="text-success text-xs">
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">1</td>
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">1</td>
+                          <td className="p-1.5">100</td>
+                        </tr>
+                        <tr className="text-success text-xs">
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">1</td>
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">1</td>
+                          <td className="p-1.5">100</td>
+                        </tr>
+                        <tr className="text-success text-xs">
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">1</td>
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">1</td>
+                          <td className="p-1.5">100</td>
+                        </tr>
+                        <tr className="text-success text-xs">
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">1</td>
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">1</td>
+                          <td className="p-1.5">100</td>
+                        </tr>
+                        <tr className="text-xs">
+                          <td className="p-1.5 text-success">100</td>
+                          <td className="p-1.5 text-secondary" colSpan="4">
+                            Total
+                          </td>
+                          <td className="p-1.5 text-success">100</td>
+                        </tr>
+                      </tbody>
                     </table>
                     <div>
                       <table className="w-full text-center">
-                        <tr className="text-xs text-secondary">
-                          <th className="p-2 font-normal">Open</th>
-                          <th className="p-2 font-normal">High</th>
-                          <th className="p-2 font-normal">Low</th>
-                          <th className="p-2 font-normal">Prev.Close</th>
-                        </tr>
-                        <tr className="text-xs text-primary">
-                          {console.log(
-                            liveInstrumentsData?.[
-                              instrument.ExchangeInstrumentID
-                            ]
-                          )}
-                          <td>
-                            {
-                              liveInstrumentsData?.[
-                                instrument.ExchangeInstrumentID
-                              ].Touchline.Open
-                            }
-                          </td>
-                          <td>
-                            {
-                              liveInstrumentsData?.[
-                                instrument.ExchangeInstrumentID
-                              ].Touchline.High
-                            }
-                          </td>
-                          <td>
-                            {
-                              liveInstrumentsData?.[
-                                instrument.ExchangeInstrumentID
-                              ].Touchline.Low
-                            }
-                          </td>
-                          <td>
-                            {
-                              liveInstrumentsData?.[
-                                instrument.ExchangeInstrumentID
-                              ].Touchline.Close
-                            }
-                          </td>
-                        </tr>
+                        <thead>
+                          <tr className="text-xs text-secondary">
+                            <th className="p-2 font-normal">Open</th>
+                            <th className="p-2 font-normal">High</th>
+                            <th className="p-2 font-normal">Low</th>
+                            <th className="p-2 font-normal">Prev.Close</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr className="text-xs text-primary">
+                            <td>
+                              {
+                                liveInstrumentsData?.[
+                                  instrument.ExchangeInstrumentID
+                                ].Touchline.Open
+                              }
+                            </td>
+                            <td>
+                              {
+                                liveInstrumentsData?.[
+                                  instrument.ExchangeInstrumentID
+                                ].Touchline.High
+                              }
+                            </td>
+                            <td>
+                              {
+                                liveInstrumentsData?.[
+                                  instrument.ExchangeInstrumentID
+                                ].Touchline.Low
+                              }
+                            </td>
+                            <td>
+                              {
+                                liveInstrumentsData?.[
+                                  instrument.ExchangeInstrumentID
+                                ].Touchline.Close
+                              }
+                            </td>
+                          </tr>
+                        </tbody>
                       </table>
                       <div className="w-full flex justify-between py-2 text-sm">
                         <div className="flex justify-between w-full px-8">
