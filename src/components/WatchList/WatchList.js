@@ -1,5 +1,6 @@
 import React, {
   Fragment,
+  useCallback,
   useContext,
   useEffect,
   useRef,
@@ -29,11 +30,13 @@ import { searchInstruments } from "../../http/searchInstruments/searchInstrument
 import { Segments } from "../../types/enums/segment.enums.types";
 import IInstrument from "../../types/interfaces/instrument.interfaces.types";
 import { delSymbol } from "../../http/delSymbol/delSymbol";
+import { addSymbol } from "../../http/addSymbol/addSymbol";
+import { USER_ID } from "../../constants/global";
 
 export function WatchList() {
   const [selectedIndice, setSelectedIndice] = useState("Indian");
   const [selectedGroup, setSelectedGroup] = useState("Indices");
-  const [stockSearch, setStockSearch] = useState("");
+  const [instrumentSearch, setStockSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
   const [master, setMaster] = useState([]);
   const [instruments, setInstruments] = useState([]);
@@ -80,6 +83,21 @@ export function WatchList() {
 
   const [liveInstrumentsData, setLiveInstrumentsData] = useState({});
 
+  const increment = 10000;
+  const [searchIndex, setSearchIndex] = useState(increment);
+  const observer = useRef();
+  const endRef = useCallback((node) => {
+    if (observer.current) observer.current.disconnect();
+    observer.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        if (searchIndex < master.length) {
+          setSearchIndex(searchIndex + increment);
+        }
+      }
+    });
+    if (node) observer.current.observe(node);
+  });
+
   useEffect(() => {
     socket.on("1502-json-full", (res) => {
       const data = JSON.parse(res);
@@ -118,6 +136,9 @@ export function WatchList() {
           setInstruments([]);
           await unsubscribeInstruments(indianIndicesList);
         }
+      } else {
+        setInstruments([]);
+        await unsubscribeInstruments(indianIndicesList);
       }
     })();
   }, [selectedGroup, selectedIndice]);
@@ -161,22 +182,22 @@ export function WatchList() {
     fetchInstruments();
   }, [groupSymbols]);
 
-  useEffect(() => {
-    const search = () => {
-      if (stockSearch) {
-        const result = master.filter(
+  const search = () => {
+    if (instrumentSearch) {
+      const result = master
+        .slice(0, searchIndex)
+        .filter(
           (s) =>
-            s.name.includes(stockSearch.toUpperCase()) ||
-            s.description.includes(stockSearch.toUpperCase())
+            s.name.includes(instrumentSearch.toUpperCase()) ||
+            s.description.includes(instrumentSearch.toUpperCase())
         );
-        setSearchResult(result);
-      }
-    };
+      setSearchResult(result);
+    }
+  };
 
-    const debounce = setTimeout(search, 500);
-
-    return () => clearTimeout(debounce);
-  }, [master, stockSearch]);
+  useEffect(() => {
+    search();
+  }, [master, instrumentSearch, searchIndex]);
 
   useEffect(() => {
     const keys = [
@@ -226,6 +247,10 @@ export function WatchList() {
     );
   };
 
+  const handleAddInstrument = (data) => {
+    addSymbol(data);
+  };
+
   const handleDeleteInstrument = ({
     groupName,
     exchangeInstrumentID,
@@ -263,7 +288,7 @@ export function WatchList() {
           <div className="px-5 py-3 w-full">
             <div
               className={`${
-                stockSearch
+                instrumentSearch
                   ? "bg-blueHighlight border-blue text-primary"
                   : "bg-inherit border-secondary text-secondary"
               } flex items-center px-2 py-2 gap-2 text-sm outline-blue-100 w-full bg-gray-100 rounded-md border`}
@@ -271,12 +296,15 @@ export function WatchList() {
               <Search color="inherit" fontSize="small" />
               <input
                 autoFocus
-                value={stockSearch}
-                onChange={(e) => setStockSearch(e.target.value)}
+                value={instrumentSearch}
+                onChange={(e) => {
+                  setStockSearch(e.target.value);
+                  setSearchIndex(0);
+                }}
                 placeholder="Search eg: infy bse, nifty fut, nifty weekly"
                 className="w-full outline-none bg-transparent"
               />
-              {stockSearch ? (
+              {instrumentSearch ? (
                 <CancelOutlined
                   color="inherit"
                   fontSize="small"
@@ -290,16 +318,22 @@ export function WatchList() {
           </div>
         )}
 
-        {stockSearch
-          ? searchResult.map((stock) => (
-              <div key={stock.instrumentID} className="w-full relative group">
+        {instrumentSearch ? (
+          <>
+            {searchResult.map((instrument) => (
+              <div
+                key={instrument.instrumentID}
+                className="w-full relative group"
+              >
                 <div className="w-full  border-border border-b p-5 flex justify-between items-center">
                   <div>
-                    <div className="text-primary text-sm">{stock.name}</div>
+                    <div className="text-primary text-sm">
+                      {instrument.name}
+                    </div>
                   </div>
                   <div className="text-right">
                     <div className="text-secondary bg-secondaryHighlight text-xs p-1 rounded-[4px]">
-                      {stock.exchangeSegment}
+                      {instrument.exchangeSegment}
                     </div>
                   </div>
                 </div>
@@ -334,274 +368,286 @@ export function WatchList() {
                   <div className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center bg-white text-primary border border-primary">
                     5
                   </div>
-                  <div className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center border border-primary text-white bg-blue-gradient">
+                  <div
+                    onClick={() =>
+                      handleAddInstrument({
+                        userID: localStorage.getItem(USER_ID),
+                        groupName: selectedGroup,
+                        exchangeSegment: instrument.exchangeSegment,
+                        exchangeInstrumentID: instrument.instrumentID,
+                        symbolExpiry: instrument.ExDate,
+                      })
+                    }
+                    className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center border border-primary text-white bg-blue-gradient"
+                  >
                     <Add />
                     {/* <Done /> */}
                   </div>
                 </div>
               </div>
-            ))
-          : instruments.map((instrument) => (
-              <Fragment key={instrument.ExchangeInstrumentID}>
-                <div className="w-full relative group">
-                  <div className="w-full border-border border-b p-5 flex justify-between items-center">
-                    <div>
-                      <div className="text-primary text-base">
-                        {instrument.DisplayName}
-                      </div>
-                      <div className="text-secondary text-xs">
-                        {Segments[instrument.ExchangeSegment]}
-                      </div>
+            ))}
+            <div ref={endRef} />
+          </>
+        ) : (
+          instruments.map((instrument) => (
+            <Fragment key={instrument.ExchangeInstrumentID}>
+              <div className="w-full relative group">
+                <div className="w-full border-border border-b p-5 flex justify-between items-center">
+                  <div>
+                    <div className="text-primary text-base">
+                      {instrument.DisplayName}
                     </div>
-                    <div className="text-right">
-                      <div className="text-primary text-base">
-                        {
-                          liveInstrumentsData?.[instrument.ExchangeInstrumentID]
-                            ?.Touchline?.LastTradedPrice
-                        }
-                      </div>
-                      <div
-                        className={`text-xs ${
-                          liveInstrumentsData?.[instrument.ExchangeInstrumentID]
-                            ?.Touchline?.PercentChange > 0
-                            ? "text-success"
-                            : "text-failure"
-                        }`}
-                      >
-                        {parseFloat(
-                          (liveInstrumentsData?.[
-                            instrument.ExchangeInstrumentID
-                          ]?.Touchline?.LastTradedPrice *
-                            liveInstrumentsData?.[
-                              instrument.ExchangeInstrumentID
-                            ]?.Touchline?.PercentChange) /
-                            100
-                        ).toFixed(2)}{" "}
-                        (
-                        {parseFloat(
-                          liveInstrumentsData?.[instrument.ExchangeInstrumentID]
-                            ?.Touchline?.PercentChange
-                        ).toFixed(2)}
-                        %)
-                      </div>
+                    <div className="text-secondary text-xs">
+                      {Segments[instrument.ExchangeSegment]}
                     </div>
                   </div>
-
-                  <div className="absolute right-0 top-0 h-full items-center gap-2 pr-2 hidden group-hover:flex text-base">
-                    <div
-                      onClick={() =>
-                        dispatch(
-                          visiblityReducer({
-                            visible: true,
-                            order: {
-                              type: "BUY",
-                              instrument,
-                              data: liveInstrumentsData?.[
-                                instrument.ExchangeInstrumentID
-                              ],
-                            },
-                          })
-                        )
+                  <div className="text-right">
+                    <div className="text-primary text-base">
+                      {
+                        liveInstrumentsData?.[instrument.ExchangeInstrumentID]
+                          ?.Touchline?.LastTradedPrice
                       }
-                      className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center text-white bg-green-gradient"
-                    >
-                      B
                     </div>
                     <div
-                      onClick={() =>
-                        dispatch(
-                          visiblityReducer({
-                            visible: true,
-                            order: {
-                              type: "SELL",
-                              instrument,
-                              data: liveInstrumentsData?.[
-                                instrument.ExchangeInstrumentID
-                              ],
-                            },
-                          })
-                        )
-                      }
-                      className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center text-white bg-red-gradient"
+                      className={`text-xs ${
+                        liveInstrumentsData?.[instrument.ExchangeInstrumentID]
+                          ?.Touchline?.PercentChange > 0
+                          ? "text-success"
+                          : "text-failure"
+                      }`}
                     >
-                      S
-                    </div>
-                    <div
-                      onClick={() =>
-                        handleInstrumentExpand(instrument.ExchangeInstrumentID)
-                      }
-                      className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center bg-white text-primary border border-primary"
-                    >
-                      5
-                    </div>
-                    {console.log(instrument)}
-                    <div
-                      onClick={() =>
-                        handleDeleteInstrument({
-                          groupName: selectedGroup,
-                          exchangeInstrumentID: instrument.ExchangeInstrumentID,
-                          exchangeSegment: instrument.ExchangeSegment,
-                          symbolExpiry: instrument.ExDate,
-                        })
-                      }
-                      className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center border border-primary text-primary bg-white"
-                    >
-                      <Delete />
-                    </div>
-                    <div className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center border border-primary text-primary bg-white">
-                      <MoreVert />
+                      {parseFloat(
+                        (liveInstrumentsData?.[instrument.ExchangeInstrumentID]
+                          ?.Touchline?.LastTradedPrice *
+                          liveInstrumentsData?.[instrument.ExchangeInstrumentID]
+                            ?.Touchline?.PercentChange) /
+                          100
+                      ).toFixed(2)}{" "}
+                      (
+                      {parseFloat(
+                        liveInstrumentsData?.[instrument.ExchangeInstrumentID]
+                          ?.Touchline?.PercentChange
+                      ).toFixed(2)}
+                      %)
                     </div>
                   </div>
                 </div>
-                {instrument.isExpanded && (
-                  <div className="w-full">
+
+                <div className="absolute right-0 top-0 h-full items-center gap-2 pr-2 hidden group-hover:flex text-base">
+                  <div
+                    onClick={() =>
+                      dispatch(
+                        visiblityReducer({
+                          visible: true,
+                          order: {
+                            type: "BUY",
+                            instrument,
+                            data: liveInstrumentsData?.[
+                              instrument.ExchangeInstrumentID
+                            ],
+                          },
+                        })
+                      )
+                    }
+                    className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center text-white bg-green-gradient"
+                  >
+                    B
+                  </div>
+                  <div
+                    onClick={() =>
+                      dispatch(
+                        visiblityReducer({
+                          visible: true,
+                          order: {
+                            type: "SELL",
+                            instrument,
+                            data: liveInstrumentsData?.[
+                              instrument.ExchangeInstrumentID
+                            ],
+                          },
+                        })
+                      )
+                    }
+                    className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center text-white bg-red-gradient"
+                  >
+                    S
+                  </div>
+                  <div
+                    onClick={() =>
+                      handleInstrumentExpand(instrument.ExchangeInstrumentID)
+                    }
+                    className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center bg-white text-primary border border-primary"
+                  >
+                    5
+                  </div>
+                  <div
+                    onClick={() =>
+                      handleDeleteInstrument({
+                        groupName: selectedGroup,
+                        exchangeInstrumentID: instrument.ExchangeInstrumentID,
+                        exchangeSegment: instrument.ExchangeSegment,
+                        symbolExpiry: instrument.ExDate,
+                      })
+                    }
+                    className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center border border-primary text-primary bg-white"
+                  >
+                    <Delete />
+                  </div>
+                  <div className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center border border-primary text-primary bg-white">
+                    <MoreVert />
+                  </div>
+                </div>
+              </div>
+              {instrument.isExpanded && (
+                <div className="w-full">
+                  <table className="w-full text-center">
+                    <thead>
+                      <tr className="text-xs text-secondary border border-border border-t-0 border-r-0">
+                        <th className="p-2 font-normal">QTY.</th>
+                        <th className="p-2 font-normal">ORDERS</th>
+                        <th className="p-2 font-normal">BID</th>
+                        <th className="p-2 font-normal">OFFER</th>
+                        <th className="p-2 font-normal">ORDERS</th>
+                        <th className="p-2 font-normal">QTY.</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="text-success text-xs">
+                        <td className="p-1.5">100</td>
+                        <td className="p-1.5">1</td>
+                        <td className="p-1.5">100</td>
+                        <td className="p-1.5">100</td>
+                        <td className="p-1.5">1</td>
+                        <td className="p-1.5">100</td>
+                      </tr>
+                      <tr className="text-success text-xs">
+                        <td className="p-1.5">100</td>
+                        <td className="p-1.5">1</td>
+                        <td className="p-1.5">100</td>
+                        <td className="p-1.5">100</td>
+                        <td className="p-1.5">1</td>
+                        <td className="p-1.5">100</td>
+                      </tr>
+                      <tr className="text-success text-xs">
+                        <td className="p-1.5">100</td>
+                        <td className="p-1.5">1</td>
+                        <td className="p-1.5">100</td>
+                        <td className="p-1.5">100</td>
+                        <td className="p-1.5">1</td>
+                        <td className="p-1.5">100</td>
+                      </tr>
+                      <tr className="text-success text-xs">
+                        <td className="p-1.5">100</td>
+                        <td className="p-1.5">1</td>
+                        <td className="p-1.5">100</td>
+                        <td className="p-1.5">100</td>
+                        <td className="p-1.5">1</td>
+                        <td className="p-1.5">100</td>
+                      </tr>
+                      <tr className="text-success text-xs">
+                        <td className="p-1.5">100</td>
+                        <td className="p-1.5">1</td>
+                        <td className="p-1.5">100</td>
+                        <td className="p-1.5">100</td>
+                        <td className="p-1.5">1</td>
+                        <td className="p-1.5">100</td>
+                      </tr>
+                      <tr className="text-xs">
+                        <td className="p-1.5 text-success">100</td>
+                        <td className="p-1.5 text-secondary" colSpan="4">
+                          Total
+                        </td>
+                        <td className="p-1.5 text-success">100</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div>
                     <table className="w-full text-center">
                       <thead>
-                        <tr className="text-xs text-secondary border border-border border-t-0 border-r-0">
-                          <th className="p-2 font-normal">QTY.</th>
-                          <th className="p-2 font-normal">ORDERS</th>
-                          <th className="p-2 font-normal">BID</th>
-                          <th className="p-2 font-normal">OFFER</th>
-                          <th className="p-2 font-normal">ORDERS</th>
-                          <th className="p-2 font-normal">QTY.</th>
+                        <tr className="text-xs text-secondary">
+                          <th className="p-2 font-normal">Open</th>
+                          <th className="p-2 font-normal">High</th>
+                          <th className="p-2 font-normal">Low</th>
+                          <th className="p-2 font-normal">Prev.Close</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr className="text-success text-xs">
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">1</td>
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">1</td>
-                          <td className="p-1.5">100</td>
-                        </tr>
-                        <tr className="text-success text-xs">
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">1</td>
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">1</td>
-                          <td className="p-1.5">100</td>
-                        </tr>
-                        <tr className="text-success text-xs">
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">1</td>
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">1</td>
-                          <td className="p-1.5">100</td>
-                        </tr>
-                        <tr className="text-success text-xs">
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">1</td>
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">1</td>
-                          <td className="p-1.5">100</td>
-                        </tr>
-                        <tr className="text-success text-xs">
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">1</td>
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">1</td>
-                          <td className="p-1.5">100</td>
-                        </tr>
-                        <tr className="text-xs">
-                          <td className="p-1.5 text-success">100</td>
-                          <td className="p-1.5 text-secondary" colSpan="4">
-                            Total
-                          </td>
-                          <td className="p-1.5 text-success">100</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <div>
-                      <table className="w-full text-center">
-                        <thead>
-                          <tr className="text-xs text-secondary">
-                            <th className="p-2 font-normal">Open</th>
-                            <th className="p-2 font-normal">High</th>
-                            <th className="p-2 font-normal">Low</th>
-                            <th className="p-2 font-normal">Prev.Close</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr className="text-xs text-primary">
-                            <td>
-                              {
-                                liveInstrumentsData?.[
-                                  instrument.ExchangeInstrumentID
-                                ].Touchline.Open
-                              }
-                            </td>
-                            <td>
-                              {
-                                liveInstrumentsData?.[
-                                  instrument.ExchangeInstrumentID
-                                ].Touchline.High
-                              }
-                            </td>
-                            <td>
-                              {
-                                liveInstrumentsData?.[
-                                  instrument.ExchangeInstrumentID
-                                ].Touchline.Low
-                              }
-                            </td>
-                            <td>
-                              {
-                                liveInstrumentsData?.[
-                                  instrument.ExchangeInstrumentID
-                                ].Touchline.Close
-                              }
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                      <div className="w-full flex justify-between py-2 text-sm">
-                        <div className="flex justify-between w-full px-8">
-                          <span className="text-secondary">Volume</span>
-                          <span className="text-primary">NA</span>
-                        </div>
-                        <div className="flex justify-between w-full px-8">
-                          <span className="text-secondary">Avg. Price</span>
-                          <span className="text-primary">
+                        <tr className="text-xs text-primary">
+                          <td>
                             {
                               liveInstrumentsData?.[
                                 instrument.ExchangeInstrumentID
-                              ].Touchline.AverageTradedPrice
+                              ].Touchline.Open
                             }
-                          </span>
-                        </div>
-                      </div>
-                      <div className="w-full flex justify-between py-2 text-sm">
-                        <div className="flex justify-between w-full px-8">
-                          <span className="text-secondary">LTT</span>
-                          <span className="text-primary">
-                            {new Date(
+                          </td>
+                          <td>
+                            {
                               liveInstrumentsData?.[
                                 instrument.ExchangeInstrumentID
-                              ].Touchline.LastTradedTime
-                            )
-                              .toLocaleDateString("en", {
-                                year: "2-digit",
-                                month: "2-digit",
-                                day: "2-digit",
-                              })
-                              .replace(/\//g, ":")}
-                          </span>
-                        </div>
-                        <div className="flex justify-between w-full px-8">
-                          <span className="text-secondary">LO/Up Cir.</span>
-                          <span className="text-primary">NA</span>
-                        </div>
+                              ].Touchline.High
+                            }
+                          </td>
+                          <td>
+                            {
+                              liveInstrumentsData?.[
+                                instrument.ExchangeInstrumentID
+                              ].Touchline.Low
+                            }
+                          </td>
+                          <td>
+                            {
+                              liveInstrumentsData?.[
+                                instrument.ExchangeInstrumentID
+                              ].Touchline.Close
+                            }
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <div className="w-full flex justify-between py-2 text-sm">
+                      <div className="flex justify-between w-full px-8">
+                        <span className="text-secondary">Volume</span>
+                        <span className="text-primary">NA</span>
+                      </div>
+                      <div className="flex justify-between w-full px-8">
+                        <span className="text-secondary">Avg. Price</span>
+                        <span className="text-primary">
+                          {
+                            liveInstrumentsData?.[
+                              instrument.ExchangeInstrumentID
+                            ].Touchline.AverageTradedPrice
+                          }
+                        </span>
+                      </div>
+                    </div>
+                    <div className="w-full flex justify-between py-2 text-sm">
+                      <div className="flex justify-between w-full px-8">
+                        <span className="text-secondary">LTT</span>
+                        <span className="text-primary">
+                          {new Date(
+                            liveInstrumentsData?.[
+                              instrument.ExchangeInstrumentID
+                            ].Touchline.LastTradedTime
+                          )
+                            .toLocaleDateString("en", {
+                              year: "2-digit",
+                              month: "2-digit",
+                              day: "2-digit",
+                            })
+                            .replace(/\//g, ":")}
+                        </span>
+                      </div>
+                      <div className="flex justify-between w-full px-8">
+                        <span className="text-secondary">LO/Up Cir.</span>
+                        <span className="text-primary">NA</span>
                       </div>
                     </div>
                   </div>
-                )}
-              </Fragment>
-            ))}
+                </div>
+              )}
+            </Fragment>
+          ))
+        )}
 
         <div className="text-md fixed mt-auto h-fit bottom-0 left-0 right-0 bg-white p-[10px] border-border border-t gap-2 flex flex-col sidebar-width">
           <div
