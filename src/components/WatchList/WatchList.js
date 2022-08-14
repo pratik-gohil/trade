@@ -28,6 +28,7 @@ import { unsubscribeInstruments } from "../../http/unsubscribeInstruments/unsubs
 import { searchInstruments } from "../../http/searchInstruments/searchInstruments";
 import { Segments } from "../../types/enums/segment.enums.types";
 import IInstrument from "../../types/interfaces/instrument.interfaces.types";
+import { delSymbol } from "../../http/delSymbol/delSymbol";
 
 export function WatchList() {
   const [selectedIndice, setSelectedIndice] = useState("Indian");
@@ -121,26 +122,28 @@ export function WatchList() {
     })();
   }, [selectedGroup, selectedIndice]);
 
-  useEffect(() => {
-    (async () => {
-      if (selectedGroup) {
-        if (selectedGroup === "Indices" || selectedGroup === "Predefined") {
-          return;
-        }
-        const response = await getGroupSymbols({ groupName: selectedGroup });
-        if (response.type === "success") {
-          setGroupSymbols((prevGroupsSymbols) => {
-            if (prevGroupsSymbols.length) {
-              (async () => await unsubscribeInstruments(prevGroupsSymbols))();
-            }
-            return response.result.instruments;
-          });
-        }
+  const fetchGroupSymbols = async () => {
+    if (selectedGroup) {
+      if (selectedGroup === "Indices" || selectedGroup === "Predefined") {
+        return;
       }
-    })();
-  }, [selectedGroup]);
+      const response = await getGroupSymbols({ groupName: selectedGroup });
+      if (response.type === "success") {
+        setGroupSymbols((prevGroupsSymbols) => {
+          if (prevGroupsSymbols.length) {
+            (async () => await unsubscribeInstruments(prevGroupsSymbols))();
+          }
+          return response.result.instruments;
+        });
+      }
+    }
+  };
 
   useEffect(() => {
+    fetchGroupSymbols();
+  }, [selectedGroup]);
+
+  const fetchInstruments = () => {
     if (groupSymbols.length) {
       (async () => {
         await subscribeInstruments(groupSymbols);
@@ -152,6 +155,10 @@ export function WatchList() {
     } else {
       setInstruments([]);
     }
+  };
+
+  useEffect(() => {
+    fetchInstruments();
   }, [groupSymbols]);
 
   useEffect(() => {
@@ -209,7 +216,7 @@ export function WatchList() {
     })();
   }, []);
 
-  const handleStockExpand = (id) => {
+  const handleInstrumentExpand = (id) => {
     setInstruments((prev) =>
       prev.map((instrument) => {
         return instrument.ExchangeInstrumentID === id
@@ -217,6 +224,22 @@ export function WatchList() {
           : instrument;
       })
     );
+  };
+
+  const handleDeleteInstrument = ({
+    groupName,
+    exchangeInstrumentID,
+    exchangeSegment,
+    symbolExpiry,
+  }) => {
+    delSymbol({
+      groupName,
+      exchangeInstrumentID,
+      exchangeSegment,
+      symbolExpiry,
+    }).then(() => {
+      fetchGroupSymbols();
+    });
   };
 
   return (
@@ -405,13 +428,24 @@ export function WatchList() {
                     </div>
                     <div
                       onClick={() =>
-                        handleStockExpand(instrument.ExchangeInstrumentID)
+                        handleInstrumentExpand(instrument.ExchangeInstrumentID)
                       }
                       className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center bg-white text-primary border border-primary"
                     >
                       5
                     </div>
-                    <div className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center border border-primary text-primary bg-white">
+                    {console.log(instrument)}
+                    <div
+                      onClick={() =>
+                        handleDeleteInstrument({
+                          groupName: selectedGroup,
+                          exchangeInstrumentID: instrument.ExchangeInstrumentID,
+                          exchangeSegment: instrument.ExchangeSegment,
+                          symbolExpiry: instrument.ExDate,
+                        })
+                      }
+                      className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center border border-primary text-primary bg-white"
+                    >
                       <Delete />
                     </div>
                     <div className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center border border-primary text-primary bg-white">
