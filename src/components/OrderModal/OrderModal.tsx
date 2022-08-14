@@ -9,7 +9,15 @@ import {
 import { NumberInput } from "../NumberInput";
 import { CustomSwitch } from "../Switch";
 import { RootState } from "../../app/store";
-import { useTheme, Theme } from "@mui/material";
+import {
+  useTheme,
+  Theme,
+  Radio,
+  FormControlLabel,
+  RadioGroup,
+} from "@mui/material";
+import { blue } from "@mui/material/colors";
+import CustomRadio from "../Radio/Radio";
 
 let margin = 50;
 
@@ -26,7 +34,7 @@ export function OrderModal() {
 
   const [price, setPrice] = useState(0);
   const [triggerPrice, setTriggerPrice] = useState(0);
-  const [QTY, setQTY] = useState(1);
+  const [Qty, setQTY] = useState(1);
   const [disclosedQTY, setDisclosedQTY] = useState(0);
   const isOpen = useSelector((state: RootState) => state.orderModal.visible);
   const dispatch = useDispatch();
@@ -90,7 +98,7 @@ export function OrderModal() {
         >
           <div
             ref={modalRef}
-            className="absolute top-0 bg-white rounded-lg overflow-hidden shadow"
+            className="absolute top-0 bg-white text-[#8c8c8c] rounded-[10px] overflow-hidden shadow-modal"
           >
             <div
               className={`${
@@ -98,34 +106,46 @@ export function OrderModal() {
               } flex justify-between items-center handle cursor-move px-5 py-[10px]`}
             >
               <div className="flex flex-col gap-1">
-                <div className="text-md font-medium">
+                <div className="text-md font-medium text-[#333]">
                   {instrument.DisplayName}
                 </div>
-                <div className="text-xs text-blue font-medium flex justify-center items-center gap-8">
-                  <div
-                    className="
-                flex justify-center items-center gap-2"
-                  >
-                    <input
-                      name="radio-order-modal-exchange"
-                      id="radio-order-modal-exchange-nse"
-                      type="radio"
-                    />
-                    <label htmlFor="radio-order-modal-exchange-nse">
-                      NSE - 480
-                    </label>
-                  </div>
-                  <div className="flex justify-center items-center gap-2">
-                    <input
-                      name="radio-order-modal-exchange"
-                      id="radio-order-modal-exchange-bse"
-                      type="radio"
-                    />
-                    <label htmlFor="radio-order-modal-exchange-bse">
-                      BSE - 480
-                    </label>
-                  </div>
-                </div>
+                <RadioGroup
+                  sx={{ display: "flex", flexDirection: "row", gap: 2 }}
+                  aria-labelledby="radio-order-modal-exchange"
+                  name="radio-order-modal-exchange"
+                  defaultValue="NSE"
+                >
+                  <FormControlLabel
+                    sx={{
+                      fontSize: "12px",
+                      margin: 0,
+                      display: "flex",
+                      gap: 0.5,
+                    }}
+                    control={<CustomRadio />}
+                    value="NSE"
+                    label={
+                      <span className="text-xs font-medium block">
+                        NSE - {data?.Touchline?.LastTradedPrice}
+                      </span>
+                    }
+                  />
+                  <FormControlLabel
+                    sx={{
+                      fontSize: "12px",
+                      margin: 0,
+                      display: "flex",
+                      gap: 0.5,
+                    }}
+                    control={<CustomRadio />}
+                    value="BSE"
+                    label={
+                      <span className="text-xs font-medium block">
+                        BSE - {data?.Touchline?.LastTradedPrice}
+                      </span>
+                    }
+                  />
+                </RadioGroup>
               </div>
               <div>
                 <button
@@ -150,7 +170,7 @@ export function OrderModal() {
                 />
               </div>
             </div>
-            <div className="flex items-center gap-14 border-b-2 border-border text-sm font-medium px-5 pt-2 pb-1">
+            <div className="flex items-center gap-14 border-b-2 border-border text-sm font-medium px-5 pt-2.5 pb-1 bg-[#f9f9f9]">
               <div
                 onClick={() => setOrderType("Regular")}
                 className={`${
@@ -183,38 +203,54 @@ export function OrderModal() {
               </div>
             </div>
             <div className="px-5 py-[10px] flex flex-col gap-4 border-b-2 border-border">
-              <div className="text-xs text-primary font-medium flex items-center gap-8">
-                <div
-                  className="
-                flex justify-center items-center gap-2"
-                >
-                  <input
-                    name="radio-order-modal-trade-type"
-                    id="radio-order-modal-trade-type-intraday"
-                    type="radio"
-                  />
-                  <label htmlFor="radio-order-modal-trade-type-intraday">
-                    Trade Intraday
-                  </label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    name="radio-order-modal-trade-type"
-                    id="radio-order-modal-trade-type-longterm"
-                    type="radio"
-                  />
-                  <label
-                    htmlFor="radio-order-modal-trade-type-longterm"
-                    className=""
-                  >
-                    Delivery Longterm
-                  </label>
-                </div>
-              </div>
+              <RadioGroup
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  gap: 4,
+                }}
+                aria-labelledby="radio-order-modal-trade-type"
+                name="radio-order-modal-trade-type"
+                defaultValue="intraday"
+              >
+                <FormControlLabel
+                  sx={{
+                    fontSize: "12px",
+                    margin: 0,
+                    display: "flex",
+
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: 0.5,
+                  }}
+                  control={<CustomRadio />}
+                  value="intraday"
+                  label={
+                    <span className="text-xs font-medium block">
+                      Trade Intraday
+                    </span>
+                  }
+                />
+                <FormControlLabel
+                  sx={{
+                    fontSize: "12px",
+                    margin: 0,
+                    display: "flex",
+                    gap: 0.5,
+                  }}
+                  control={<CustomRadio />}
+                  value="longterm"
+                  label={
+                    <span className="text-xs font-medium block">
+                      Delivery Longterm
+                    </span>
+                  }
+                />
+              </RadioGroup>
               <div className="flex justify-between items-center gap-8">
                 <NumberInput
-                  label="QTY"
-                  value={QTY}
+                  label="Qty"
+                  value={Qty}
                   onChange={(value) => setQTY(value)}
                 />
                 <NumberInput
@@ -229,90 +265,102 @@ export function OrderModal() {
                   onChange={(value) => setTriggerPrice(value)}
                 />
               </div>
-              <div className="text-xs text-primary font-medium flex items-center gap-8">
-                <div
-                  className="
-                flex justify-center items-center gap-2"
-                >
-                  <input
-                    name="radio-order-modal-trade-sub-type"
-                    id="radio-order-modal-trade-sub-type-market"
-                    type="radio"
-                  />
-                  <label htmlFor="radio-order-modal-trade-sub-type-market">
-                    Market
-                  </label>
-                </div>
-                <div
-                  className="
-                flex justify-center items-center gap-2"
-                >
-                  <input
-                    name="radio-order-modal-trade-sub-type"
-                    id="radio-order-modal-trade-sub-type-limit"
-                    type="radio"
-                  />
-                  <label htmlFor="radio-order-modal-trade-sub-type-limit">
-                    Limit
-                  </label>
-                </div>
-                <div
-                  className="
-                flex justify-center items-center gap-2"
-                >
-                  <input
-                    name="radio-order-modal-trade-sub-type"
-                    id="radio-order-modal-trade-sub-type-sl"
-                    type="radio"
-                  />
-                  <label htmlFor="radio-order-modal-trade-sub-type-sl">
-                    SL
-                  </label>
-                </div>
-                <div
-                  className="
-                flex justify-center items-center gap-2"
-                >
-                  <input
-                    name="radio-order-modal-trade-sub-type"
-                    id="radio-order-modal-trade-sub-type-sl-m"
-                    type="radio"
-                  />
-                  <label htmlFor="radio-order-modal-trade-sub-type-sl-m">
-                    SL-M
-                  </label>
-                </div>
-              </div>
+              <RadioGroup
+                sx={{ display: "flex", flexDirection: "row", gap: 4 }}
+                aria-labelledby="radio-order-modal-trade-sub-type"
+                name="radio-order-modal-trade-sub-type"
+                defaultValue="limit"
+              >
+                <FormControlLabel
+                  sx={{
+                    fontSize: "12px",
+                    margin: 0,
+                    display: "flex",
+                    gap: 0.5,
+                  }}
+                  control={<CustomRadio />}
+                  value="market"
+                  label={
+                    <span className="text-xs font-medium block">Market</span>
+                  }
+                />
+                <FormControlLabel
+                  sx={{
+                    fontSize: "12px",
+                    margin: 0,
+                    display: "flex",
+                    gap: 0.5,
+                  }}
+                  control={<CustomRadio />}
+                  value="limit"
+                  label={
+                    <span className="text-xs font-medium block">Limit</span>
+                  }
+                />
+                <FormControlLabel
+                  sx={{
+                    fontSize: "12px",
+                    margin: 0,
+                    display: "flex",
+                    gap: 0.5,
+                  }}
+                  control={<CustomRadio />}
+                  value="sl"
+                  label={<span className="text-xs font-medium block">SL</span>}
+                />
+                <FormControlLabel
+                  sx={{
+                    fontSize: "12px",
+                    margin: 0,
+                    display: "flex",
+                    gap: 0.5,
+                  }}
+                  control={<CustomRadio />}
+                  value="sl-m"
+                  label={
+                    <span className="text-xs font-medium block">SL-M</span>
+                  }
+                />
+              </RadioGroup>
             </div>
             <div className="flex gap-8 px-5 py-[10px] border-b-2 border-border">
-              <div className="flex flex-col ">
+              <div className="flex flex-col justify-between">
                 <div className="text-sm">Validity</div>
-                <div className="text-xs text-primary font-medium flex items-center gap-8">
-                  <div
-                    className="
-                flex justify-center items-center gap-2"
-                  >
-                    <input
-                      name="radio-order-modal-validity"
-                      id="radio-order-modal-validity-day"
-                      type="radio"
-                    />
-                    <label htmlFor="radio-order-modal-validity-day">Day</label>
-                  </div>
-                  <div
-                    className="
-                flex justify-center items-center gap-2"
-                  >
-                    <input
-                      name="radio-order-modal-validity"
-                      id="radio-order-modal-validity-intermidiate"
-                      type="radio"
-                    />
-                    <label htmlFor="radio-order-modal-validity-intermidiate">
-                      Immediate
-                    </label>
-                  </div>
-                </div>
+                <RadioGroup
+                  sx={{ display: "flex", flexDirection: "row", gap: 4 }}
+                  aria-labelledby="radio-order-modal-validity"
+                  name="radio-order-modal-validity"
+                  defaultValue="day"
+                >
+                  <FormControlLabel
+                    sx={{
+                      fontSize: "12px",
+                      margin: 0,
+                      display: "flex",
+                      gap: 0.5,
+                    }}
+                    control={<CustomRadio />}
+                    value="day"
+                    label={
+                      <span className="text-xs font-medium block">Day</span>
+                    }
+                  />
+                  <FormControlLabel
+                    sx={{
+                      fontSize: "12px",
+                      margin: 0,
+                      display: "flex",
+                      gap: 0.5,
+                    }}
+                    control={<CustomRadio />}
+                    value="immediate"
+                    label={
+                      <span className="text-xs font-medium block">
+                        Immediate
+                      </span>
+                    }
+                  />
+                </RadioGroup>
               </div>
               <div className="mt-auto">
                 <NumberInput
@@ -323,25 +371,30 @@ export function OrderModal() {
               </div>
             </div>
 
-            <div className="flex justify-between items-center px-5 py-[10px]">
-              <div className="flex flex-col text-xs text-neutral">
+            <div className="flex justify-between items-center px-5 py-[10px] bg-[#f9f9f9] font-medium">
+              <div className="flex flex-col text-xs">
                 <div className="flex gap-6">
                   <div>Approx. Margin</div>
-                  <div className="flex gap-2 translate-x-[32px]">
-                    <div>280.00</div>
-                    <Replay className="text-blue cursor-pointer" />
+                  <div className="flex gap-2 translate-x-[29px]">
+                    <div>
+                      {(data?.Touchline?.LastTradedPrice * Qty).toFixed(2)}
+                    </div>
+                    <Replay
+                      className="text-blue cursor-pointer"
+                      fontSize="small"
+                    />
                   </div>
                 </div>
                 <div className="flex justify-between">
                   <div>Available</div>
-                  <div>280.00</div>
+                  <div>NA</div>
                 </div>
               </div>
               <div className="flex gap-6">
                 <button
                   className={`${
                     type === "BUY" ? "bg-green-gradient" : "bg-red-gradient"
-                  } w-[105px] h-[45px] rounded-lg font-medium text-white`}
+                  } w-[105px] h-[45px] rounded-lg text-3xl font-medium text-white`}
                 >
                   {type === "BUY" ? "Buy" : "Sell"}
                 </button>
@@ -354,7 +407,7 @@ export function OrderModal() {
                       })
                     )
                   }
-                  className="bg-white w-[105px] h-[45px] rounded-lg font-medium text-neutral border-2 border-secondary"
+                  className="bg-white w-[105px] h-[45px] rounded-lg font-medium border-2 border-[#a9a9a9] text-[#a9a9a9] text-3xl"
                 >
                   Cancel
                 </button>
