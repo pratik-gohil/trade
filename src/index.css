@@ -61,6 +61,22 @@
     min-width: 428px;
     width: 428px;
   }
+
+  .shadow-custom {
+    box-shadow: 0 -3px 15px 0 rgba(0, 0, 0, 0.25);
+  }
+
+  .shadow-custom-sm {
+    box-shadow: 0 -3px 15px 0 rgba(0, 0, 0, 0.08);
+  }
+
+  .shadow-modal {
+    box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.25);
+  }
+
+  .shadow-popup {
+    box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.3);
+  }
 }
 
 html {
@@ -105,6 +121,7 @@ body {
   font-family: 'Inter', sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color: rgba(var(--primary), 1)
 }
 
 code {

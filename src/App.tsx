@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Main } from "./components/Main";
 import {
   BrowserRouter as Router,
@@ -47,17 +47,8 @@ declare module "@mui/material/Typography" {
   }
 }
 
-const theme = createTheme({
-  palette: {
-    primary: { main: "rgba(68, 68, 68)" },
-    secondary: { main: "rgba(169, 169, 169, 1)" },
-    neutral: { main: "rgba(140, 140, 140, 1)" },
-    success: { main: "rgba(76, 175, 80, 1)" },
-    failure: { main: "rgba(223, 81, 76, 1)" },
-    blue: { main: "rgba(21, 84, 146, 1)" },
-    border: { main: "rgba(230, 230, 230, 1)" },
-  },
-});
+const cssVar = (name: string) =>
+  getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 
 export default function App() {
   const isLoggedIn = localStorage.getItem(TOKEN);
@@ -76,6 +67,25 @@ export default function App() {
       }
     })();
   }, [dispatch]);
+
+  const [theme] = useState(() =>
+    createTheme({
+      typography: {
+        allVariants: {
+          fontFamily: "Inter",
+        },
+      },
+      palette: {
+        primary: { main: `rgba(${cssVar("--primary")}, 1) ` },
+        secondary: { main: `rgba(${cssVar("--secondary")}, 1) ` },
+        neutral: { main: `rgba(${cssVar("--neutral")}, 1) ` },
+        success: { main: `rgba(${cssVar("--success")}, 1) ` },
+        failure: { main: `rgba(${cssVar("--failure")}, 1) ` },
+        blue: { main: `rgba(${cssVar("--blue")}, 1) ` },
+        border: { main: `rgba(${cssVar("--border")}, 1) ` },
+      },
+    })
+  );
 
   return (
     <ThemeProvider theme={theme}>

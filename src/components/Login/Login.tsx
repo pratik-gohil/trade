@@ -40,7 +40,7 @@ export function Login() {
 
   return (
     <div className="flex justify-center items-center h-screen w-screen">
-      <div className="rounded-3xl shadow-xl p-10 w-[540px] max-w-[540px] h-[540px] max-h-[540px]">
+      <div className="rounded-3xl shadow-custom p-10 w-[540px] max-w-[540px] h-[540px] max-h-[540px]">
         <div className="flex flex-col gap-[30px] h-full">
           {LoginFlow[loginFlowCurrentState]}
         </div>

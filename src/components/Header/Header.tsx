@@ -42,7 +42,7 @@ const links = [
 export const Header = () => {
   const user = useSelector((state: RootState) => state.auth.user);
   return (
-    <div className="max-h-16 h-16 flex justify-between items-center shadow-sm">
+    <div className="max-h-16 h-16 flex justify-between items-center shadow-custom">
       <div className="flex justify-between items-center gap-4 sidebar-width overflow-hidden px-5">
         <span className="text-xl font-medium text-primary">TRADE.COM</span>
         <div className="flex text-right gap-4 text-xs font-medium mr-[10px]">
@@ -69,7 +69,7 @@ export const Header = () => {
               className={({ isActive }) =>
                 (isActive
                   ? "text-blue !underline !decoration-2 underline-offset-[5px] nav-link"
-                  : "text-primary nav-link") + " font-medium hover:text-blue"
+                  : "text-[#666] nav-link") + " font-medium hover:text-blue"
               }
               to={link.path}
             >
@@ -77,7 +77,7 @@ export const Header = () => {
             </NavLink>
           ))}
         </div>
-        <div className="text-neutral text-sm flex items-center gap-2 border-border border-l pl-2">
+        <div className="text-[#444] font-medium text-sm flex items-center gap-2 border-border border-l pl-2">
           <span className="rounded-full">
             <AccountCircleIcon />
           </span>

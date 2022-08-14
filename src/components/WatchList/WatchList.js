@@ -296,6 +296,7 @@ export function WatchList() {
               <Search color="inherit" fontSize="small" />
               <input
                 autoFocus
+                type="text"
                 value={instrumentSearch}
                 onChange={(e) => {
                   setStockSearch(e.target.value);
@@ -312,7 +313,8 @@ export function WatchList() {
                   className="cursor-pointer"
                 />
               ) : (
-                <span>5/10</span>
+                <></>
+                // <span>5/10</span>
               )}
             </div>
           </div>
@@ -449,7 +451,7 @@ export function WatchList() {
                         })
                       )
                     }
-                    className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center text-white bg-green-gradient"
+                    className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center text-white bg-green-gradient"
                   >
                     B
                   </div>
@@ -468,7 +470,7 @@ export function WatchList() {
                         })
                       )
                     }
-                    className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center text-white bg-red-gradient"
+                    className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center text-white bg-red-gradient"
                   >
                     S
                   </div>
@@ -476,7 +478,7 @@ export function WatchList() {
                     onClick={() =>
                       handleInstrumentExpand(instrument.ExchangeInstrumentID)
                     }
-                    className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center bg-white text-primary border border-primary"
+                    className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center bg-white text-primary border border-primary"
                   >
                     5
                   </div>
@@ -489,11 +491,11 @@ export function WatchList() {
                         symbolExpiry: instrument.ExDate,
                       })
                     }
-                    className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center border border-primary text-primary bg-white"
+                    className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center border border-primary text-primary bg-white"
                   >
                     <Delete />
                   </div>
-                  <div className="w-10 h-7 overflow-hidden cursor-pointer rounded-[5px] flex justify-center items-center border border-primary text-primary bg-white">
+                  <div className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center border border-primary text-primary bg-white">
                     <MoreVert />
                   </div>
                 </div>
@@ -649,12 +651,12 @@ export function WatchList() {
           ))
         )}
 
-        <div className="text-md fixed mt-auto h-fit bottom-0 left-0 right-0 bg-white p-[10px] border-border border-t gap-2 flex flex-col sidebar-width">
+        <div className="text-md fixed mt-auto h-fit bottom-0 left-0 right-0 bg-white p-[10px] border-border border-t gap-2 flex flex-col sidebar-width shadow-custom-sm">
           <div
             ref={filterModalRef}
-            className={`${
+            className={`shadow-popup ${
               showWatchListFilters ? "block" : "hidden"
-            } absolute bottom-full mb-4 mr-[6px] right-4 bg-white shadow rounded overflow-hidden w-fit text-base`}
+            } absolute bottom-full mb-4 mr-[6px] right-4 bg-white rounded overflow-hidden w-fit text-base`}
           >
             <div className="border-b border-border p-4">
               <div className="flex justify-between mb-4">
@@ -807,7 +809,7 @@ export function WatchList() {
               ref={filterModalToggleButton}
               className={`${
                 showWatchListFilters ? "rotate-90" : "rotate-0"
-              } cursor-pointer text-primary transition !w-[20px] !h-[20px]`}
+              } cursor-pointer text-[#333] transition !w-[20px] !h-[20px]`}
             />
           </div>
           {tradeBoxes && (
@@ -825,7 +827,7 @@ export function WatchList() {
                   </div>
                 ))}
               </div>
-              <EditOutlined className="cursor-pointer text-primary !w-[20px] !h-[20px]" />
+              <EditOutlined className="cursor-pointer text-[#333] !w-[20px] !h-[20px]" />
             </div>
           )}
         </div>
