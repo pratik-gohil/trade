@@ -15,6 +15,8 @@ import {
   CancelOutlined,
   // Done,
   Add,
+  ArrowDropUp,
+  ArrowDropDown,
 } from "@mui/icons-material";
 import useModal from "../../hooks/useModal";
 import { visiblityReducer } from "../../features/orderModal/orderModal";
@@ -32,6 +34,13 @@ import IInstrument from "../../types/interfaces/instrument.interfaces.types";
 import { delSymbol } from "../../http/delSymbol/delSymbol";
 import { addSymbol } from "../../http/addSymbol/addSymbol";
 import { USER_ID } from "../../constants/global";
+import {
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  RadioGroup,
+} from "@mui/material";
+import CustomRadio from "../Radio/Radio";
 
 export function WatchList() {
   const [selectedIndice, setSelectedIndice] = useState("Indian");
@@ -42,6 +51,14 @@ export function WatchList() {
   const [instruments, setInstruments] = useState([]);
   const [groupSymbols, setGroupSymbols] = useState([]);
   const [groups, setGroups] = useState([]);
+  const [filters, setFilters] = useState({
+    filterBy: "A-Z",
+    change: "close",
+    changeFormat: "percentage",
+    showDirection: true,
+    showChange: true,
+    showHoldings: true,
+  });
   const tradeBoxes = ["TradeBox 1", "TradeBox 2", "TradeBox 3", "TradeBox 4"];
   const indices = ["Indian", "Global", "Commodity", "Currency"];
   const indianIndicesList = [
@@ -81,8 +98,6 @@ export function WatchList() {
   const dispatch = useDispatch();
   const { socket } = useContext(SocketContext);
 
-  const [liveInstrumentsData, setLiveInstrumentsData] = useState({});
-
   const increment = 10000;
   const [searchIndex, setSearchIndex] = useState(increment);
   const observer = useRef();
@@ -101,10 +116,13 @@ export function WatchList() {
   useEffect(() => {
     socket.on("1502-json-full", (res) => {
       const data = JSON.parse(res);
-      setLiveInstrumentsData((prev) => ({
-        ...prev,
-        [data.ExchangeInstrumentID]: data,
-      }));
+      setInstruments((instruments) =>
+        instruments.map((instrument) =>
+          instrument.ExchangeInstrumentID === data.ExchangeInstrumentID
+            ? { ...instrument, ...data }
+            : instrument
+        )
+      );
     });
 
     return () => {
@@ -267,6 +285,39 @@ export function WatchList() {
     });
   };
 
+  const filterAlphabatically = (a, b) => {
+    return a?.DisplayName.localeCompare(b?.DisplayName);
+  };
+
+  const filterByPercentChange = (a, b) => {
+    return a?.Touchline?.PercentChange - b?.Touchline?.PercentChange;
+  };
+
+  const filterByLTP = (a, b) => {
+    return a?.Touchline?.LastTradedPrice - b?.Touchline?.LastTradedPrice;
+  };
+
+  const filterEXH = (a, b) => {
+    return Segments[a?.ExchangeSegment].localeCompare(
+      Segments[b?.ExchangeSegment]
+    );
+  };
+
+  const filterInstruments = (a, b) => {
+    switch (filters.filterBy) {
+      case "A-Z":
+        return filterAlphabatically(a, b);
+      case "%":
+        return filterByPercentChange(a, b);
+      case "LTP":
+        return filterByLTP(a, b);
+      case "EXH":
+        return filterEXH(a, b);
+      default:
+        return filterAlphabatically(a, b);
+    }
+  };
+
   return (
     <>
       <div className="relative h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] overflow-y-auto sidebar-width flex flex-col items-center border-r border-border">
@@ -391,7 +442,7 @@ export function WatchList() {
             <div ref={endRef} />
           </>
         ) : (
-          instruments.map((instrument) => (
+          instruments.sort(filterInstruments).map((instrument) => (
             <Fragment key={instrument.ExchangeInstrumentID}>
               <div className="w-full relative group">
                 <div className="w-full border-border border-b p-5 flex justify-between items-center">
@@ -405,32 +456,35 @@ export function WatchList() {
                   </div>
                   <div className="text-right">
                     <div className="text-primary text-base">
-                      {
-                        liveInstrumentsData?.[instrument.ExchangeInstrumentID]
-                          ?.Touchline?.LastTradedPrice
-                      }
+                      {instrument?.Touchline?.LastTradedPrice}
                     </div>
                     <div
                       className={`text-xs ${
-                        liveInstrumentsData?.[instrument.ExchangeInstrumentID]
-                          ?.Touchline?.PercentChange > 0
+                        instrument?.Touchline?.PercentChange > 0
                           ? "text-success"
                           : "text-failure"
                       }`}
                     >
-                      {parseFloat(
-                        (liveInstrumentsData?.[instrument.ExchangeInstrumentID]
-                          ?.Touchline?.LastTradedPrice *
-                          liveInstrumentsData?.[instrument.ExchangeInstrumentID]
-                            ?.Touchline?.PercentChange) /
-                          100
-                      ).toFixed(2)}{" "}
-                      (
-                      {parseFloat(
-                        liveInstrumentsData?.[instrument.ExchangeInstrumentID]
-                          ?.Touchline?.PercentChange
-                      ).toFixed(2)}
-                      %)
+                      {filters.showChange && (
+                        <span>
+                          {parseFloat(
+                            (instrument?.Touchline?.LastTradedPrice *
+                              instrument?.Touchline?.PercentChange) /
+                              100
+                          ).toFixed(2)}{" "}
+                          (
+                          {parseFloat(
+                            instrument?.Touchline?.PercentChange
+                          ).toFixed(2)}
+                          %)
+                        </span>
+                      )}
+                      {filters.showDirection &&
+                        (instrument?.Touchline?.PercentChange > 0 ? (
+                          <ArrowDropUp />
+                        ) : (
+                          <ArrowDropDown />
+                        ))}
                     </div>
                   </div>
                 </div>
@@ -444,9 +498,7 @@ export function WatchList() {
                           order: {
                             type: "BUY",
                             instrument,
-                            data: liveInstrumentsData?.[
-                              instrument.ExchangeInstrumentID
-                            ],
+                            data: instrument,
                           },
                         })
                       )
@@ -463,9 +515,7 @@ export function WatchList() {
                           order: {
                             type: "SELL",
                             instrument,
-                            data: liveInstrumentsData?.[
-                              instrument.ExchangeInstrumentID
-                            ],
+                            data: instrument,
                           },
                         })
                       )
@@ -575,34 +625,10 @@ export function WatchList() {
                       </thead>
                       <tbody>
                         <tr className="text-xs text-primary">
-                          <td>
-                            {
-                              liveInstrumentsData?.[
-                                instrument.ExchangeInstrumentID
-                              ].Touchline.Open
-                            }
-                          </td>
-                          <td>
-                            {
-                              liveInstrumentsData?.[
-                                instrument.ExchangeInstrumentID
-                              ].Touchline.High
-                            }
-                          </td>
-                          <td>
-                            {
-                              liveInstrumentsData?.[
-                                instrument.ExchangeInstrumentID
-                              ].Touchline.Low
-                            }
-                          </td>
-                          <td>
-                            {
-                              liveInstrumentsData?.[
-                                instrument.ExchangeInstrumentID
-                              ].Touchline.Close
-                            }
-                          </td>
+                          <td>{instrument?.Touchline?.Open}</td>
+                          <td>{instrument?.Touchline?.High}</td>
+                          <td>{instrument?.Touchline?.Low}</td>
+                          <td>{instrument?.Touchline?.Close}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -614,11 +640,7 @@ export function WatchList() {
                       <div className="flex justify-between w-full px-8">
                         <span className="text-secondary">Avg. Price</span>
                         <span className="text-primary">
-                          {
-                            liveInstrumentsData?.[
-                              instrument.ExchangeInstrumentID
-                            ].Touchline.AverageTradedPrice
-                          }
+                          {instrument?.Touchline?.AverageTradedPrice}
                         </span>
                       </div>
                     </div>
@@ -626,11 +648,7 @@ export function WatchList() {
                       <div className="flex justify-between w-full px-8">
                         <span className="text-secondary">LTT</span>
                         <span className="text-primary">
-                          {new Date(
-                            liveInstrumentsData?.[
-                              instrument.ExchangeInstrumentID
-                            ].Touchline.LastTradedTime
-                          )
+                          {new Date(instrument?.Touchline?.LastTradedTime)
                             .toLocaleDateString("en", {
                               year: "2-digit",
                               month: "2-digit",
@@ -670,8 +688,15 @@ export function WatchList() {
               <div className="flex justify-between items-center gap-2">
                 {["A-Z", "%", "LTP", "EXH"].map((fil) => (
                   <div
+                    onClick={() =>
+                      setFilters((filters) => ({ ...filters, filterBy: fil }))
+                    }
                     key={fil}
-                    className={`text-center py-1 px-3 border border-border cursor-pointer`}
+                    className={`${
+                      fil === filters.filterBy
+                        ? "border-blue text-blue font-medium"
+                        : "border-border"
+                    } text-center py-1 px-3 border cursor-pointer`}
                   >
                     {fil}
                   </div>
@@ -680,77 +705,190 @@ export function WatchList() {
             </div>
             <div className="border-b border-border p-4">
               <div className="mb-4">Change</div>
-              <div className="flex items-center gap-4">
-                <div className="flex justify-between items-center gap-2">
-                  <input
-                    name="watchlist-filter"
-                    value="close"
-                    id="watchlist-filter-close-price"
-                    type="radio"
-                    className="cursor-pointer"
-                  />{" "}
-                  <label
-                    htmlFor="watchlist-filter-close-price"
-                    className="cursor-pointer"
-                  >
-                    Close Price
-                  </label>
-                </div>
-                <div className="flex justify-between items-center gap-2">
-                  <input
-                    name="watchlist-filter"
-                    value="open"
-                    id="watchlist-filter-open-price"
-                    type="radio"
-                    className="cursor-pointer"
-                  />{" "}
-                  <label
-                    htmlFor="watchlist-filter-open-price"
-                    className="cursor-pointer"
-                  >
-                    Open Price
-                  </label>
-                </div>
-              </div>
+              <RadioGroup
+                sx={{ display: "flex", flexDirection: "row", gap: 2 }}
+                aria-labelledby="watchlist-filter"
+                name="watchlist-filter"
+                defaultValue="close"
+              >
+                <FormControlLabel
+                  sx={{
+                    fontSize: "12px",
+                    margin: 0,
+                    display: "flex",
+                    gap: 0.5,
+                  }}
+                  control={<CustomRadio />}
+                  value="close"
+                  label={
+                    <span className="text-xs font-medium block">
+                      Close Price
+                    </span>
+                  }
+                />
+                <FormControlLabel
+                  sx={{
+                    fontSize: "12px",
+                    margin: 0,
+                    display: "flex",
+                    gap: 0.5,
+                  }}
+                  control={<CustomRadio />}
+                  value="open"
+                  label={
+                    <labe className="text-xs font-medium block">
+                      Open Price
+                    </labe>
+                  }
+                />
+              </RadioGroup>
             </div>
             <div className="border-b border-border p-4">
               <div className="mb-4">Change Format</div>
-              <div className="flex items-center gap-4">
-                <div className="flex justify-between items-center gap-2">
-                  <input
-                    name="watchlist-filter-format"
-                    value="percentage"
-                    id="watchlist-filter-format-percentage"
-                    type="radio"
-                    className="cursor-pointer"
-                  />{" "}
-                  <label
-                    htmlFor="watchlist-filter-format-percentage"
-                    className="cursor-pointer"
-                  >
-                    Percentage
-                  </label>
-                </div>
-                <div className="flex justify-between items-center gap-2">
-                  <input
-                    name="watchlist-filter-format"
-                    value="absolute"
-                    id="watchlist-filter-format-absolute"
-                    type="radio"
-                    className="cursor-pointer"
-                  />{" "}
-                  <label
-                    htmlFor="watchlist-filter-format-absolute"
-                    className="cursor-pointer"
-                  >
-                    Absolute
-                  </label>
-                </div>
-              </div>
+              <RadioGroup
+                sx={{ display: "flex", flexDirection: "row", gap: 2 }}
+                aria-labelledby="watchlist-filter-change-format"
+                name="watchlist-filter-change-format"
+                defaultValue="percentage"
+              >
+                <FormControlLabel
+                  sx={{
+                    fontSize: "12px",
+                    margin: 0,
+                    display: "flex",
+                    gap: 0.5,
+                  }}
+                  control={<CustomRadio />}
+                  value="percentage"
+                  label={
+                    <span className="text-xs font-medium block">
+                      Percentage
+                    </span>
+                  }
+                />
+                <FormControlLabel
+                  sx={{
+                    fontSize: "12px",
+                    margin: 0,
+                    display: "flex",
+                    gap: 0.5,
+                  }}
+                  control={<CustomRadio />}
+                  value="absolute"
+                  label={
+                    <span className="text-xs font-medium block">Absolute</span>
+                  }
+                />
+              </RadioGroup>
             </div>
 
             <div className="border-b border-border p-4">
-              <div className="flex items-center gap-2">
+              <FormGroup
+                sx={{
+                  gap: ".5rem",
+                }}
+              >
+                <FormControlLabel
+                  sx={{
+                    fontSize: "12px",
+                    margin: 0,
+                    display: "flex",
+                    gap: 0.5,
+                  }}
+                  control={
+                    <Checkbox
+                      onChange={(e) =>
+                        setFilters((filter) => ({
+                          ...filter,
+                          showDirection: e.target.checked,
+                        }))
+                      }
+                      defaultChecked={filters.showDirection}
+                      sx={(theme) => ({
+                        padding: 0,
+                        "& .MuiSvgIcon-root": { fontSize: 16 },
+                        "&.Mui-checked": {
+                          color: theme.palette.blue.main,
+                        },
+                        "&:hover": { bgcolor: "transparent" },
+                      })}
+                      disableRipple
+                    />
+                  }
+                  label={
+                    <span className="text-xs font-medium block">
+                      Show direction
+                    </span>
+                  }
+                />
+                <FormControlLabel
+                  sx={{
+                    fontSize: "12px",
+                    margin: 0,
+                    display: "flex",
+                    gap: 0.5,
+                  }}
+                  control={
+                    <Checkbox
+                      onChange={(e) =>
+                        setFilters((filter) => ({
+                          ...filter,
+                          showChange: e.target.checked,
+                        }))
+                      }
+                      defaultChecked={filters.showChange}
+                      sx={(theme) => ({
+                        padding: 0,
+                        "& .MuiSvgIcon-root": { fontSize: 16 },
+                        "&.Mui-checked": {
+                          color: theme.palette.blue.main,
+                        },
+                        "&:hover": { bgcolor: "transparent" },
+                      })}
+                      disableRipple
+                    />
+                  }
+                  label={
+                    <span className="text-xs font-medium block">
+                      Show change
+                    </span>
+                  }
+                />
+                <FormControlLabel
+                  sx={{
+                    fontSize: "12px",
+                    margin: 0,
+                    display: "flex",
+                    gap: 0.5,
+                  }}
+                  control={
+                    <Checkbox
+                      onChange={(e) =>
+                        setFilters((filter) => ({
+                          ...filter,
+                          showHoldings: e.target.checked,
+                        }))
+                      }
+                      defaultChecked={filters.showHoldings}
+                      sx={(theme) => ({
+                        padding: 0,
+                        "& .MuiSvgIcon-root": { fontSize: 16 },
+                        "&.Mui-checked": {
+                          color: theme.palette.blue.main,
+                        },
+                        "&:hover": { bgcolor: "transparent" },
+                      })}
+                      disableRipple
+                    />
+                  }
+                  label={
+                    <span className="text-xs font-medium block">
+                      Show holdings
+                    </span>
+                  }
+                />
+              </FormGroup>
+              {/* <div className="flex items-center gap-2">
                 <input id="watchlist-filter-show-direction" type="checkbox" />{" "}
                 <label htmlFor="watchlist-filter-show-direction">
                   Show direction
@@ -767,7 +905,7 @@ export function WatchList() {
                 <label htmlFor="watchlist-filter-show-holding">
                   Show holding
                 </label>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="flex justify-between items-center text-secondary gap-2">
