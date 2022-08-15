@@ -30,10 +30,10 @@ import { subscribeInstruments } from "../../http/subscribeInstruments/subscribeI
 import { unsubscribeInstruments } from "../../http/unsubscribeInstruments/unsubscribeInstruments";
 import { searchInstruments } from "../../http/searchInstruments/searchInstruments";
 import { Segments } from "../../types/enums/segment.enums.types";
-import IInstrument from "../../types/interfaces/instrument.interfaces.types";
+import { IInstrument } from "../../types/interfaces/instrument.interfaces.types";
 import { delSymbol } from "../../http/delSymbol/delSymbol";
 import { addSymbol } from "../../http/addSymbol/addSymbol";
-import { USER_ID } from "../../constants/global";
+import { constants } from "../../constants/global";
 import {
   Checkbox,
   FormControlLabel,
@@ -41,21 +41,53 @@ import {
   RadioGroup,
 } from "@mui/material";
 import CustomRadio from "../Radio/Radio";
+import { percDiff } from "../../utils/percentageDiffrence";
+const { USER_ID } = constants;
+
+interface IMasterInstrument {
+  exchangeSegment: string;
+  exchangeInstrumentID: string;
+  instrumentType: string;
+  name: string;
+  description: string;
+  series: string;
+  nameWithSeries: string;
+  instrumentID: string;
+  highPriceBand: string;
+  lowPriceBand: string;
+  freezeQty: string;
+  tickSize: string;
+  lotSize: string;
+  multiplier: string;
+  underlyingInstrumentId: string;
+  contractExpiration: string;
+  strikePrice: string;
+  optionType: string;
+}
+
+interface IGroup {
+  isDefault: boolean;
+  isEditable: boolean;
+  groupName: string;
+  isSectorWatch: boolean;
+  isPredefinedGroup: boolean;
+  exchangeSegment: string;
+}
 
 export function WatchList() {
   const [selectedIndice, setSelectedIndice] = useState("Indian");
   const [selectedGroup, setSelectedGroup] = useState("Indices");
   const [instrumentSearch, setStockSearch] = useState("");
-  const [searchResult, setSearchResult] = useState([]);
-  const [master, setMaster] = useState([]);
-  const [instruments, setInstruments] = useState([]);
+  const [searchResult, setSearchResult] = useState<IMasterInstrument[]>([]);
+  const [master, setMaster] = useState<IMasterInstrument[]>([]);
+  const [instruments, setInstruments] = useState<IInstrument[]>([]);
   const [groupSymbols, setGroupSymbols] = useState([]);
-  const [groups, setGroups] = useState([]);
+  const [groups, setGroups] = useState<IGroup[]>([]);
   const [filters, setFilters] = useState({
     filterBy: "A-Z",
     changeBy: "close",
     changeByFormat: "percentage",
-    showDirection: true,
+    showDirection: false,
     showChange: true,
     showHoldings: true,
   });
@@ -96,11 +128,11 @@ export function WatchList() {
     filterModalToggleButton
   );
   const dispatch = useDispatch();
-  const { socket } = useContext(SocketContext);
+  const { socket } = useContext(SocketContext) as { socket: any };
 
   const increment = 10000;
   const [searchIndex, setSearchIndex] = useState(increment);
-  const observer = useRef();
+  const observer = useRef<IntersectionObserver | null>(null);
   const endRef = useCallback((node) => {
     if (observer.current) observer.current.disconnect();
     observer.current = new IntersectionObserver((entries) => {
@@ -110,18 +142,18 @@ export function WatchList() {
         }
       }
     });
-    if (node) observer.current.observe(node);
-  });
+    if (node) observer?.current?.observe(node);
+  }, []);
 
   useEffect(() => {
     socket.on("1502-json-full", (res) => {
       const data = JSON.parse(res);
       setInstruments((instruments) =>
-        instruments.map((instrument) =>
-          instrument.ExchangeInstrumentID === data.ExchangeInstrumentID
+        instruments.map((instrument) => {
+          return instrument.ExchangeInstrumentID === data.ExchangeInstrumentID
             ? { ...instrument, ...data }
-            : instrument
-        )
+            : instrument;
+        })
       );
     });
 
@@ -266,7 +298,9 @@ export function WatchList() {
   };
 
   const handleAddInstrument = (data) => {
-    addSymbol(data);
+    addSymbol(data).then(() => {
+      fetchGroupSymbols();
+    });
   };
 
   const handleDeleteInstrument = ({
@@ -427,8 +461,8 @@ export function WatchList() {
                         userID: localStorage.getItem(USER_ID),
                         groupName: selectedGroup,
                         exchangeSegment: instrument.exchangeSegment,
-                        exchangeInstrumentID: instrument.instrumentID,
-                        symbolExpiry: instrument.ExDate,
+                        exchangeInstrumentID: instrument.exchangeInstrumentID,
+                        // symbolExpiry: instrument.ExDate,
                       })
                     }
                     className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center border border-primary text-white bg-blue-gradient"
@@ -443,15 +477,13 @@ export function WatchList() {
           </>
         ) : (
           instruments.sort(filterInstruments).map((instrument) => {
-            var percDiff = (a, b) =>
-              ((100 * (a - b)) / ((a + b) / 2)).toFixed(2);
             const changeBy =
               filters.changeBy === "close"
                 ? instrument?.Touchline?.Close
                 : instrument?.Touchline?.Open;
-            const diffrence = (
-              instrument?.Touchline?.LastTradedPrice - changeBy
-            ).toFixed(2);
+            const diffrence = Number(
+              (instrument?.Touchline?.LastTradedPrice - changeBy).toFixed(2)
+            );
             const percentDiffrence = percDiff(
               instrument?.Touchline?.LastTradedPrice,
               changeBy
@@ -612,7 +644,7 @@ export function WatchList() {
                         </tr>
                         <tr className="text-xs">
                           <td className="p-1.5 text-success">100</td>
-                          <td className="p-1.5 text-secondary" colSpan="4">
+                          <td className="p-1.5 text-secondary" colSpan={4}>
                             Total
                           </td>
                           <td className="p-1.5 text-success">100</td>
@@ -937,7 +969,7 @@ export function WatchList() {
                       } flex-1 text-center py-1 px-[9.5px] cursor-pointer text-lg`}
                       onClick={() => setSelectedGroup(group.groupName)}
                     >
-                      <span>{i}</span>
+                      <span>{i + 1}</span>
                     </div>
                   )
               )}

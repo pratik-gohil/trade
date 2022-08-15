@@ -1,5 +1,6 @@
-import { TOKEN } from "../../constants/global";
+import { constants } from "../../constants/global";
 import HTTP from "../http";
+const { TOKEN } = constants;
 
 export const subscribeInstruments = async (data) => {
   const response = await HTTP.post(

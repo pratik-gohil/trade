@@ -83,6 +83,36 @@ export interface IInstrument {
   TotalMargin: number;
   SettlementIndicator: string;
   Industry: number;
+  Touchline: Touchline;
+  isExpanded: boolean;
+}
+
+interface Touchline {
+  BidInfo: BidInfo;
+  AskInfo: BidInfo;
+  LastTradedPrice: number;
+  LastTradedQunatity: number;
+  TotalBuyQuantity: number;
+  TotalSellQuantity: number;
+  TotalTradedQuantity: number;
+  AverageTradedPrice: number;
+  LastTradedTime: number;
+  LastUpdateTime: number;
+  PercentChange: number;
+  Open: number;
+  High: number;
+  Low: number;
+  Close: number;
+  TotalValueTraded?: any;
+  BuyBackTotalBuy: number;
+  BuyBackTotalSell: number;
+}
+
+interface BidInfo {
+  Size: number;
+  Price: number;
+  TotalOrders: number;
+  BuyBackMarketMaker: number;
 }
 
 interface Bhavcopy {

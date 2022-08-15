@@ -1,4 +1,5 @@
-import { TOKEN, USER_ID } from "../../constants/global";
+import { constants } from "../../constants/global";
+const { TOKEN, USER_ID } = constants;
 
 export const delSymbol = async ({
   groupName,

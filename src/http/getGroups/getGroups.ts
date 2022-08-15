@@ -1,5 +1,6 @@
-import { TOKEN, USER_ID } from "../../constants/global";
+import { constants } from "../../constants/global";
 import HTTP from "../http";
+const { TOKEN, USER_ID } = constants;
 
 export const getGroups = async () => {
   return await HTTP.get({

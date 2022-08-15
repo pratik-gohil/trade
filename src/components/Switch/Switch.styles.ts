@@ -3,7 +3,6 @@ const pxToRem = (px, oneRemPx = 17) => `${px / oneRemPx}rem`;
 export const useCustomSwitch = (theme, color) => {
   const heightInPX = 25;
   const sizeInPX = 15;
-  // const borderWidth = 0;
   const width = pxToRem(56);
   const height = pxToRem(heightInPX);
   const size = pxToRem(sizeInPX);
@@ -26,19 +25,14 @@ export const useCustomSwitch = (theme, color) => {
           opacity: 1,
           border: "none",
         },
-        "& $thumb": {
-          // backgroundColor: "#fff",
-        },
+        "& $thumb": {},
       },
     },
     track: {
       borderRadius: 40,
-      // border: `solid ${theme.palette.grey[400]}`,
-      // borderWidth,
       backgroundColor: "#fff",
       opacity: 1,
       transition: theme.transitions.create(["background-color", "border"]),
-      boxSizing: "border-box",
     },
     thumb: {
       boxShadow: "none",

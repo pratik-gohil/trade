@@ -5,7 +5,8 @@ import { ClientLoginPassword } from "./ClientLoginPassword";
 import { useNavigate } from "react-router-dom";
 import { ClientLoginPIN } from "./ClientLoginPIN";
 import SwitchAccount from "./SwitchAccount";
-import { TOKEN } from "../../constants/global";
+import { constants } from "../../constants/global";
+const { TOKEN } = constants;
 
 export function Login() {
   const navigate = useNavigate();

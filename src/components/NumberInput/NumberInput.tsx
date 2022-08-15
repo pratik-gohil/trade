@@ -27,7 +27,7 @@ export function NumberInput({ label, value, onChange, disabled = false }) {
           placeholder=""
           autoCorrect="off"
           min="1"
-          autoFocus="autofocus"
+          autoFocus
           className={`${
             disabled ? "cursor-not-allowed" : ""
           } outline-0 text-center bg-transparent text-primary font-medium max-w-[100px]`}

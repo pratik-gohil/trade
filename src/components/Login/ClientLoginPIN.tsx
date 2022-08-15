@@ -3,14 +3,10 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../../app/store";
-import {
-  CLIENT_CODES,
-  CLIENT_ID,
-  TOKEN,
-  USER_ID,
-} from "../../constants/global";
+import { constants } from "../../constants/global";
 import { validatePIN } from "../../http/validatePIN/validatePIN";
 import { PasswordInput } from "../PasswordInput/PasswordInput";
+const { CLIENT_CODES, CLIENT_ID, TOKEN, USER_ID } = constants;
 
 export const ClientLoginPIN = ({ setLoginFlowCurrentState }) => {
   const user = useSelector((state: RootState) => state.auth.user);
