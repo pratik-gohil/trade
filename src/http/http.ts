@@ -1,7 +1,11 @@
 export default class HTTP {
-  constructor() {}
-
-  static async get({ url, requestOptions = {} }) {
+  static async get({
+    url,
+    requestOptions = {},
+  }: {
+    url: string;
+    requestOptions: any;
+  }) {
     return await fetch(url, requestOptions)
       .then((res) => res.json())
       .then((data) => data)
@@ -9,8 +13,8 @@ export default class HTTP {
   }
 
   static async post(
-    url,
-    requestOptions = {
+    url: string,
+    requestOptions: any = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

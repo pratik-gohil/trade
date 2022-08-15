@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
+import { subscribeInstruments } from "../../http/subscribeInstruments/subscribeInstruments";
+import { searchInstruments } from "../../http/searchInstruments/searchInstruments";
+import { SocketContext } from "../../socket";
+import { percDiff } from "../../utils/percentageDiffrence";
+import { IInstrument } from "../../types/interfaces/instrument.interfaces.types";
 
 const links = [
   {
@@ -39,26 +44,93 @@ const links = [
   },
 ];
 
+const pinnedInstrumentsIds = [
+  { exchangeSegment: 1, exchangeInstrumentID: 26000 },
+  { exchangeSegment: 1, exchangeInstrumentID: 26065 },
+];
+
 export const Header = () => {
   const user = useSelector((state: RootState) => state.auth.user);
+  const [pinnedInstruments, setPinnedInstruments] = useState<IInstrument[]>([]);
+  const { socket } = useContext(SocketContext) as { socket: any };
+
+  useEffect(() => {
+    (async () => {
+      const response = await searchInstruments(pinnedInstrumentsIds);
+      if (response.type === "success") {
+        setPinnedInstruments(response.result);
+        await subscribeInstruments(pinnedInstrumentsIds);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    socket.on("1502-json-full", (res) => {
+      const data = JSON.parse(res);
+      setPinnedInstruments((instruments) =>
+        instruments.map((instrument) => {
+          return instrument.ExchangeInstrumentID === data.ExchangeInstrumentID
+            ? { ...instrument, ...data }
+            : instrument;
+        })
+      );
+    });
+
+    return () => {
+      socket.off("1502-json-full");
+    };
+  }, []);
+
   return (
     <div className="max-h-16 h-16 flex justify-between items-center shadow-custom">
       <div className="flex justify-between items-center gap-4 sidebar-width overflow-hidden px-5">
         <span className="text-xl font-medium text-primary">TRADE.COM</span>
         <div className="flex text-right gap-4 text-xs font-medium mr-[10px]">
-          <div>
+          {pinnedInstruments.map((instrument) => {
+            const diffrence = Number(
+              (
+                instrument?.Touchline?.LastTradedPrice -
+                instrument?.Touchline?.Close
+              ).toFixed(2)
+            );
+            const percentDiffrence = percDiff(
+              instrument?.Touchline?.LastTradedPrice,
+              instrument?.Touchline?.Close
+            );
+            return (
+              <div key={instrument.ExchangeInstrumentID}>
+                <div className="flex gap-2">
+                  <span>{instrument?.DisplayName}</span>{" "}
+                  <span
+                    className={`${
+                      instrument?.Touchline?.PercentChange > 0
+                        ? "text-success"
+                        : "text-failure"
+                    }`}
+                  >
+                    {instrument?.Touchline?.LastTradedPrice}
+                  </span>
+                </div>
+                <div className="text-secondary">
+                  {diffrence > 0 && "+"}
+                  {diffrence} ({percentDiffrence}%)
+                </div>
+              </div>
+            );
+          })}
+          {/* <div>
             <div className="flex gap-2">
               <span>NIFTY 50</span>{" "}
               <span className="text-failure">54878.88</span>
             </div>
             <div className="text-secondary">-167.25(-0.01%)</div>
-          </div>
-          <div>
+          </div> */}
+          {/* <div>
             <div className="flex gap-2">
               <span>SENSEX</span> <span className="text-success">54878.88</span>
             </div>
             <div className="text-secondary">+167.25(+0.01%)</div>
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="flex justify-between items-center gap-4 w-full px-5">

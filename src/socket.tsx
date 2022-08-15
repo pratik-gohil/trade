@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import io from "socket.io-client";
-import { TOKEN, USER_ID } from "./constants/global";
+import { constants } from "./constants/global";
+const { TOKEN, USER_ID } = constants;
 
 const SocketContext = createContext({});
 

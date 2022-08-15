@@ -18,7 +18,8 @@ import { Login } from "./components/Login";
 import { Header } from "./components/Header";
 import { getUserProfile } from "./http/getUserProfile/getUserProfile";
 import { setUserReducer } from "./features/Auth/Auth";
-import { TOKEN } from "./constants/global";
+import { constants } from "./constants/global";
+const { TOKEN } = constants;
 
 declare module "@mui/material/styles" {
   interface Palette {
