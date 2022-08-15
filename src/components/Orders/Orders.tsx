@@ -311,17 +311,13 @@ function EnhancedTableHead(props: EnhancedTableProps) {
       onRequestSort(event, property);
     };
 
-  useEffect(() => {
-    // const orders = getOrders();
-  }, []);
-
   return (
     <TableHead>
       <TableRow>
         {allowSelection && (
           <TableCell padding="checkbox">
             <Checkbox
-              color="primary"
+              color="secondary"
               indeterminate={numSelected > 0 && numSelected < rowCount}
               checked={rowCount > 0 && numSelected === rowCount}
               onChange={onSelectAllClick}
@@ -343,7 +339,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
               direction={orderBy === headCell.id ? order : "asc"}
               onClick={createSortHandler(headCell.id)}
             >
-              {headCell.label}
+              <span className="text-primary text-xs">{headCell.label}</span>
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
                   {order === "desc" ? "sorted descending" : "sorted ascending"}
@@ -506,7 +502,7 @@ export function Orders() {
                       {allowSelection && (
                         <TableCell padding="checkbox">
                           <Checkbox
-                            color="primary"
+                            color="secondary"
                             checked={isItemSelected}
                             inputProps={{
                               "aria-labelledby": labelId,
@@ -520,7 +516,7 @@ export function Orders() {
                         scope="row"
                         padding="none"
                       >
-                        {row.time}
+                        <span className="text-base">{row.time}</span>
                       </TableCell>
                       <TableCell align="right">
                         <span
@@ -533,9 +529,15 @@ export function Orders() {
                           {row.action}
                         </span>
                       </TableCell>
-                      <TableCell align="right">{row.scrips}</TableCell>
                       <TableCell align="right">
-                        <span className="text-secondary">{row.qty}</span>
+                        <span className="text-base text-primary">
+                          {row.scrips}
+                        </span>
+                      </TableCell>
+                      <TableCell align="right">
+                        <span className="text-[#a9a9a9] text-base">
+                          {row.qty}
+                        </span>
                       </TableCell>
                       <TableCell align="right">
                         <span
@@ -548,8 +550,16 @@ export function Orders() {
                           {row.product}
                         </span>
                       </TableCell>
-                      <TableCell align="right">{row.orderPrice}</TableCell>
-                      <TableCell align="right">{row.ltp}</TableCell>
+                      <TableCell align="right">
+                        <span className="text-primary text-base">
+                          {row.orderPrice}
+                        </span>
+                      </TableCell>
+                      <TableCell align="right">
+                        <span className="text-primary text-base">
+                          {row.ltp}
+                        </span>
+                      </TableCell>
                     </TableRow>
                   );
                 })}
