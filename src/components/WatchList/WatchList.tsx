@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -21,7 +22,6 @@ import {
 import useModal from "../../hooks/useModal";
 import { visiblityReducer } from "../../features/orderModal/orderModal";
 import { useDispatch } from "react-redux";
-// import master from "../../json/master.json";
 import { getMaster } from "../../http/master/master";
 import { getGroups } from "../../http/getGroups/getGroups";
 import { getGroupSymbols } from "../../http/getGroupSymbols/getGroupSymbols";
@@ -77,8 +77,7 @@ interface IGroup {
 export function WatchList() {
   const [selectedIndice, setSelectedIndice] = useState("Indian");
   const [selectedGroup, setSelectedGroup] = useState("Indices");
-  const [instrumentSearch, setStockSearch] = useState("");
-  const [searchResult, setSearchResult] = useState<IMasterInstrument[]>([]);
+  const [instrumentSearch, setInstrumentSearch] = useState("");
   const [master, setMaster] = useState<IMasterInstrument[]>([]);
   const [instruments, setInstruments] = useState<IInstrument[]>([]);
   const [groupSymbols, setGroupSymbols] = useState([]);
@@ -144,6 +143,20 @@ export function WatchList() {
     });
     if (node) observer?.current?.observe(node);
   }, []);
+
+  const masterSearchResult = useMemo(() => {
+    if (instrumentSearch !== "") {
+      const result = master
+        .slice(0, searchIndex)
+        .filter(
+          (s) =>
+            s.name.includes(instrumentSearch.toUpperCase()) ||
+            s.description.includes(instrumentSearch.toUpperCase())
+        );
+      return result;
+    }
+    return [];
+  }, [instrumentSearch]);
 
   useEffect(() => {
     socket.on("1502-json-full", (res) => {
@@ -231,23 +244,6 @@ export function WatchList() {
   useEffect(() => {
     fetchInstruments();
   }, [groupSymbols]);
-
-  const search = () => {
-    if (instrumentSearch) {
-      const result = master
-        .slice(0, searchIndex)
-        .filter(
-          (s) =>
-            s.name.includes(instrumentSearch.toUpperCase()) ||
-            s.description.includes(instrumentSearch.toUpperCase())
-        );
-      setSearchResult(result);
-    }
-  };
-
-  useEffect(() => {
-    search();
-  }, [master, instrumentSearch, searchIndex]);
 
   useEffect(() => {
     const keys = [
@@ -384,8 +380,7 @@ export function WatchList() {
                 type="text"
                 value={instrumentSearch}
                 onChange={(e) => {
-                  setStockSearch(e.target.value);
-                  setSearchIndex(0);
+                  setInstrumentSearch(e.target.value);
                 }}
                 placeholder="Search eg: infy bse, nifty fut, nifty weekly"
                 className="w-full outline-none bg-transparent"
@@ -394,7 +389,7 @@ export function WatchList() {
                 <CancelOutlined
                   color="inherit"
                   fontSize="small"
-                  onClick={() => setStockSearch("")}
+                  onClick={() => setInstrumentSearch("")}
                   className="cursor-pointer"
                 />
               ) : (
@@ -407,7 +402,7 @@ export function WatchList() {
 
         {instrumentSearch ? (
           <>
-            {searchResult.map((instrument) => (
+            {masterSearchResult.map((instrument) => (
               <div
                 key={instrument.instrumentID}
                 className="w-full relative group"
