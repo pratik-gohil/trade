@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { subscribeInstruments } from "../../http/subscribeInstruments/subscribeInstruments";
@@ -8,6 +8,7 @@ import { searchInstruments } from "../../http/searchInstruments/searchInstrument
 import { SocketContext } from "../../socket";
 import { percDiff } from "../../utils/percentageDiffrence";
 import { IInstrument } from "../../types/interfaces/instrument.interfaces.types";
+import trade from "../../assets/trade.png";
 
 const links = [
   {
@@ -84,7 +85,9 @@ export const Header = () => {
   return (
     <div className="max-h-16 h-16 flex justify-between items-center shadow-custom">
       <div className="flex justify-between items-center gap-4 sidebar-width overflow-hidden px-5">
-        <span className="text-xl font-medium text-primary">TRADE.COM</span>
+        <Link to="/">
+          <img src={trade} className="w-[89px] h-[9px]" />
+        </Link>
         <div className="flex text-right gap-4 text-xs font-medium mr-[10px]">
           {pinnedInstruments.map((instrument) => {
             const diffrence = Number(

@@ -24,7 +24,7 @@ export const ClientLoginPIN = ({ setLoginFlowCurrentState }) => {
       localStorage.setItem(CLIENT_CODES, data.result.clientCodes);
       localStorage.setItem(USER_ID, data.result.userID);
       localStorage.setItem(CLIENT_ID, data.result.userID);
-      navigate("/");
+      // navigate("/");
     }
   };
 

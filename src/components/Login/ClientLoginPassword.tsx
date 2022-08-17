@@ -1,5 +1,7 @@
+import { FormControlLabel } from "@mui/material";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import CustomCheckbox from "../../Checkbox/Checkbox";
 import { setUserReducer } from "../../features/Auth/Auth";
 import { validateUser } from "../../http/validateUser/validateUser";
 import { PasswordInput } from "../PasswordInput/PasswordInput";
@@ -38,14 +40,21 @@ export function ClientLoginPassword({ setLoginFlowCurrentState }) {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <div className="flex gap-1">
-        <input type="checkbox" id="login-page-save-account" />
-        <label
-          htmlFor="login-page-save-account"
-          className="text-xs text-[#41414e] cursor-pointer"
-        >
-          Save Account
-        </label>
+      <div className="flex gap-3">
+        <FormControlLabel
+          sx={{
+            fontSize: "12px",
+            margin: 0,
+            display: "flex",
+            gap: 0.5,
+          }}
+          control={<CustomCheckbox />}
+          label={
+            <span className="text-xs text-[#41414e] cursor-pointer">
+              Save Account
+            </span>
+          }
+        />
       </div>
       <div className="flex flex-col gap-[30px] justify-center items-center mt-auto">
         <button

@@ -321,9 +321,6 @@ function EnhancedTableHead(props: EnhancedTableProps) {
               indeterminate={numSelected > 0 && numSelected < rowCount}
               checked={rowCount > 0 && numSelected === rowCount}
               onChange={onSelectAllClick}
-              inputProps={{
-                "aria-label": "select all desserts",
-              }}
             />
           </TableCell>
         )}
@@ -468,7 +465,7 @@ export function Orders() {
           numSelected={selected.length}
         />
         <TableContainer>
-          <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
+          <Table sx={{ minWidth: 750 }}>
             <EnhancedTableHead
               allowSelection={allowSelection}
               numSelected={selected.length}

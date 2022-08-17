@@ -34,14 +34,10 @@ import { IInstrument } from "../../types/interfaces/instrument.interfaces.types"
 import { delSymbol } from "../../http/delSymbol/delSymbol";
 import { addSymbol } from "../../http/addSymbol/addSymbol";
 import { constants } from "../../constants/global";
-import {
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  RadioGroup,
-} from "@mui/material";
+import { FormControlLabel, FormGroup, RadioGroup } from "@mui/material";
 import CustomRadio from "../Radio/Radio";
 import { percDiff } from "../../utils/percentageDiffrence";
+import CustomCheckbox from "../../Checkbox/Checkbox";
 const { USER_ID } = constants;
 
 interface IMasterInstrument {
@@ -150,8 +146,12 @@ export function WatchList() {
         .slice(0, searchIndex)
         .filter(
           (s) =>
-            s.name.includes(instrumentSearch.toUpperCase()) ||
-            s.description.includes(instrumentSearch.toUpperCase())
+            s.name
+              .toLowerCase()
+              .includes(instrumentSearch.trim().toLocaleLowerCase()) ||
+            s.description
+              .toLowerCase()
+              .includes(instrumentSearch.trim().toLocaleLowerCase())
         );
       return result;
     }
@@ -830,7 +830,7 @@ export function WatchList() {
                     gap: 0.5,
                   }}
                   control={
-                    <Checkbox
+                    <CustomCheckbox
                       onChange={(e) =>
                         setFilters((filter) => ({
                           ...filter,
@@ -838,14 +838,6 @@ export function WatchList() {
                         }))
                       }
                       defaultChecked={filters.showDirection}
-                      sx={(theme) => ({
-                        padding: 0,
-                        "& .MuiSvgIcon-root": { fontSize: 16 },
-                        "&.Mui-checked": {
-                          color: theme.palette.blue.main,
-                        },
-                        "&:hover": { bgcolor: "transparent" },
-                      })}
                       disableRipple
                     />
                   }
@@ -863,7 +855,7 @@ export function WatchList() {
                     gap: 0.5,
                   }}
                   control={
-                    <Checkbox
+                    <CustomCheckbox
                       onChange={(e) =>
                         setFilters((filter) => ({
                           ...filter,
@@ -871,14 +863,6 @@ export function WatchList() {
                         }))
                       }
                       defaultChecked={filters.showChange}
-                      sx={(theme) => ({
-                        padding: 0,
-                        "& .MuiSvgIcon-root": { fontSize: 16 },
-                        "&.Mui-checked": {
-                          color: theme.palette.blue.main,
-                        },
-                        "&:hover": { bgcolor: "transparent" },
-                      })}
                       disableRipple
                     />
                   }
@@ -896,7 +880,7 @@ export function WatchList() {
                     gap: 0.5,
                   }}
                   control={
-                    <Checkbox
+                    <CustomCheckbox
                       onChange={(e) =>
                         setFilters((filter) => ({
                           ...filter,
@@ -904,14 +888,6 @@ export function WatchList() {
                         }))
                       }
                       defaultChecked={filters.showHoldings}
-                      sx={(theme) => ({
-                        padding: 0,
-                        "& .MuiSvgIcon-root": { fontSize: 16 },
-                        "&.Mui-checked": {
-                          color: theme.palette.blue.main,
-                        },
-                        "&:hover": { bgcolor: "transparent" },
-                      })}
                       disableRipple
                     />
                   }
