@@ -37,7 +37,7 @@ import { constants } from "../../constants/global";
 import { FormControlLabel, FormGroup, RadioGroup } from "@mui/material";
 import CustomRadio from "../Radio/Radio";
 import { percDiff } from "../../utils/percentageDiffrence";
-import CustomCheckbox from "../../Checkbox/Checkbox";
+import CustomCheckbox from "../Checkbox/Checkbox";
 const { USER_ID } = constants;
 
 interface IMasterInstrument {
@@ -157,23 +157,6 @@ export function WatchList() {
     }
     return [];
   }, [instrumentSearch]);
-
-  useEffect(() => {
-    socket.on("1502-json-full", (res) => {
-      const data = JSON.parse(res);
-      setInstruments((instruments) =>
-        instruments.map((instrument) => {
-          return instrument.ExchangeInstrumentID === data.ExchangeInstrumentID
-            ? { ...instrument, ...data }
-            : instrument;
-        })
-      );
-    });
-
-    return () => {
-      socket.off("1502-json-full");
-    };
-  }, []);
 
   useEffect(() => {
     (async () => {
@@ -347,6 +330,23 @@ export function WatchList() {
         return filterAlphabatically(a, b);
     }
   };
+
+  useEffect(() => {
+    socket.on("1502-json-full", (res) => {
+      const data = JSON.parse(res);
+      setInstruments((instruments) =>
+        instruments.map((instrument) => {
+          return instrument.ExchangeInstrumentID === data.ExchangeInstrumentID
+            ? { ...instrument, ...data }
+            : instrument;
+        })
+      );
+    });
+
+    return () => {
+      socket.off("1502-json-full");
+    };
+  }, []);
 
   return (
     <>

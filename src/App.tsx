@@ -19,6 +19,7 @@ import { Header } from "./components/Header";
 import { getUserProfile } from "./http/getUserProfile/getUserProfile";
 import { setUserReducer } from "./features/Auth/Auth";
 import { constants } from "./constants/global";
+import Logout from "./components/Logout/Logout";
 const { TOKEN } = constants;
 
 declare module "@mui/material/styles" {
@@ -104,6 +105,7 @@ export default function App() {
               )}
             />
             <Route path="/login" element={<Login />} />
+            <Route path="/logout" element={<Logout />} />
           </Routes>
         </Router>
       </WebSocketProvider>

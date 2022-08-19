@@ -1,7 +1,7 @@
 import { FormControlLabel } from "@mui/material";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import CustomCheckbox from "../../Checkbox/Checkbox";
+import CustomCheckbox from "../Checkbox/Checkbox";
 import { setUserReducer } from "../../features/Auth/Auth";
 import { validateUser } from "../../http/validateUser/validateUser";
 import { PasswordInput } from "../PasswordInput/PasswordInput";
