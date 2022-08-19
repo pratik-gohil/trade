@@ -11,7 +11,9 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import Checkbox from "@mui/material/Checkbox";
-import { visuallyHidden } from "@mui/utils";
+import { EnhancedTableToolbar } from "./EnhancedTableToolbar";
+import { EnhancedTableHead } from "./EnhancedTableHead";
+import { getOrders } from "../../http/getOrders/getOrders";
 
 interface Data {
   id: string;
@@ -214,186 +216,23 @@ const rows = [
 
 type Order = "asc" | "desc";
 
-// This method is created for cross-browser compatibility, if you don't
-// need to support IE11, you can use Array.prototype.sort() directly
-// function stableSort<T>(
-//   array: readonly T[],
-//   comparator: (a: T, b: T) => number
-// ) {
-//   const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-//   stabilizedThis.sort((a, b) => {
-//     const order = comparator(a[0], b[0]);
-//     if (order !== 0) {
-//       return order;
-//     }
-//     return a[1] - b[1];
-//   });
-//   return stabilizedThis.map((el) => el[0]);
-// }
-
-interface HeadCell {
-  disablePadding: boolean;
-  id: keyof Data;
-  label: string;
-  numeric: boolean;
-}
-
-const headCells: readonly HeadCell[] = [
-  {
-    id: "time",
-    numeric: false,
-    disablePadding: true,
-    label: "Time",
-  },
-  {
-    id: "action",
-    numeric: true,
-    disablePadding: false,
-    label: "Action",
-  },
-  {
-    id: "scrips",
-    numeric: true,
-    disablePadding: false,
-    label: "Scrips",
-  },
-  {
-    id: "qty",
-    numeric: true,
-    disablePadding: false,
-    label: "Qty",
-  },
-  {
-    id: "product",
-    numeric: true,
-    disablePadding: false,
-    label: "Product",
-  },
-  {
-    id: "orderPrice",
-    numeric: true,
-    disablePadding: false,
-    label: "Order Price",
-  },
-  {
-    id: "ltp",
-    numeric: true,
-    disablePadding: false,
-    label: "LTP",
-  },
-];
-
-interface EnhancedTableProps {
-  allowSelection: boolean;
-  numSelected: number;
-  onRequestSort: (
-    event: React.MouseEvent<unknown>,
-    property: keyof Data
-  ) => void;
-  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  order: Order;
-  orderBy: string;
-  rowCount: number;
-}
-
-function EnhancedTableHead(props: EnhancedTableProps) {
-  const {
-    allowSelection,
-    onSelectAllClick,
-    order,
-    orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort,
-  } = props;
-  const createSortHandler =
-    (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property);
-    };
-
-  return (
-    <TableHead>
-      <TableRow>
-        {allowSelection && (
-          <TableCell padding="checkbox">
-            <Checkbox
-              color="secondary"
-              indeterminate={numSelected > 0 && numSelected < rowCount}
-              checked={rowCount > 0 && numSelected === rowCount}
-              onChange={onSelectAllClick}
-            />
-          </TableCell>
-        )}
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
-            padding={headCell.disablePadding ? "none" : "normal"}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={createSortHandler(headCell.id)}
-            >
-              <span className="text-primary text-xs">{headCell.label}</span>
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
-                </Box>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
-}
-
-interface EnhancedTableToolbarProps {
-  numSelected: number;
-  allowSelection: boolean;
-  setAllowSelection: Dispatch<SetStateAction<boolean>>;
-}
-
-const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
-  const { numSelected, allowSelection, setAllowSelection } = props;
-
-  return (
-    <div className="flex justify-between items-center mb-6">
-      <div className="flex items-center gap-4">
-        <div className="text-primary text-2xl font-semibold">Open Orders</div>
-        <div
-          onClick={() => setAllowSelection((prev) => !prev)}
-          className={`${
-            numSelected
-              ? "text-blue border-blue"
-              : "text-secondary border-secondary"
-          } border rounded px-2 cursor-pointer text-lg font-medium`}
-        >
-          Select {allowSelection && `(${numSelected})`}
-        </div>
-      </div>
-      <div className="border border-secondary py-1 rounded text-base text-secondary">
-        <Search className="text-inherit mx-1.5" fontSize="small" />
-        <input
-          type="text"
-          className="outline-none"
-          placeholder="Search in Open Orders"
-        />
-      </div>
-    </div>
-  );
-};
-
 export function Orders() {
   const [allowSelection, setAllowSelection] = useState(false);
-
+  const [orders, setOrders] = useState<IOrder[]>([]);
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("time");
-  const [selected, setSelected] = React.useState<readonly string[]>([]);
+  const [selected, setSelected] = React.useState<readonly number[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  useEffect(() => {
+    (async () => {
+      const response = await getOrders();
+      if (response.type === "success") {
+        setOrders(response.result);
+      }
+    })();
+  }, []);
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -406,16 +245,16 @@ export function Orders() {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.id);
+      const newSelecteds = orders.map((n) => n.AppOrderID);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
+  const handleClick = (event: React.MouseEvent<unknown>, name: number) => {
     const selectedIndex = selected.indexOf(name);
-    let newSelected: readonly string[] = [];
+    let newSelected: readonly number[] = [];
 
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, name);
@@ -444,7 +283,7 @@ export function Orders() {
     setPage(0);
   };
 
-  const isSelected = (name: string) => selected.indexOf(name) !== -1;
+  const isSelected = (name: number) => selected.indexOf(name) !== -1;
 
   return (
     <div className="p-5">
@@ -473,14 +312,14 @@ export function Orders() {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={rows.length}
+              rowCount={orders.length}
             />
             <TableBody className="max-h-28 overflow-auto">
-              {rows
+              {orders
                 .sort()
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.id);
+                  const isItemSelected = isSelected(row.AppOrderID);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
@@ -488,12 +327,12 @@ export function Orders() {
                       hover
                       onClick={(event) => {
                         setAllowSelection(true);
-                        handleClick(event, row.id);
+                        handleClick(event, row.AppOrderID);
                       }}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.id}
+                      key={row.AppOrderID}
                       selected={isItemSelected}
                     >
                       {allowSelection && (
@@ -513,48 +352,46 @@ export function Orders() {
                         scope="row"
                         padding="none"
                       >
-                        <span className="text-base">{row.time}</span>
+                        <span className="text-base">
+                          {row.ExchangeTransactTime}
+                        </span>
                       </TableCell>
                       <TableCell align="right">
                         <span
                           className={`${
-                            row.action === "BUY"
+                            row.OrderSide === "BUY"
                               ? "text-success bg-successHighlight"
                               : "text-failure bg-failureHighlight"
                           } text-xs rounded-[4px] py-[5px] px-[6px]`}
                         >
-                          {row.action}
+                          {row.OrderSide}
                         </span>
                       </TableCell>
                       <TableCell align="right">
                         <span className="text-base text-primary">
-                          {row.scrips}
+                          {row.TradingSymbol}
                         </span>
                       </TableCell>
                       <TableCell align="right">
-                        <span className="text-[#a9a9a9] text-base">
-                          {row.qty}
-                        </span>
+                        <span className="text-[#a9a9a9] text-base">NA</span>
                       </TableCell>
                       <TableCell align="right">
                         <span
-                          className={`${
-                            row.product === "MIS" || row.product === "INTRA"
-                              ? "text-purple bg-purpleHighlight"
-                              : "text-blue bg-blueHighlight"
-                          } text-xs rounded-[4px] py-[5px] px-[6px]`}
+                        // className={`${
+                        //   row.product === "MIS" || row.product === "INTRA"
+                        //     ? "text-purple bg-purpleHighlight"
+                        //     : "text-blue bg-blueHighlight"
+                        // } text-xs rounded-[4px] py-[5px] px-[6px]`}
                         >
-                          {row.product}
+                          NA
                         </span>
                       </TableCell>
                       <TableCell align="right">
-                        <span className="text-primary text-base">
-                          {row.orderPrice}
-                        </span>
+                        <span className="text-primary text-base">NA</span>
                       </TableCell>
                       <TableCell align="right">
                         <span className="text-primary text-base">
-                          {row.ltp}
+                          {row.OrderPrice}
                         </span>
                       </TableCell>
                     </TableRow>
@@ -566,7 +403,7 @@ export function Orders() {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={rows.length}
+          count={orders.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
