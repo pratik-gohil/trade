@@ -499,226 +499,221 @@ export function WatchList() {
               changeBy
             );
             return (
-              instrument?.Touchline && (
-                <Fragment key={instrument.ExchangeInstrumentID}>
-                  <div className="w-full relative group">
-                    <div className="w-full border-border border-b p-5 flex justify-between items-center">
-                      <div>
-                        <div className="text-primary text-base">
-                          {instrument.DisplayName}
-                        </div>
-                        <div className="text-secondary text-xs">
-                          {Segments[instrument.ExchangeSegment]}
-                        </div>
+              <Fragment key={instrument.ExchangeInstrumentID}>
+                <div className="w-full relative group">
+                  <div className="w-full border-border border-b p-5 flex justify-between items-center">
+                    <div>
+                      <div className="text-primary text-base">
+                        {instrument.DisplayName}
                       </div>
-                      <div className="text-right">
-                        <div className="text-primary text-base">
-                          {instrument?.Touchline?.LastTradedPrice}
-                        </div>
-                        <div
-                          className={`text-xs ${
-                            instrument?.Touchline?.PercentChange > 0
-                              ? "text-success"
-                              : "text-failure"
-                          }`}
-                        >
-                          {filters.showChange && (
-                            <span>
-                              {diffrence > 0 && "+"}
-                              {diffrence} ({percentDiffrence}%)
-                            </span>
-                          )}
-                          {filters.showDirection &&
-                            (instrument?.Touchline?.PercentChange > 0 ? (
-                              <ArrowDropUp />
-                            ) : (
-                              <ArrowDropDown />
-                            ))}
-                        </div>
+                      <div className="text-secondary text-xs">
+                        {Segments[instrument.ExchangeSegment]}
                       </div>
                     </div>
-
-                    <div className="absolute right-0 top-0 h-full items-center gap-2 pr-2 hidden group-hover:flex text-base">
-                      <div
-                        onClick={() =>
-                          dispatch(
-                            visiblityReducer({
-                              visible: true,
-                              order: {
-                                type: "BUY",
-                                instrument,
-                                data: instrument,
-                              },
-                            })
-                          )
-                        }
-                        className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center text-white bg-green-gradient"
-                      >
-                        B
+                    <div className="text-right">
+                      <div className="text-primary text-base">
+                        {instrument?.Touchline?.LastTradedPrice}
                       </div>
                       <div
-                        onClick={() =>
-                          dispatch(
-                            visiblityReducer({
-                              visible: true,
-                              order: {
-                                type: "SELL",
-                                instrument,
-                                data: instrument,
-                              },
-                            })
-                          )
-                        }
-                        className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center text-white bg-red-gradient"
+                        className={`text-xs ${
+                          instrument?.Touchline?.PercentChange > 0
+                            ? "text-success"
+                            : "text-failure"
+                        }`}
                       >
-                        S
-                      </div>
-                      <div
-                        onClick={() =>
-                          handleInstrumentExpand(
-                            instrument.ExchangeInstrumentID
-                          )
-                        }
-                        className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center bg-white text-primary border border-primary"
-                      >
-                        5
-                      </div>
-                      <div
-                        onClick={() =>
-                          handleDeleteInstrument({
-                            groupName: selectedGroup,
-                            exchangeInstrumentID:
-                              instrument.ExchangeInstrumentID,
-                            exchangeSegment: instrument.ExchangeSegment,
-                            symbolExpiry: instrument.ExDate,
-                          })
-                        }
-                        className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center border border-primary text-primary bg-white"
-                      >
-                        <Delete />
-                      </div>
-                      <div className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center border border-primary text-primary bg-white">
-                        <MoreVert />
+                        {filters.showChange && (
+                          <span>
+                            {diffrence > 0 && "+"}
+                            {diffrence} ({percentDiffrence}%)
+                          </span>
+                        )}
+                        {filters.showDirection &&
+                          (instrument?.Touchline?.PercentChange > 0 ? (
+                            <ArrowDropUp />
+                          ) : (
+                            <ArrowDropDown />
+                          ))}
                       </div>
                     </div>
                   </div>
-                  {instrument.isExpanded && (
-                    <div className="w-full">
+
+                  <div className="absolute right-0 top-0 h-full items-center gap-2 pr-2 hidden group-hover:flex text-base">
+                    <div
+                      onClick={() =>
+                        dispatch(
+                          visiblityReducer({
+                            visible: true,
+                            order: {
+                              type: "BUY",
+                              instrument,
+                              data: instrument,
+                            },
+                          })
+                        )
+                      }
+                      className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center text-white bg-green-gradient"
+                    >
+                      B
+                    </div>
+                    <div
+                      onClick={() =>
+                        dispatch(
+                          visiblityReducer({
+                            visible: true,
+                            order: {
+                              type: "SELL",
+                              instrument,
+                              data: instrument,
+                            },
+                          })
+                        )
+                      }
+                      className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center text-white bg-red-gradient"
+                    >
+                      S
+                    </div>
+                    <div
+                      onClick={() =>
+                        handleInstrumentExpand(instrument.ExchangeInstrumentID)
+                      }
+                      className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center bg-white text-primary border border-primary"
+                    >
+                      5
+                    </div>
+                    <div
+                      onClick={() =>
+                        handleDeleteInstrument({
+                          groupName: selectedGroup,
+                          exchangeInstrumentID: instrument.ExchangeInstrumentID,
+                          exchangeSegment: instrument.ExchangeSegment,
+                          symbolExpiry: instrument.ExDate,
+                        })
+                      }
+                      className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center border border-primary text-primary bg-white"
+                    >
+                      <Delete />
+                    </div>
+                    <div className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center border border-primary text-primary bg-white">
+                      <MoreVert />
+                    </div>
+                  </div>
+                </div>
+                {instrument.isExpanded && (
+                  <div className="w-full">
+                    <table className="w-full text-center">
+                      <thead>
+                        <tr className="text-xs text-secondary border border-border border-t-0 border-r-0">
+                          <th className="p-2 font-normal">QTY.</th>
+                          <th className="p-2 font-normal">ORDERS</th>
+                          <th className="p-2 font-normal">BID</th>
+                          <th className="p-2 font-normal">OFFER</th>
+                          <th className="p-2 font-normal">ORDERS</th>
+                          <th className="p-2 font-normal">QTY.</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="text-success text-xs">
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">1</td>
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">1</td>
+                          <td className="p-1.5">100</td>
+                        </tr>
+                        <tr className="text-success text-xs">
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">1</td>
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">1</td>
+                          <td className="p-1.5">100</td>
+                        </tr>
+                        <tr className="text-success text-xs">
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">1</td>
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">1</td>
+                          <td className="p-1.5">100</td>
+                        </tr>
+                        <tr className="text-success text-xs">
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">1</td>
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">1</td>
+                          <td className="p-1.5">100</td>
+                        </tr>
+                        <tr className="text-success text-xs">
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">1</td>
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">100</td>
+                          <td className="p-1.5">1</td>
+                          <td className="p-1.5">100</td>
+                        </tr>
+                        <tr className="text-xs">
+                          <td className="p-1.5 text-success">100</td>
+                          <td className="p-1.5 text-secondary" colSpan={4}>
+                            Total
+                          </td>
+                          <td className="p-1.5 text-success">100</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <div>
                       <table className="w-full text-center">
                         <thead>
-                          <tr className="text-xs text-secondary border border-border border-t-0 border-r-0">
-                            <th className="p-2 font-normal">QTY.</th>
-                            <th className="p-2 font-normal">ORDERS</th>
-                            <th className="p-2 font-normal">BID</th>
-                            <th className="p-2 font-normal">OFFER</th>
-                            <th className="p-2 font-normal">ORDERS</th>
-                            <th className="p-2 font-normal">QTY.</th>
+                          <tr className="text-xs text-secondary">
+                            <th className="p-2 font-normal">Open</th>
+                            <th className="p-2 font-normal">High</th>
+                            <th className="p-2 font-normal">Low</th>
+                            <th className="p-2 font-normal">Prev.Close</th>
                           </tr>
                         </thead>
                         <tbody>
-                          <tr className="text-success text-xs">
-                            <td className="p-1.5">100</td>
-                            <td className="p-1.5">1</td>
-                            <td className="p-1.5">100</td>
-                            <td className="p-1.5">100</td>
-                            <td className="p-1.5">1</td>
-                            <td className="p-1.5">100</td>
-                          </tr>
-                          <tr className="text-success text-xs">
-                            <td className="p-1.5">100</td>
-                            <td className="p-1.5">1</td>
-                            <td className="p-1.5">100</td>
-                            <td className="p-1.5">100</td>
-                            <td className="p-1.5">1</td>
-                            <td className="p-1.5">100</td>
-                          </tr>
-                          <tr className="text-success text-xs">
-                            <td className="p-1.5">100</td>
-                            <td className="p-1.5">1</td>
-                            <td className="p-1.5">100</td>
-                            <td className="p-1.5">100</td>
-                            <td className="p-1.5">1</td>
-                            <td className="p-1.5">100</td>
-                          </tr>
-                          <tr className="text-success text-xs">
-                            <td className="p-1.5">100</td>
-                            <td className="p-1.5">1</td>
-                            <td className="p-1.5">100</td>
-                            <td className="p-1.5">100</td>
-                            <td className="p-1.5">1</td>
-                            <td className="p-1.5">100</td>
-                          </tr>
-                          <tr className="text-success text-xs">
-                            <td className="p-1.5">100</td>
-                            <td className="p-1.5">1</td>
-                            <td className="p-1.5">100</td>
-                            <td className="p-1.5">100</td>
-                            <td className="p-1.5">1</td>
-                            <td className="p-1.5">100</td>
-                          </tr>
-                          <tr className="text-xs">
-                            <td className="p-1.5 text-success">100</td>
-                            <td className="p-1.5 text-secondary" colSpan={4}>
-                              Total
-                            </td>
-                            <td className="p-1.5 text-success">100</td>
+                          <tr className="text-xs text-primary">
+                            <td>{instrument?.Touchline?.Open}</td>
+                            <td>{instrument?.Touchline?.High}</td>
+                            <td>{instrument?.Touchline?.Low}</td>
+                            <td>{instrument?.Touchline?.Close}</td>
                           </tr>
                         </tbody>
                       </table>
-                      <div>
-                        <table className="w-full text-center">
-                          <thead>
-                            <tr className="text-xs text-secondary">
-                              <th className="p-2 font-normal">Open</th>
-                              <th className="p-2 font-normal">High</th>
-                              <th className="p-2 font-normal">Low</th>
-                              <th className="p-2 font-normal">Prev.Close</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr className="text-xs text-primary">
-                              <td>{instrument?.Touchline?.Open}</td>
-                              <td>{instrument?.Touchline?.High}</td>
-                              <td>{instrument?.Touchline?.Low}</td>
-                              <td>{instrument?.Touchline?.Close}</td>
-                            </tr>
-                          </tbody>
-                        </table>
-                        <div className="w-full flex justify-between py-2 text-sm">
-                          <div className="flex justify-between w-full px-8">
-                            <span className="text-secondary">Volume</span>
-                            <span className="text-primary">NA</span>
-                          </div>
-                          <div className="flex justify-between w-full px-8">
-                            <span className="text-secondary">Avg. Price</span>
-                            <span className="text-primary">
-                              {instrument?.Touchline?.AverageTradedPrice}
-                            </span>
-                          </div>
+                      <div className="w-full flex justify-between py-2 text-sm">
+                        <div className="flex justify-between w-full px-8">
+                          <span className="text-secondary">Volume</span>
+                          <span className="text-primary">NA</span>
                         </div>
-                        <div className="w-full flex justify-between py-2 text-sm">
-                          <div className="flex justify-between w-full px-8">
-                            <span className="text-secondary">LTT</span>
-                            <span className="text-primary">
-                              {new Date(instrument?.Touchline?.LastTradedTime)
-                                .toLocaleDateString("en", {
-                                  year: "2-digit",
-                                  month: "2-digit",
-                                  day: "2-digit",
-                                })
-                                .replace(/\//g, ":")}
-                            </span>
-                          </div>
-                          <div className="flex justify-between w-full px-8">
-                            <span className="text-secondary">LO/Up Cir.</span>
-                            <span className="text-primary">NA</span>
-                          </div>
+                        <div className="flex justify-between w-full px-8">
+                          <span className="text-secondary">Avg. Price</span>
+                          <span className="text-primary">
+                            {instrument?.Touchline?.AverageTradedPrice}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="w-full flex justify-between py-2 text-sm">
+                        <div className="flex justify-between w-full px-8">
+                          <span className="text-secondary">LTT</span>
+                          <span className="text-primary">
+                            {new Date(instrument?.Touchline?.LastTradedTime)
+                              .toLocaleDateString("en", {
+                                year: "2-digit",
+                                month: "2-digit",
+                                day: "2-digit",
+                              })
+                              .replace(/\//g, ":")}
+                          </span>
+                        </div>
+                        <div className="flex justify-between w-full px-8">
+                          <span className="text-secondary">LO/Up Cir.</span>
+                          <span className="text-primary">NA</span>
                         </div>
                       </div>
                     </div>
-                  )}
-                </Fragment>
-              )
+                  </div>
+                )}
+              </Fragment>
             );
           })
         )}
