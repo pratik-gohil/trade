@@ -16,7 +16,7 @@ export function Login() {
 
   useEffect(() => {
     localStorage.getItem(TOKEN) && navigate("/");
-  }, [navigate]);
+  }, []);
 
   const [loginFlowCurrentState, setLoginFlowCurrentState] = useState(
     "clientLoginPassword"

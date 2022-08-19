@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { RootState } from "../../app/store";
 import { constants } from "../../constants/global";
 import { validatePIN } from "../../http/validatePIN/validatePIN";
+import { asyncLocalStorage } from "../../utils/asyncLocalStorage";
 import { PasswordInput } from "../PasswordInput/PasswordInput";
 const { CLIENT_CODES, CLIENT_ID, TOKEN, USER_ID } = constants;
 
@@ -20,11 +21,12 @@ export const ClientLoginPIN = ({ setLoginFlowCurrentState }) => {
     });
 
     if (data.type === "success") {
-      localStorage.setItem(TOKEN, data.result.token);
-      localStorage.setItem(CLIENT_CODES, data.result.clientCodes);
-      localStorage.setItem(USER_ID, data.result.userID);
-      localStorage.setItem(CLIENT_ID, data.result.userID);
-      // navigate("/");
+      asyncLocalStorage.setItem(TOKEN, data.result.token);
+      asyncLocalStorage.setItem(CLIENT_CODES, data.result.clientCodes);
+      asyncLocalStorage.setItem(USER_ID, data.result.userID);
+      asyncLocalStorage.setItem(CLIENT_ID, data.result.userID);
+    } else {
+      return;
     }
   };
 
@@ -71,7 +73,12 @@ export const ClientLoginPIN = ({ setLoginFlowCurrentState }) => {
            items-center mt-auto"
       >
         <button
-          onClick={handleValidatePIN}
+          onClick={async () =>
+            await handleValidatePIN().then(() => {
+              navigate("/");
+              navigate(0);
+            })
+          }
           className="bg-blue-gradient rounded-lg p-[10px] text-white font-semibold w-[360px]"
         >
           LOGIN
