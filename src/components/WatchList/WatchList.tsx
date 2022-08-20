@@ -852,7 +852,7 @@ export function WatchList() {
                           showDirection: e.target.checked,
                         }))
                       }
-                      defaultChecked={filters.showDirection}
+                      checked={filters.showDirection}
                       disableRipple
                     />
                   }
@@ -877,7 +877,7 @@ export function WatchList() {
                           showChange: e.target.checked,
                         }))
                       }
-                      defaultChecked={filters.showChange}
+                      checked={filters.showChange}
                       disableRipple
                     />
                   }
@@ -902,7 +902,7 @@ export function WatchList() {
                           showHoldings: e.target.checked,
                         }))
                       }
-                      defaultChecked={filters.showHoldings}
+                      checked={filters.showHoldings}
                       disableRipple
                     />
                   }
