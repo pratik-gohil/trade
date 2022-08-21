@@ -63,6 +63,12 @@ export default function App() {
     (async () => {
       if (localStorage.getItem(TOKEN)) {
         const userProfile = await getUserProfile();
+        if (
+          userProfile.type === "error" &&
+          userProfile.description === "Invalid Token"
+        ) {
+          localStorage.clear();
+        }
         if (userProfile.type === "success") {
           dispatch(setUserReducer(userProfile.result));
         }
