@@ -1,4 +1,6 @@
 import HTTP from "../http";
+import { constants } from "../../constants/global";
+const { TOKEN } = constants;
 
 export const orderEntry = async (data) => {
   const response = await HTTP.post(
@@ -8,6 +10,7 @@ export const orderEntry = async (data) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: localStorage.getItem(TOKEN) || "",
       },
     }
   );
