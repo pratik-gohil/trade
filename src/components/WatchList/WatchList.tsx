@@ -438,7 +438,7 @@ export function WatchList() {
                         dispatch(
                           visiblityReducer({
                             visible: true,
-                            order: { type: "BUY" },
+                            order: { orderSide: "BUY" },
                           })
                         )
                       }
@@ -451,7 +451,7 @@ export function WatchList() {
                         dispatch(
                           visiblityReducer({
                             visible: true,
-                            order: { type: "SELL" },
+                            order: { orderSide: "SELL" },
                           })
                         )
                       }
@@ -544,9 +544,8 @@ export function WatchList() {
                           visiblityReducer({
                             visible: true,
                             order: {
-                              type: "BUY",
+                              orderSide: "BUY",
                               instrument,
-                              data: instrument,
                             },
                           })
                         )
@@ -563,7 +562,6 @@ export function WatchList() {
                             order: {
                               type: "SELL",
                               instrument,
-                              data: instrument,
                             },
                           })
                         )
