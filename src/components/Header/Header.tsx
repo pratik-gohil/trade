@@ -47,7 +47,7 @@ const links = [
 
 const pinnedInstrumentsIds = [
   { exchangeSegment: 1, exchangeInstrumentID: 26000 },
-  { exchangeSegment: 1, exchangeInstrumentID: 26065 },
+  { exchangeSegment: 11, exchangeInstrumentID: 26065 },
 ];
 
 export const Header = () => {
