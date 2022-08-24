@@ -64,8 +64,9 @@ export default function App() {
       if (localStorage.getItem(TOKEN)) {
         const userProfile = await getUserProfile();
         if (
-          userProfile.type === "error" &&
-          userProfile.description === "Invalid Token"
+          (userProfile.type === "error" &&
+            userProfile.description === "Invalid Token") ||
+          userProfile.description === "Token/Authorization not found"
         ) {
           localStorage.clear();
         }

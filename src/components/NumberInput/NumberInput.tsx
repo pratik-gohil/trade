@@ -1,7 +1,13 @@
 import React from "react";
 import { Add, Remove } from "@mui/icons-material";
 
-export function NumberInput({ label, value, onChange, disabled = false }) {
+export function NumberInput({
+  label,
+  value,
+  onChange,
+  disabled = false,
+  autoFocus = false,
+}) {
   return (
     <div
       className={`h-[45px] text-[#8c8c8c] flex items-center relative border border-solid border-gray-300 px-3 rounded-lg ${
@@ -27,7 +33,7 @@ export function NumberInput({ label, value, onChange, disabled = false }) {
           placeholder=""
           autoCorrect="off"
           min="1"
-          autoFocus
+          autoFocus={autoFocus}
           className={`${
             disabled ? "cursor-not-allowed" : ""
           } outline-0 text-center bg-transparent text-primary font-medium max-w-[100px]`}
