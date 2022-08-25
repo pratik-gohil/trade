@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
@@ -11,6 +11,10 @@ import Checkbox from "@mui/material/Checkbox";
 import { EnhancedTableToolbar } from "./EnhancedTableToolbar";
 import { EnhancedTableHead } from "./EnhancedTableHead";
 import { getOrders } from "../../http/getOrders/getOrders";
+import { subscribeInstruments } from "../../http/subscribeInstruments/subscribeInstruments";
+import { Segments } from "../../types/enums/segment.enums.types";
+import { SocketContext } from "../../socket";
+import { IMarketDepth } from "../../types/interfaces/marketDepth.interfaces.types";
 
 interface Data {
   id: string;
@@ -66,22 +70,49 @@ interface IOrder {
 
 type Order = "asc" | "desc";
 
+interface IOrderWithMarketDepth extends IOrder, IMarketDepth {
+  ExchangeSegment: any;
+}
+
 export function Orders() {
   const [allowSelection, setAllowSelection] = useState(false);
-  const [orders, setOrders] = useState<IOrder[]>([]);
+  const [orders, setOrders] = useState<IOrderWithMarketDepth[]>([]);
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("time");
   const [selected, setSelected] = React.useState<readonly number[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const { socket } = useContext(SocketContext) as { socket: any };
 
   useEffect(() => {
     (async () => {
       const response = await getOrders();
       if (response.type === "success") {
         setOrders(response.result);
+        const orderIds = response.result.map((order) => ({
+          exchangeSegment: Segments[order.ExchangeSegment],
+          exchangeInstrumentID: order.ExchangeInstrumentID,
+        }));
+        subscribeInstruments(orderIds);
       }
     })();
+  }, []);
+
+  useEffect(() => {
+    socket.on("1502-json-full", (res) => {
+      const data = JSON.parse(res);
+      setOrders((orders) => {
+        return orders.map((order) =>
+          order.ExchangeInstrumentID === data.ExchangeInstrumentID
+            ? { ...order, ...data }
+            : order
+        );
+      });
+    });
+
+    return () => {
+      socket.off("1502-json-full");
+    };
   }, []);
 
   const handleRequestSort = (
@@ -166,12 +197,10 @@ export function Orders() {
             />
             <TableBody className="max-h-28 overflow-auto">
               {orders
-                .sort()
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.AppOrderID);
                   const labelId = `enhanced-table-checkbox-${index}`;
-
                   return (
                     <TableRow
                       hover
@@ -223,25 +252,30 @@ export function Orders() {
                         </span>
                       </TableCell>
                       <TableCell align="right">
-                        <span className="text-[#a9a9a9] text-base">NA</span>
-                      </TableCell>
-                      <TableCell align="right">
-                        <span
-                        // className={`${
-                        //   row.product === "MIS" || row.product === "INTRA"
-                        //     ? "text-purple bg-purpleHighlight"
-                        //     : "text-blue bg-blueHighlight"
-                        // } text-xs rounded-[4px] py-[5px] px-[6px]`}
-                        >
-                          NA
+                        <span className="text-[#a9a9a9] text-base">
+                          {row.OrderPrice}
                         </span>
                       </TableCell>
                       <TableCell align="right">
-                        <span className="text-primary text-base">NA</span>
+                        <span
+                          className={`${
+                            row.ProductType === "MIS" ||
+                            row.ProductType === "INTRA"
+                              ? "text-purple bg-purpleHighlight"
+                              : "text-blue bg-blueHighlight"
+                          } text-xs rounded-[4px] py-[5px] px-[6px]`}
+                        >
+                          {row.ProductType}
+                        </span>
                       </TableCell>
                       <TableCell align="right">
                         <span className="text-primary text-base">
                           {row.OrderPrice}
+                        </span>
+                      </TableCell>
+                      <TableCell align="right">
+                        <span className="text-primary text-base">
+                          {row?.Touchline?.LastTradedPrice}
                         </span>
                       </TableCell>
                     </TableRow>
