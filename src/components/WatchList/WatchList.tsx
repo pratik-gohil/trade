@@ -7,6 +7,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import * as JsSearch from "js-search";
 import {
   SettingsOutlined,
   EditOutlined,
@@ -78,6 +79,7 @@ interface IGroupSymbol {
 }
 
 export function WatchList() {
+  const [search, setSearch] = useState<any>(null);
   const [selectedIndice, setSelectedIndice] = useState("Indian");
   const [selectedGroup, setSelectedGroup] = useState("Indices");
   const [instrumentSearch, setInstrumentSearch] = useState("");
@@ -147,25 +149,25 @@ export function WatchList() {
     if (node) observer?.current?.observe(node);
   }, []);
 
-  const masterSearchResult = useMemo(() => {
-    if (instrumentSearch !== "") {
-      const result = master
-        .slice(0, searchIndex)
-        .filter(
-          (s) =>
-            s.name
-              .toLowerCase()
-              .includes(instrumentSearch.trim().toLocaleLowerCase()) ||
-            s.description
-              .toLowerCase()
-              .includes(instrumentSearch.trim().toLocaleLowerCase())
-        );
-      return result;
-    } else {
-      setSearchIndex(increment);
-      return [];
+  useEffect(() => {
+    setSearch(new JsSearch.Search("DisplayName"));
+  }, []);
+
+  useEffect(() => {
+    if (search && master) {
+      search.addIndex("name");
+      search.addIndex("description");
+
+      search.addDocuments(master);
     }
-  }, [instrumentSearch]);
+  }, [search, master]);
+
+  const masterSearchResult = useMemo(() => {
+    if (search !== null && instrumentSearch !== "") {
+      const result = search.search(instrumentSearch);
+      return result;
+    }
+  }, [instrumentSearch, master, search]);
 
   useEffect(() => {
     (async () => {
@@ -238,36 +240,9 @@ export function WatchList() {
   }, [groupSymbols]);
 
   useEffect(() => {
-    // const keys = [
-    //   "exchangeSegment",
-    //   "exchangeInstrumentID",
-    //   "instrumentType",
-    //   "name",
-    //   "description",
-    //   "series",
-    //   "nameWithSeries",
-    //   "instrumentID",
-    //   "highPriceBand",
-    //   "lowPriceBand",
-    //   "freezeQty",
-    //   "tickSize",
-    //   "lotSize",
-    //   "multiplier",
-    //   "underlyingInstrumentId",
-    //   "contractExpiration",
-    //   "strikePrice",
-    //   "optionType",
-    //   "underlyingIndexName",
-    //   "DisplayName",
-    //   "ISIN",
-    //   "Numerator",
-    //   "Denominator",
-    // ];
     (async () => {
       const response = await mapMaster(["NSECM", "BSECM", "NSECD", "NSEFO"]);
-      if (response.type === "success") {
-        setMaster(response.result);
-      }
+      setMaster(response);
     })();
   }, []);
 
@@ -419,7 +394,7 @@ export function WatchList() {
                   <div className="w-full  border-border border-b p-5 flex justify-between items-center">
                     <div>
                       <div className="text-primary text-sm">
-                        {instrument.name}
+                        {instrument.DisplayName}
                       </div>
                     </div>
                     <div className="text-right">
@@ -436,6 +411,7 @@ export function WatchList() {
                           visiblityReducer({
                             visible: true,
                             order: { orderSide: "BUY" },
+                            instrument,
                           })
                         )
                       }
@@ -449,6 +425,7 @@ export function WatchList() {
                           visiblityReducer({
                             visible: true,
                             order: { orderSide: "SELL" },
+                            instrument,
                           })
                         )
                       }

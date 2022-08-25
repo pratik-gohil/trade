@@ -135,10 +135,10 @@ export const mapMaster = async (exchangeSegment) => {
             contractExpiration: segment.length > 16 ? segment[16] : "0.0",
             strikePrice: "0.0",
             optionType: "0.0",
-            DisplayName: segment.length > 17 ? segment[17] : "0.0",
+            DisplayName: segment.length > 19 ? segment[19] : "0.0",
             ISIN: "0.0",
             Numerator: segment.length > 18 ? segment[18] : "0.0",
-            Denominator: segment.length > 19 ? segment[19] : "0.0",
+            Denominator: segment.length > 17 ? segment[17] : "0.0",
           };
         }
       });
