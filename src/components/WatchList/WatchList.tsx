@@ -595,52 +595,34 @@ export function WatchList() {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr className="text-success text-xs">
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">1</td>
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">1</td>
-                          <td className="p-1.5">100</td>
-                        </tr>
-                        <tr className="text-success text-xs">
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">1</td>
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">1</td>
-                          <td className="p-1.5">100</td>
-                        </tr>
-                        <tr className="text-success text-xs">
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">1</td>
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">1</td>
-                          <td className="p-1.5">100</td>
-                        </tr>
-                        <tr className="text-success text-xs">
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">1</td>
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">1</td>
-                          <td className="p-1.5">100</td>
-                        </tr>
-                        <tr className="text-success text-xs">
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">1</td>
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">100</td>
-                          <td className="p-1.5">1</td>
-                          <td className="p-1.5">100</td>
-                        </tr>
+                        {instrument.Bids.map((bid, i) => (
+                          <tr className="text-xs">
+                            <td className="p-1.5 text-success">{bid.Size}</td>
+                            <td className="p-1.5 text-success">
+                              {bid.TotalOrders}
+                            </td>
+                            <td className="p-1.5 text-success">{bid.Price}</td>
+                            <td className="p-1.5 text-failure">
+                              {instrument.Asks[i].Price}
+                            </td>
+                            <td className="p-1.5 text-failure">
+                              {instrument.Asks[i].Size}
+                            </td>
+                            <td className="p-1.5 text-failure">
+                              {instrument.Asks[i].TotalOrders}
+                            </td>
+                          </tr>
+                        ))}
                         <tr className="text-xs">
-                          <td className="p-1.5 text-success">100</td>
+                          <td className="p-1.5 text-success">
+                            {instrument?.Touchline?.TotalBuyQuantity}
+                          </td>
                           <td className="p-1.5 text-secondary" colSpan={4}>
                             Total
                           </td>
-                          <td className="p-1.5 text-success">100</td>
+                          <td className="p-1.5 text-failure">
+                            {instrument?.Touchline?.TotalSellQuantity}
+                          </td>
                         </tr>
                       </tbody>
                     </table>
@@ -666,7 +648,9 @@ export function WatchList() {
                       <div className="w-full flex justify-between py-2 text-sm">
                         <div className="flex justify-between w-full px-8">
                           <span className="text-secondary">Volume</span>
-                          <span className="text-primary">NA</span>
+                          <span className="text-primary">
+                            {instrument?.Touchline?.TotalTradedQuantity}
+                          </span>
                         </div>
                         <div className="flex justify-between w-full px-8">
                           <span className="text-secondary">Avg. Price</span>

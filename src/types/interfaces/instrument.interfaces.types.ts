@@ -22,6 +22,18 @@ export interface IInstrument {
   SourceSeries: string;
   TargetSeries: string;
   ExDate: string;
+  isExpanded: boolean;
+  StrikePrice: number;
+  OptionType: number;
+  StrikeDifference: number;
+  ContractExpiration: string;
+  RemainingExpiryDays: number;
+  RemainingExpiryDaysABS: number;
+  ContractExpirationString: string;
+  HasContractExpired: boolean;
+  UnderlyingType: number;
+  UnderlyingInstrumentId: number;
+  UnderlyingIndexName: string;
   InstrumentID: number;
   ExchangeInstrumentID: number;
   PreferredExchangeInstrumentID: number;
@@ -54,7 +66,7 @@ export interface IInstrument {
   PriceBand: PriceBand;
   DecimalDisplace: number;
   ExtendedMarketProperties: ExtendedMarketProperties;
-  MarketTypeStatusEligibility: ExtendedMarketProperties;
+  MarketTypeStatusEligibility: MarketTypeStatusEligibility;
   NameWithExchange: string;
   NameWithSeries: string;
   DisplayNameWithExchange: string;
@@ -83,13 +95,22 @@ export interface IInstrument {
   TotalMargin: number;
   SettlementIndicator: string;
   Industry: number;
+  MessageCode: number;
+  MessageVersion: number;
+  ApplicationType: number;
+  TokenID: number;
+  ExchangeTimeStamp: number;
+  Bids: Bid[];
+  Asks: Bid[];
   Touchline: Touchline;
-  isExpanded: boolean;
+  BookType: number;
+  XMarketType: number;
+  SequenceNumber: number;
 }
 
 interface Touchline {
-  BidInfo: BidInfo;
-  AskInfo: BidInfo;
+  BidInfo: Bid;
+  AskInfo: Bid;
   LastTradedPrice: number;
   LastTradedQunatity: number;
   TotalBuyQuantity: number;
@@ -108,7 +129,7 @@ interface Touchline {
   BuyBackTotalSell: number;
 }
 
-interface BidInfo {
+interface Bid {
   Size: number;
   Price: number;
   TotalOrders: number;
@@ -128,11 +149,46 @@ interface Bhavcopy {
   SettlementPrice: number;
 }
 
-interface ExtendedMarketProperties {}
+interface MarketTypeStatusEligibility {
+  Normal: Normal;
+  OddLot: Normal;
+  RetailDebt: Normal;
+  Auction: Normal;
+}
+
+interface Normal {
+  MarketType: number;
+  Eligibile: boolean;
+  TradingStatus: number;
+}
+
+interface ExtendedMarketProperties {
+  SettlementNo: SettlementNo;
+  UniqueKey: SettlementNo;
+  CompanyName: SettlementNo;
+  IssueStartDate: SettlementNo;
+  IssueMaturityDate: SettlementNo;
+  ListingDate: SettlementNo;
+  BookClosureStartDate: SettlementNo;
+  BookClosureEndDate: SettlementNo;
+  RecordDate: SettlementNo;
+  ExpulsionDate: SettlementNo;
+  Remarks: SettlementNo;
+  MaxOrderQuantity: SettlementNo;
+  ExposureMargin: SettlementNo;
+  ExDate: SettlementNo;
+  CallAuctionIndicator: SettlementNo;
+  MarketType: SettlementNo;
+}
+
+interface SettlementNo {
+  Name: number;
+  Value: string;
+}
 
 interface PriceBand {
-  High: string;
-  Low: string;
+  High: number;
+  Low: number;
   HighString: string;
   LowString: string;
   CreditRating: string;
