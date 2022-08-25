@@ -9,13 +9,7 @@ import {
 import { NumberInput } from "../NumberInput";
 import { CustomSwitch } from "../Switch";
 import { RootState } from "../../app/store";
-import {
-  useTheme,
-  Theme,
-  Radio,
-  FormControlLabel,
-  RadioGroup,
-} from "@mui/material";
+import { useTheme, Theme, FormControlLabel, RadioGroup } from "@mui/material";
 import CustomRadio from "../Radio/Radio";
 import { orderEntry } from "../../http/orderEntry/orderEntry";
 import { constants } from "../../constants/global";
