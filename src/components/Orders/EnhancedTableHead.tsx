@@ -19,69 +19,6 @@ interface Data {
   ltp: number;
 }
 
-interface IOrder {
-  LoginID: string;
-  ClientID: string;
-  AppOrderID: number;
-  OrderReferenceID: string;
-  GeneratedBy: string;
-  ExchangeOrderID: string;
-  OrderCategoryType: string;
-  ExchangeSegment: string;
-  ExchangeInstrumentID: number;
-  OrderSide: string;
-  OrderType: string;
-  ProductType: string;
-  TimeInForce: string;
-  IsAMO: boolean;
-  OrderPrice: number;
-  OrderQuantity: number;
-  OrderStopPrice: number;
-  TradingSymbol: string;
-  OrderStatus: string;
-  OrderAverageTradedPrice: string;
-  LeavesQuantity: number;
-  CumulativeQuantity: number;
-  OrderDisclosedQuantity: number;
-  OrderGeneratedDateTime: string;
-  ExchangeTransactTime: string;
-  LastUpdateDateTime: string;
-  OrderExpiryDate: string;
-  CancelRejectReason: string;
-  OrderUniqueIdentifier: string;
-  OrderLegStatus: string;
-  BoLegDetails: number;
-  IsSpread: boolean;
-  BoEntryOrderId: string;
-  MessageCode: number;
-  MessageVersion: number;
-  TokenID: number;
-  ApplicationType: number;
-  SequenceNumber: number;
-}
-
-function createData(
-  id: string,
-  time: string,
-  action: string,
-  scrips: string,
-  qty: string,
-  product: string,
-  orderPrice: number,
-  ltp: number
-): Data {
-  return {
-    id,
-    time,
-    action,
-    scrips,
-    qty,
-    product,
-    orderPrice,
-    ltp,
-  };
-}
-
 type Order = "asc" | "desc";
 
 interface HeadCell {

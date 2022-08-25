@@ -1,6 +1,5 @@
 import { IInstrument } from "./../../types/interfaces/instrument.interfaces.types";
 import { createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
 
 interface IOrderModal {
   visible: boolean;

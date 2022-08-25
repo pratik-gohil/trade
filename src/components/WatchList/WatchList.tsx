@@ -24,7 +24,6 @@ import {
 import useModal from "../../hooks/useModal";
 import { visiblityReducer } from "../../features/orderModal/orderModal";
 import { useDispatch } from "react-redux";
-import { getMaster } from "../../http/master/master";
 import { getGroups } from "../../http/getGroups/getGroups";
 import { getGroupSymbols } from "../../http/getGroupSymbols/getGroupSymbols";
 import { SocketContext } from "../../socket";
@@ -80,7 +79,7 @@ interface IGroupSymbol {
 
 export function WatchList() {
   const [search, setSearch] = useState<any>(null);
-  const [selectedIndice, setSelectedIndice] = useState("Indian");
+  const [selectedIndiceType, setSelectedIndiceType] = useState("Indian");
   const [selectedGroup, setSelectedGroup] = useState("Indices");
   const [instrumentSearch, setInstrumentSearch] = useState("");
   const [master, setMaster] = useState<IMasterInstrument[]>([]);
@@ -96,7 +95,7 @@ export function WatchList() {
     showHoldings: true,
   });
   const tradeBoxes = ["TradeBox 1", "TradeBox 2", "TradeBox 3", "TradeBox 4"];
-  const indices = ["Indian", "Global", "Commodity", "Currency"];
+  const indiceTypes = ["Indian", "Global", "Commodity", "Currency"];
   const indianIndicesList = [
     { exchangeSegment: 1, exchangeInstrumentID: 26000 },
     { exchangeSegment: 1, exchangeInstrumentID: 26065 },
@@ -183,7 +182,7 @@ export function WatchList() {
   useEffect(() => {
     (async () => {
       if (selectedGroup === "Indices") {
-        if (selectedIndice === "Indian") {
+        if (selectedIndiceType === "Indian") {
           const response = await searchInstruments(indianIndicesList);
           if (response.type === "success") {
             setInstruments(response.result);
@@ -198,7 +197,7 @@ export function WatchList() {
         await unsubscribeInstruments(indianIndicesList);
       }
     })();
-  }, [selectedGroup, selectedIndice]);
+  }, [selectedGroup, selectedIndiceType]);
 
   const fetchGroupSymbols = async () => {
     if (selectedGroup) {
@@ -333,13 +332,15 @@ export function WatchList() {
       <div className="relative h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] overflow-y-auto sidebar-width flex flex-col items-center border-r border-border">
         {selectedGroup === "Indices" ? (
           <div className="flex gap-2 w-full px-4 py-3">
-            {indices.map((indice) => (
+            {indiceTypes.map((indice) => (
               <span
                 key={indice}
                 className={`${
-                  indice === selectedIndice ? "selected-tab" : "text-secondary"
+                  indice === selectedIndiceType
+                    ? "selected-tab"
+                    : "text-secondary"
                 } py-1 px-2 rounded cursor-pointer text-lg`}
-                onClick={() => setSelectedIndice(indice)}
+                onClick={() => setSelectedIndiceType(indice)}
               >
                 {indice}
               </span>
@@ -404,56 +405,60 @@ export function WatchList() {
                     </div>
                   </div>
 
-                  <div className="absolute right-0 top-0 h-full items-center gap-2 pr-2 hidden group-hover:flex">
-                    <div
-                      onClick={() =>
-                        dispatch(
-                          visiblityReducer({
-                            visible: true,
-                            order: { orderSide: "BUY" },
-                            instrument,
-                          })
-                        )
-                      }
-                      className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center text-white bg-green-gradient"
-                    >
-                      B
-                    </div>
-                    <div
-                      onClick={() =>
-                        dispatch(
-                          visiblityReducer({
-                            visible: true,
-                            order: { orderSide: "SELL" },
-                            instrument,
-                          })
-                        )
-                      }
-                      className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center text-white bg-red-gradient"
-                    >
-                      S
-                    </div>
-                    <div className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center bg-white text-primary border border-primary">
-                      5
-                    </div>
-                    <div
-                      onClick={() =>
-                        !inWatchlist &&
-                        handleAddInstrument({
-                          userID: localStorage.getItem(USER_ID),
-                          groupName: selectedGroup,
-                          exchangeSegment: instrument.exchangeSegment,
-                          exchangeInstrumentID: instrument.exchangeInstrumentID,
-                          // symbolExpiry: instrument.ExDate,
-                        })
-                      }
-                      className={`${
-                        !inWatchlist ? "cursor-pointer" : ""
-                      } rounded-sm overflow-hidden w-8 h-8 flex justify-center items-center border border-primary text-white bg-blue-gradient`}
-                    >
-                      {inWatchlist ? <Done /> : <Add />}
-                    </div>
-                  </div>
+                  {selectedGroup !== "Indices" &&
+                    selectedGroup !== "Predefined" && (
+                      <div className="absolute right-0 top-0 h-full items-center gap-2 pr-2 hidden group-hover:flex">
+                        <div
+                          onClick={() =>
+                            dispatch(
+                              visiblityReducer({
+                                visible: true,
+                                order: { orderSide: "BUY" },
+                                instrument,
+                              })
+                            )
+                          }
+                          className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center text-white bg-green-gradient"
+                        >
+                          B
+                        </div>
+                        <div
+                          onClick={() =>
+                            dispatch(
+                              visiblityReducer({
+                                visible: true,
+                                order: { orderSide: "SELL" },
+                                instrument,
+                              })
+                            )
+                          }
+                          className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center text-white bg-red-gradient"
+                        >
+                          S
+                        </div>
+                        <div className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center bg-white text-primary border border-primary">
+                          5
+                        </div>
+                        <div
+                          onClick={() =>
+                            !inWatchlist &&
+                            handleAddInstrument({
+                              userID: localStorage.getItem(USER_ID),
+                              groupName: selectedGroup,
+                              exchangeSegment: instrument.exchangeSegment,
+                              exchangeInstrumentID:
+                                instrument.exchangeInstrumentID,
+                              symbolExpiry: instrument.ExDate,
+                            })
+                          }
+                          className={`${
+                            !inWatchlist ? "cursor-pointer" : ""
+                          } rounded-sm overflow-hidden w-8 h-8 flex justify-center items-center border border-primary text-white bg-blue-gradient`}
+                        >
+                          {inWatchlist ? <Done /> : <Add />}
+                        </div>
+                      </div>
+                    )}
                 </div>
               );
             })}
@@ -511,64 +516,70 @@ export function WatchList() {
                     </div>
                   </div>
 
-                  <div className="absolute right-0 top-0 h-full items-center gap-2 pr-2 hidden group-hover:flex text-base">
-                    <div
-                      onClick={() =>
-                        dispatch(
-                          visiblityReducer({
-                            visible: true,
-                            order: {
-                              orderSide: "BUY",
-                              instrument,
-                            },
-                          })
-                        )
-                      }
-                      className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center text-white bg-green-gradient"
-                    >
-                      B
-                    </div>
-                    <div
-                      onClick={() =>
-                        dispatch(
-                          visiblityReducer({
-                            visible: true,
-                            order: {
-                              type: "SELL",
-                              instrument,
-                            },
-                          })
-                        )
-                      }
-                      className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center text-white bg-red-gradient"
-                    >
-                      S
-                    </div>
-                    <div
-                      onClick={() =>
-                        handleInstrumentExpand(instrument.ExchangeInstrumentID)
-                      }
-                      className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center bg-white text-primary border border-primary"
-                    >
-                      5
-                    </div>
-                    <div
-                      onClick={() =>
-                        handleDeleteInstrument({
-                          groupName: selectedGroup,
-                          exchangeInstrumentID: instrument.ExchangeInstrumentID,
-                          exchangeSegment: instrument.ExchangeSegment,
-                          symbolExpiry: instrument.ExDate,
-                        })
-                      }
-                      className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center border border-primary text-primary bg-white"
-                    >
-                      <Delete />
-                    </div>
-                    <div className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center border border-primary text-primary bg-white">
-                      <MoreVert />
-                    </div>
-                  </div>
+                  {selectedGroup !== "Indices" &&
+                    selectedGroup !== "Predefined" && (
+                      <div className="absolute right-0 top-0 h-full items-center gap-2 pr-2 hidden group-hover:flex text-base">
+                        <div
+                          onClick={() =>
+                            dispatch(
+                              visiblityReducer({
+                                visible: true,
+                                order: {
+                                  orderSide: "BUY",
+                                  instrument,
+                                },
+                              })
+                            )
+                          }
+                          className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center text-white bg-green-gradient"
+                        >
+                          B
+                        </div>
+                        <div
+                          onClick={() =>
+                            dispatch(
+                              visiblityReducer({
+                                visible: true,
+                                order: {
+                                  orderSide: "SELL",
+                                  instrument,
+                                },
+                              })
+                            )
+                          }
+                          className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center text-white bg-red-gradient"
+                        >
+                          S
+                        </div>
+                        <div
+                          onClick={() =>
+                            handleInstrumentExpand(
+                              instrument.ExchangeInstrumentID
+                            )
+                          }
+                          className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center bg-white text-primary border border-primary"
+                        >
+                          5
+                        </div>
+                        <div
+                          onClick={() =>
+                            handleDeleteInstrument({
+                              groupName: selectedGroup,
+                              exchangeInstrumentID:
+                                instrument.ExchangeInstrumentID,
+                              exchangeSegment: instrument.ExchangeSegment,
+                              symbolExpiry: instrument.ExDate,
+                            })
+                          }
+                          className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center border border-primary text-primary bg-white"
+                        >
+                          <Delete />
+                        </div>
+                        <div className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center border border-primary text-primary bg-white">
+                          <MoreVert />
+                        </div>
+                      </div>
+                    )}
                 </div>
                 {instrument.isExpanded && (
                   <div className="w-full">
