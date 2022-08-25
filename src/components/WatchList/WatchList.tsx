@@ -407,7 +407,7 @@ export function WatchList() {
 
                   {selectedGroup !== "Indices" &&
                     selectedGroup !== "Predefined" && (
-                      <div className="absolute right-0 top-0 h-full items-center gap-2 pr-2 hidden group-hover:flex">
+                      <div className="absolute right-0 top-1 bottom-1 bg-white items-center gap-2 pr-2 hidden group-hover:flex">
                         <div
                           onClick={() =>
                             dispatch(
@@ -518,7 +518,7 @@ export function WatchList() {
 
                   {selectedGroup !== "Indices" &&
                     selectedGroup !== "Predefined" && (
-                      <div className="absolute right-0 top-0 h-full items-center gap-2 pr-2 hidden group-hover:flex text-base">
+                      <div className="absolute right-0 top-1 bottom-1 bg-white items-center gap-2 pr-2 hidden group-hover:flex text-base">
                         <div
                           onClick={() =>
                             dispatch(
