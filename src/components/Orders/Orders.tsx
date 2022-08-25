@@ -15,6 +15,7 @@ import { subscribeInstruments } from "../../http/subscribeInstruments/subscribeI
 import { Segments } from "../../types/enums/segment.enums.types";
 import { SocketContext } from "../../socket";
 import { IMarketDepth } from "../../types/interfaces/marketDepth.interfaces.types";
+import { unsubscribeInstruments } from "../../http/unsubscribeInstruments/unsubscribeInstruments";
 
 interface Data {
   id: string;
@@ -85,17 +86,22 @@ export function Orders() {
   const { socket } = useContext(SocketContext) as { socket: any };
 
   useEffect(() => {
+    let orderIds;
     (async () => {
       const response = await getOrders();
       if (response.type === "success") {
         setOrders(response.result);
-        const orderIds = response.result.map((order) => ({
+        orderIds = response.result.map((order) => ({
           exchangeSegment: Segments[order.ExchangeSegment],
           exchangeInstrumentID: order.ExchangeInstrumentID,
         }));
         subscribeInstruments(orderIds);
       }
     })();
+
+    return () => {
+      unsubscribeInstruments(orderIds);
+    };
   }, []);
 
   useEffect(() => {
