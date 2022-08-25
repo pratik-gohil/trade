@@ -39,6 +39,7 @@ import { FormControlLabel, FormGroup, RadioGroup } from "@mui/material";
 import CustomRadio from "../Radio/Radio";
 import { percDiff } from "../../utils/percentageDiffrence";
 import CustomCheckbox from "../Checkbox/Checkbox";
+import { mapMaster } from "./masters";
 const { USER_ID } = constants;
 
 interface IMasterInstrument {
@@ -237,39 +238,35 @@ export function WatchList() {
   }, [groupSymbols]);
 
   useEffect(() => {
-    const keys = [
-      "exchangeSegment",
-      "exchangeInstrumentID",
-      "instrumentType",
-      "name",
-      "description",
-      "series",
-      "nameWithSeries",
-      "instrumentID",
-      "highPriceBand",
-      "lowPriceBand",
-      "freezeQty",
-      "tickSize",
-      "lotSize",
-      "multiplier",
-      "underlyingInstrumentId",
-      "contractExpiration",
-      "strikePrice",
-      "optionType",
-      "underlyingIndexName",
-      "DisplayName",
-      "ISIN",
-      "Numerator",
-      "Denominator",
-    ];
+    // const keys = [
+    //   "exchangeSegment",
+    //   "exchangeInstrumentID",
+    //   "instrumentType",
+    //   "name",
+    //   "description",
+    //   "series",
+    //   "nameWithSeries",
+    //   "instrumentID",
+    //   "highPriceBand",
+    //   "lowPriceBand",
+    //   "freezeQty",
+    //   "tickSize",
+    //   "lotSize",
+    //   "multiplier",
+    //   "underlyingInstrumentId",
+    //   "contractExpiration",
+    //   "strikePrice",
+    //   "optionType",
+    //   "underlyingIndexName",
+    //   "DisplayName",
+    //   "ISIN",
+    //   "Numerator",
+    //   "Denominator",
+    // ];
     (async () => {
-      const response = await getMaster();
+      const response = await mapMaster(["NSECM", "BSECM", "NSECD", "NSEFO"]);
       if (response.type === "success") {
-        let master = response.result
-          .split("\n")
-          .map((s) => s.split("|"))
-          .map((s) => s.reduce((o, k, i) => ({ ...o, [keys[i]]: k }), {}));
-        setMaster(master);
+        setMaster(response.result);
       }
     })();
   }, []);
