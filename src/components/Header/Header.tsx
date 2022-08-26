@@ -9,6 +9,7 @@ import { SocketContext } from "../../socket";
 import { percDiff } from "../../utils/percentageDiffrence";
 import { IInstrument } from "../../types/interfaces/instrument.interfaces.types";
 import trade from "../../assets/trade.png";
+import { unsubscribeInstruments } from "../../http/unsubscribeInstruments/unsubscribeInstruments";
 
 const links = [
   {
@@ -63,6 +64,10 @@ export const Header = () => {
         await subscribeInstruments(pinnedInstrumentsIds);
       }
     })();
+
+    return () => {
+      unsubscribeInstruments(pinnedInstruments);
+    };
   }, []);
 
   useEffect(() => {
