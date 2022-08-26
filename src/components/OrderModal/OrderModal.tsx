@@ -1,5 +1,5 @@
-import { Replay } from "@mui/icons-material";
-import React, { useEffect, useRef, useState } from "react";
+import { ExpandLess, ExpandMore, Replay } from "@mui/icons-material";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Draggable from "react-draggable";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -13,35 +13,42 @@ import { useTheme, Theme, FormControlLabel, RadioGroup } from "@mui/material";
 import CustomRadio from "../Radio/Radio";
 import { orderEntry } from "../../http/orderEntry/orderEntry";
 import { constants } from "../../constants/global";
+import { getUserBalance } from "../../http/userBalance/userBalance";
 const { USER_ID, CLIENT_ID } = constants;
 
 let margin = 50;
 
 export function OrderModal() {
   const theme: Theme = useTheme();
-  const modalRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLFormElement>(null);
   const [vh, setVh] = useState(0);
   const [vw, setVw] = useState(0);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [exchangeSegment, setExchangeSegment] = useState("NSECM");
   const [timeInForce, setTimeInForce] = useState("DAY");
+  const [order, setOrder] = useState("REGULAR");
   const [orderType, setOrderType] = useState("MARKET");
   const { orderSide, instrument } = useSelector(
     (state: RootState) => state.orderModal.order
   );
-
   const [price, setPrice] = useState(0);
   const [triggerPrice, setTriggerPrice] = useState(0);
   const [orderQuantity, setOrderQuantity] = useState(1);
   const [disclosedQuantity, setDisclosedQuantity] = useState(0);
+  const [showMore, setShowMore] = useState(false);
+  const [userBalanceList, setUserBalanceList] = useState<any>([]);
   const isOpen = useSelector((state: RootState) => state.orderModal.visible);
   const dispatch = useDispatch();
 
   useEffect(() => {
     setPrice(instrument?.Touchline?.LastTradedPrice || 0);
+
+    getUserBalance().then((res) => {
+      res.type === "success" && setUserBalanceList(res.result);
+    });
   }, [instrument]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     let document_height = Math.max(
       document.documentElement.clientHeight,
       window.innerHeight || 0
@@ -55,29 +62,42 @@ export function OrderModal() {
       setVh(document_height - modalRef.current.clientHeight);
       setVw(document_width - modalRef.current.clientWidth);
     }
-  }, [isOpen]);
+  }, [isOpen, modalRef?.current?.clientHeight, modalRef?.current?.clientWidth]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setPosition({ y: vh, x: vw / 2 });
   }, [vh, vw]);
 
   if (!isOpen) return null;
 
-  const handleOrder = (instrument) => {
-    const response = orderEntry({
+  const handleOrder = async (e) => {
+    e.preventDefault();
+    const response = await orderEntry({
       clientID: localStorage.getItem(CLIENT_ID),
       userID: localStorage.getItem(USER_ID),
       exchangeSegment,
-      exchangeInstrumentID: instrument.ExchangeInstrumentID,
+      exchangeInstrumentID: instrument?.ExchangeInstrumentID,
       productType: "NRML",
       orderType,
       orderSide,
       timeInForce,
       disclosedQuantity,
       orderQuantity,
-      limitPrice: 2000,
-      stopPrice: 0,
+      limitPrice: orderType === "MARKET" || orderType === "SL-M" ? 0 : price,
+      stopPrice:
+        orderType === "MARKET" || orderType === "SL-M" ? 0 : triggerPrice,
+      isAMO: order === "AMO",
     });
+
+    if (response.type === "success") {
+      dispatch(
+        visiblityReducer({
+          visible: false,
+          order: {},
+        })
+      );
+    }
+    alert(response.description);
   };
 
   return (
@@ -111,7 +131,8 @@ export function OrderModal() {
             });
           }}
         >
-          <div
+          <form
+            onSubmit={handleOrder}
             ref={modalRef}
             className="absolute top-0 bg-white text-[#8c8c8c] rounded-[10px] overflow-hidden shadow-modal"
           >
@@ -199,32 +220,32 @@ export function OrderModal() {
             </div>
             <div className="flex items-center gap-14 border-b-2 border-border text-sm font-medium px-5 pt-2.5 pb-1 bg-[#f9f9f9]">
               <div
-              // onClick={() => setOrderType("REGULAR")}
-              // className={`${
-              //   orderType === "REGULAR"
-              //     ? "text-blue underline underline-offset-[8px] decoration-2"
-              //     : ""
-              // } cursor-pointer`}
+                onClick={() => setOrder("REGULAR")}
+                className={`${
+                  order === "REGULAR"
+                    ? "text-blue underline underline-offset-[8px] decoration-2"
+                    : ""
+                } cursor-pointer`}
               >
                 Regular
               </div>
               <div
-              // onClick={() => setOrderType("COVER")}
-              // className={`${
-              //   orderType === "COVER"
-              //     ? "text-blue underline underline-offset-[8px] decoration-2"
-              //     : ""
-              // } cursor-pointer`}
+                onClick={() => setOrder("COVER")}
+                className={`${
+                  order === "COVER"
+                    ? "text-blue underline underline-offset-[8px] decoration-2"
+                    : ""
+                } cursor-pointer`}
               >
                 Cover
               </div>
               <div
-              // onClick={() => setOrderType("AMO")}
-              // className={`${
-              //   orderType === "AMO"
-              //     ? "text-blue underline underline-offset-[8px] decoration-2"
-              //     : ""
-              // } cursor-pointer`}
+                onClick={() => setOrder("AMO")}
+                className={`${
+                  order === "AMO"
+                    ? "text-blue underline underline-offset-[9px] decoration-2"
+                    : ""
+                } cursor-pointer`}
               >
                 AMO
               </div>
@@ -252,8 +273,8 @@ export function OrderModal() {
                   }}
                   control={
                     <CustomRadio
-                      checked={timeInForce === "DAY"}
-                      onChange={() => setTimeInForce("DAY")}
+                    // checked={ === "DAY"}
+                    // onChange={() => ("DAY")}
                     />
                   }
                   value="intraday"
@@ -272,8 +293,8 @@ export function OrderModal() {
                   }}
                   control={
                     <CustomRadio
-                      checked={timeInForce === "DELIVERY"}
-                      onChange={() => setTimeInForce("DELIVERY")}
+                    // checked={ === "DELIVERY"}
+                    // onChange={() => ("DELIVERY")}
                     />
                   }
                   value="longterm"
@@ -293,102 +314,31 @@ export function OrderModal() {
                 />
                 <NumberInput
                   label="Price"
-                  value={price}
+                  value={orderType === "MARKET" ? 0 : price}
                   onChange={(value) => setPrice(value)}
+                  step={0.05}
+                  disabled={orderType === "MARKET" || orderType === "SL-M"}
+                  // min={0.01}
                 />
                 <NumberInput
-                  disabled
                   label="Trigger price"
-                  value={triggerPrice}
+                  value={
+                    orderType === "MARKET" || orderType === "SL-M"
+                      ? 0
+                      : triggerPrice
+                  }
                   onChange={(value) => setTriggerPrice(value)}
+                  step={0.05}
+                  disabled={orderType === "MARKET" || orderType === "LIMIT"}
+                  // min={0.01}
                 />
               </div>
-              <RadioGroup
-                sx={{ display: "flex", flexDirection: "row", gap: 4 }}
-                aria-labelledby="radio-order-modal-trade-sub-type"
-                name="radio-order-modal-trade-sub-type"
-                defaultValue="limit"
-              >
-                <FormControlLabel
-                  sx={{
-                    fontSize: "12px",
-                    margin: 0,
-                    display: "flex",
-                    gap: 0.5,
-                  }}
-                  control={
-                    <CustomRadio
-                      checked={orderType === "MARKET"}
-                      onChange={() => setOrderType("MARKET")}
-                    />
-                  }
-                  value="market"
-                  label={
-                    <span className="text-xs font-medium block">Market</span>
-                  }
-                />
-                <FormControlLabel
-                  sx={{
-                    fontSize: "12px",
-                    margin: 0,
-                    display: "flex",
-                    gap: 0.5,
-                  }}
-                  control={
-                    <CustomRadio
-                      checked={orderType === "LIMIT"}
-                      onChange={() => setOrderType("LIMIT")}
-                    />
-                  }
-                  value="limit"
-                  label={
-                    <span className="text-xs font-medium block">Limit</span>
-                  }
-                />
-                <FormControlLabel
-                  sx={{
-                    fontSize: "12px",
-                    margin: 0,
-                    display: "flex",
-                    gap: 0.5,
-                  }}
-                  control={
-                    <CustomRadio
-                      checked={orderType === "SL"}
-                      onChange={() => setOrderType("SL")}
-                    />
-                  }
-                  value="sl"
-                  label={<span className="text-xs font-medium block">SL</span>}
-                />
-                <FormControlLabel
-                  sx={{
-                    fontSize: "12px",
-                    margin: 0,
-                    display: "flex",
-                    gap: 0.5,
-                  }}
-                  control={
-                    <CustomRadio
-                      checked={orderType === "SL-M"}
-                      onChange={() => setOrderType("SL-M")}
-                    />
-                  }
-                  value="sl-m"
-                  label={
-                    <span className="text-xs font-medium block">SL-M</span>
-                  }
-                />
-              </RadioGroup>
-            </div>
-            <div className="flex gap-8 px-5 py-[10px] border-b-2 border-border">
-              <div className="flex flex-col justify-between">
-                <div className="text-sm">Validity</div>
+              <div className="flex justify-between">
                 <RadioGroup
                   sx={{ display: "flex", flexDirection: "row", gap: 4 }}
-                  aria-labelledby="radio-order-modal-validity"
-                  name="radio-order-modal-validity"
-                  defaultValue="day"
+                  aria-labelledby="radio-order-modal-trade-sub-type"
+                  name="radio-order-modal-trade-sub-type"
+                  defaultValue="limit"
                 >
                   <FormControlLabel
                     sx={{
@@ -399,13 +349,13 @@ export function OrderModal() {
                     }}
                     control={
                       <CustomRadio
-                        checked={timeInForce === "DAY"}
-                        onChange={() => setTimeInForce("DAY")}
+                        checked={orderType === "MARKET"}
+                        onChange={() => setOrderType("MARKET")}
                       />
                     }
-                    value="day"
+                    value="market"
                     label={
-                      <span className="text-xs font-medium block">Day</span>
+                      <span className="text-xs font-medium block">Market</span>
                     }
                   />
                   <FormControlLabel
@@ -417,27 +367,129 @@ export function OrderModal() {
                     }}
                     control={
                       <CustomRadio
-                        checked={timeInForce === "IMMEDIATE"}
-                        onChange={() => setTimeInForce("IMMEDIATE")}
+                        checked={orderType === "LIMIT"}
+                        onChange={() => setOrderType("LIMIT")}
                       />
                     }
-                    value="immediate"
+                    value="limit"
                     label={
-                      <span className="text-xs font-medium block">
-                        Immediate
-                      </span>
+                      <span className="text-xs font-medium block">Limit</span>
+                    }
+                  />
+                  <FormControlLabel
+                    sx={{
+                      fontSize: "12px",
+                      margin: 0,
+                      display: "flex",
+                      gap: 0.5,
+                    }}
+                    control={
+                      <CustomRadio
+                        checked={orderType === "SL"}
+                        onChange={() => setOrderType("SL")}
+                      />
+                    }
+                    value="sl"
+                    label={
+                      <span className="text-xs font-medium block">SL</span>
+                    }
+                  />
+                  <FormControlLabel
+                    sx={{
+                      fontSize: "12px",
+                      margin: 0,
+                      display: "flex",
+                      gap: 0.5,
+                    }}
+                    control={
+                      <CustomRadio
+                        checked={orderType === "SL-M"}
+                        onChange={() => setOrderType("SL-M")}
+                      />
+                    }
+                    value="sl-m"
+                    label={
+                      <span className="text-xs font-medium block">SL-M</span>
                     }
                   />
                 </RadioGroup>
-              </div>
-              <div className="mt-auto">
-                <NumberInput
-                  label="Disclosed QTY."
-                  value={disclosedQuantity}
-                  onChange={(value) => setDisclosedQuantity(value)}
-                />
+                <div
+                  className="text-xl text-blue font-medium cursor-pointer"
+                  onClick={() => setShowMore(!showMore)}
+                >
+                  {showMore ? (
+                    <>
+                      Hide Options <ExpandLess />
+                    </>
+                  ) : (
+                    <>
+                      More Options <ExpandMore />
+                    </>
+                  )}
+                </div>
               </div>
             </div>
+            {showMore && (
+              <div className="flex gap-8 px-5 py-[10px] border-b-2 border-border">
+                <div className="flex flex-col justify-between">
+                  <div className="text-sm">Validity</div>
+                  <RadioGroup
+                    sx={{ display: "flex", flexDirection: "row", gap: 4 }}
+                    aria-labelledby="radio-order-modal-validity"
+                    name="radio-order-modal-validity"
+                    defaultValue="day"
+                  >
+                    <FormControlLabel
+                      sx={{
+                        fontSize: "12px",
+                        margin: 0,
+                        display: "flex",
+                        gap: 0.5,
+                      }}
+                      control={
+                        <CustomRadio
+                          checked={timeInForce === "DAY"}
+                          onChange={() => setTimeInForce("DAY")}
+                        />
+                      }
+                      value="day"
+                      label={
+                        <span className="text-xs font-medium block">Day</span>
+                      }
+                    />
+                    <FormControlLabel
+                      sx={{
+                        fontSize: "12px",
+                        margin: 0,
+                        display: "flex",
+                        gap: 0.5,
+                      }}
+                      control={
+                        <CustomRadio
+                          checked={timeInForce === "IMMEDIATE"}
+                          onChange={() => setTimeInForce("IMMEDIATE")}
+                        />
+                      }
+                      value="immediate"
+                      label={
+                        <span className="text-xs font-medium block">
+                          Immediate
+                        </span>
+                      }
+                    />
+                  </RadioGroup>
+                </div>
+                <div className="mt-auto">
+                  <NumberInput
+                    label="Disclosed QTY."
+                    value={disclosedQuantity}
+                    onChange={(value) => setDisclosedQuantity(value)}
+                    min={0}
+                    max={orderQuantity}
+                  />
+                </div>
+              </div>
+            )}
 
             <div className="flex justify-between items-center px-5 py-[10px] bg-[#f9f9f9] font-medium">
               <div className="flex flex-col text-xs">
@@ -457,12 +509,17 @@ export function OrderModal() {
                 </div>
                 <div className="flex justify-between">
                   <div>Available</div>
-                  <div>NA</div>
+                  <div>
+                    {userBalanceList?.BalanceList[0] &&
+                      userBalanceList?.BalanceList[0]?.limitObject?.RMSSubLimits
+                        ?.netMarginAvailable}
+                  </div>
                 </div>
               </div>
               <div className="flex gap-6">
                 <button
-                  onClick={() => handleOrder(instrument)}
+                  type="submit"
+                  // onClick={() => handleOrder(instrument)}
                   className={`${
                     orderSide === "BUY"
                       ? "bg-green-gradient"
@@ -472,6 +529,7 @@ export function OrderModal() {
                   {orderSide === "BUY" ? "Buy" : "Sell"}
                 </button>
                 <button
+                  type="button"
                   onClick={() =>
                     dispatch(
                       visiblityReducer({
@@ -486,7 +544,7 @@ export function OrderModal() {
                 </button>
               </div>
             </div>
-          </div>
+          </form>
         </Draggable>
       </>
     )

@@ -236,6 +236,10 @@ export function WatchList() {
 
   useEffect(() => {
     fetchInstruments();
+
+    return () => {
+      unsubscribeInstruments(groupSymbols);
+    };
   }, [groupSymbols]);
 
   useEffect(() => {
@@ -480,7 +484,7 @@ export function WatchList() {
             return (
               <Fragment key={instrument.ExchangeInstrumentID}>
                 <div className="w-full relative group">
-                  <div className="w-full border-border border-b p-5 flex justify-between items-center">
+                  <div className="w-full border-border border-b p-[18px] flex justify-between items-center">
                     <div>
                       <div className="text-primary text-base">
                         {instrument.DisplayName}

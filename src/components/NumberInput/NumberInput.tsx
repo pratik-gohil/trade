@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 import { Add, Remove } from "@mui/icons-material";
 
 export function NumberInput({
@@ -7,9 +7,15 @@ export function NumberInput({
   onChange,
   disabled = false,
   autoFocus = false,
+  step = 1,
+  pattern = "",
+  min = 1,
+  max = Infinity,
 }) {
+  const id = useId();
   return (
-    <div
+    <label
+      htmlFor={id}
       className={`h-[45px] text-[#8c8c8c] flex items-center relative border border-solid border-gray-300 px-3 rounded-lg ${
         disabled ? "input-disabled cursor-not-allowed" : ""
       }`}
@@ -19,8 +25,12 @@ export function NumberInput({
       </span>
       <div className="flex">
         <button
+          type="button"
           disabled={disabled}
-          onClick={() => onChange(++value)}
+          onClick={() => {
+            parseFloat(value) + step <= max &&
+              onChange(parseFloat((parseFloat(value) + step).toFixed(2)));
+          }}
           className={`${
             disabled ? "cursor-not-allowed invisible" : "cursor-pointer"
           } text-primary`}
@@ -29,21 +39,29 @@ export function NumberInput({
         </button>
 
         <input
+          id={id}
+          pattern={pattern}
           type="number"
           placeholder=""
           autoCorrect="off"
-          min="1"
+          min={min}
+          max={max}
           autoFocus={autoFocus}
           className={`${
             disabled ? "cursor-not-allowed" : ""
-          } outline-0 text-center bg-transparent text-primary font-medium max-w-[100px]`}
+          } outline-0 text-center bg-transparent text-primary font-medium w-[100px] max-w-[100px]`}
           value={value}
-          onChange={(e) => onChange(parseFloat(e.target.value))}
+          onChange={(e) => onChange(e.target.value)}
           disabled={disabled}
+          step={step}
         />
         <button
+          type="button"
           disabled={disabled}
-          onClick={() => onChange(--value)}
+          onClick={() => {
+            parseFloat(value) - step >= min &&
+              onChange(parseFloat((parseFloat(value) - step).toFixed(2)));
+          }}
           className={`${
             disabled ? "cursor-not-allowed invisible" : "cursor-pointer"
           } text-primary`}
@@ -51,6 +69,6 @@ export function NumberInput({
           <Remove fontSize="inherit" className="text-[#333]" />
         </button>
       </div>
-    </div>
+    </label>
   );
 }
