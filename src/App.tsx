@@ -20,6 +20,7 @@ import { getUserProfile } from "./http/getUserProfile/getUserProfile";
 import { setUserReducer } from "./features/Auth/Auth";
 import { constants } from "./constants/global";
 import Logout from "./components/Logout/Logout";
+import { asyncLocalStorage } from "./utils/asyncLocalStorage";
 const { TOKEN } = constants;
 
 declare module "@mui/material/styles" {
@@ -68,7 +69,9 @@ export default function App() {
             userProfile.description === "Invalid Token") ||
           userProfile.description === "Token/Authorization not found"
         ) {
-          localStorage.clear();
+          asyncLocalStorage.clear().then(() => {
+            window.location.href = "/";
+          });
         }
         if (userProfile.type === "success") {
           dispatch(setUserReducer(userProfile.result));
