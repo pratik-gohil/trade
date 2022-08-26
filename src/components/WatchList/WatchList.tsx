@@ -603,7 +603,7 @@ export function WatchList() {
                       </thead>
                       <tbody>
                         {instrument.Bids.map((bid, i) => (
-                          <tr className="text-xs">
+                          <tr key={i} className="text-xs">
                             <td className="p-1.5 text-success">{bid.Size}</td>
                             <td className="p-1.5 text-success">
                               {bid.TotalOrders}
