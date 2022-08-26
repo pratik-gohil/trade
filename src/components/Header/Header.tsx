@@ -95,16 +95,18 @@ export const Header = () => {
         </Link>
         <div className="flex text-right gap-4 text-xs font-medium mr-[10px]">
           {pinnedInstruments.map((instrument) => {
-            const diffrence = Number(
-              (
-                instrument?.Touchline?.LastTradedPrice -
+            const diffrence =
+              Number(
+                (
+                  instrument?.Touchline?.LastTradedPrice -
+                  instrument?.Touchline?.Close
+                ).toFixed(2)
+              ) || 0;
+            const percentDiffrence =
+              percDiff(
+                instrument?.Touchline?.LastTradedPrice,
                 instrument?.Touchline?.Close
-              ).toFixed(2)
-            );
-            const percentDiffrence = percDiff(
-              instrument?.Touchline?.LastTradedPrice,
-              instrument?.Touchline?.Close
-            );
+              ) || 0;
             return (
               <div key={instrument.ExchangeInstrumentID}>
                 <div className="flex gap-2">
@@ -116,7 +118,7 @@ export const Header = () => {
                         : "text-failure"
                     }`}
                   >
-                    {instrument?.Touchline?.LastTradedPrice}
+                    {instrument?.Touchline?.LastTradedPrice || 0}
                   </span>
                 </div>
                 <div className="text-secondary">

@@ -236,11 +236,13 @@ export function WatchList() {
 
   useEffect(() => {
     fetchInstruments();
+  }, [groupSymbols]);
 
+  useEffect(() => {
     return () => {
       unsubscribeInstruments(groupSymbols);
     };
-  }, [groupSymbols]);
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -471,16 +473,17 @@ export function WatchList() {
         ) : (
           instruments.sort(filterInstruments).map((instrument) => {
             const changeBy =
-              filters.changeBy === "close"
+              (filters.changeBy === "close"
                 ? instrument?.Touchline?.Close
-                : instrument?.Touchline?.Open;
-            const diffrence = Number(
-              (instrument?.Touchline?.LastTradedPrice - changeBy).toFixed(2)
-            );
-            const percentDiffrence = percDiff(
-              instrument?.Touchline?.LastTradedPrice,
-              changeBy
-            );
+                : instrument?.Touchline?.Open) || 0;
+            const diffrence =
+              Number(
+                (instrument?.Touchline?.LastTradedPrice - changeBy).toFixed(
+                  2
+                ) || 0
+              ) || 0;
+            const percentDiffrence =
+              percDiff(instrument?.Touchline?.LastTradedPrice, changeBy) || 0;
             return (
               <Fragment key={instrument.ExchangeInstrumentID}>
                 <div className="w-full relative group">
@@ -495,7 +498,7 @@ export function WatchList() {
                     </div>
                     <div className="text-right">
                       <div className="text-primary text-base">
-                        {instrument?.Touchline?.LastTradedPrice}
+                        {instrument?.Touchline?.LastTradedPrice || 0}
                       </div>
                       <div
                         className={`text-xs ${
