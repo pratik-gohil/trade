@@ -281,7 +281,7 @@ export function Orders() {
                       </TableCell>
                       <TableCell align="right">
                         <span className="text-primary text-base">
-                          {row?.Touchline?.LastTradedPrice}
+                          {row?.Touchline?.LastTradedPrice || 0}
                         </span>
                       </TableCell>
                     </TableRow>
