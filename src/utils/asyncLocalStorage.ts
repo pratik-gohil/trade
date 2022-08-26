@@ -7,4 +7,8 @@ export const asyncLocalStorage = {
     await null;
     return localStorage.getItem(key);
   },
+  clear: async function () {
+    await null;
+    return localStorage.clear();
+  },
 };
