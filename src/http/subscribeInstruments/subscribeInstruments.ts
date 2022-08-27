@@ -8,7 +8,7 @@ export const subscribeInstruments = async (data) => {
     {
       body: JSON.stringify({
         instruments: data,
-        xtsMessageCode: 1502,
+        xtsMessageCode: 1501,
       }),
       method: "POST",
       headers: {
