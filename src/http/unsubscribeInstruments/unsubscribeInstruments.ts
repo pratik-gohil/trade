@@ -8,7 +8,7 @@ export const unsubscribeInstruments = async (data) => {
     {
       body: JSON.stringify({
         instruments: data,
-        xtsMessageCode: 1502,
+        xtsMessageCode: 1501,
       }),
       method: "PUT",
       headers: {

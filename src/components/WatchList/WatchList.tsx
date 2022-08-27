@@ -317,7 +317,7 @@ export function WatchList() {
   };
 
   useEffect(() => {
-    socket.on("1502-json-full", (res) => {
+    socket.on("1501-json-full", (res) => {
       const data = JSON.parse(res);
       setInstruments((instruments) =>
         instruments.map((instrument) => {
@@ -329,7 +329,7 @@ export function WatchList() {
     });
 
     return () => {
-      socket.off("1502-json-full");
+      socket.off("1501-json-full");
     };
   }, []);
 
