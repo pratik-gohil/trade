@@ -16,6 +16,8 @@ import { Segments } from "../../types/enums/segment.enums.types";
 import { SocketContext } from "../../socket";
 import { IMarketDepth } from "../../types/interfaces/marketDepth.interfaces.types";
 import { unsubscribeInstruments } from "../../http/unsubscribeInstruments/unsubscribeInstruments";
+import { useSelector } from "react-redux";
+import { RootState } from "../../app/store";
 
 interface Data {
   id: string;
@@ -84,10 +86,12 @@ export function Orders() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const { socket } = useContext(SocketContext) as { socket: any };
+  const isOpen = useSelector((state: RootState) => state.orderModal.visible);
 
   useEffect(() => {
     let orderIds;
-    (async () => {
+
+    const fetchOrders = async () => {
       const response = await getOrders();
       if (response.type === "success") {
         setOrders(response.result);
@@ -96,13 +100,21 @@ export function Orders() {
           exchangeInstrumentID: order.ExchangeInstrumentID,
         }));
         subscribeInstruments(orderIds);
+
+        return orderIds;
       }
-    })();
+    };
+
+    if (!isOpen) {
+      fetchOrders();
+    }
+
+    fetchOrders();
 
     return () => {
       unsubscribeInstruments(orderIds);
     };
-  }, []);
+  }, [isOpen]);
 
   useEffect(() => {
     socket.on("1502-json-full", (res) => {
