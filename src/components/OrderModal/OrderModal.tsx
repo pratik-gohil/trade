@@ -31,6 +31,7 @@ export function OrderModal() {
   const { orderSide, instrument } = useSelector(
     (state: RootState) => state.orderModal.order
   );
+  const [tradeType, setTradeType] = useState("INTRADAY");
   const [price, setPrice] = useState(0);
   const [triggerPrice, setTriggerPrice] = useState(0);
   const [orderQuantity, setOrderQuantity] = useState(1);
@@ -77,7 +78,12 @@ export function OrderModal() {
       userID: localStorage.getItem(USER_ID),
       exchangeSegment,
       exchangeInstrumentID: instrument?.ExchangeInstrumentID,
-      productType: "NRML",
+      productType:
+        tradeType === "LONGTERM"
+          ? "MIS"
+          : exchangeSegment === "NSECM" || exchangeSegment === "BSECM"
+          ? "CNC"
+          : "NRML",
       orderType,
       orderSide,
       timeInForce,
@@ -273,8 +279,8 @@ export function OrderModal() {
                   }}
                   control={
                     <CustomRadio
-                    // checked={ === "DAY"}
-                    // onChange={() => ("DAY")}
+                      checked={tradeType === "INTRADAY"}
+                      onChange={() => setTradeType("INTRADAY")}
                     />
                   }
                   value="intraday"
@@ -293,8 +299,8 @@ export function OrderModal() {
                   }}
                   control={
                     <CustomRadio
-                    // checked={ === "DELIVERY"}
-                    // onChange={() => ("DELIVERY")}
+                      checked={tradeType === "LONGTERM"}
+                      onChange={() => setTradeType("LONGTERM")}
                     />
                   }
                   value="longterm"
