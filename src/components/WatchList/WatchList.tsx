@@ -186,15 +186,15 @@ export function WatchList() {
           const response = await searchInstruments(indianIndicesList);
           if (response.type === "success") {
             setInstruments(response.result);
-            await subscribeInstruments(indianIndicesList);
+            await subscribeInstruments({ instruments: indianIndicesList });
           }
         } else {
           setInstruments([]);
-          await unsubscribeInstruments(indianIndicesList);
+          await unsubscribeInstruments({ instruments: indianIndicesList });
         }
       } else {
         setInstruments([]);
-        await unsubscribeInstruments(indianIndicesList);
+        await unsubscribeInstruments({ instruments: indianIndicesList });
       }
     })();
   }, [selectedGroup, selectedIndiceType]);
@@ -208,7 +208,10 @@ export function WatchList() {
       if (response.type === "success") {
         setGroupSymbols((prevGroupsSymbols) => {
           if (prevGroupsSymbols.length) {
-            (async () => await unsubscribeInstruments(prevGroupsSymbols))();
+            (async () =>
+              await unsubscribeInstruments({
+                instruments: prevGroupsSymbols,
+              }))();
           }
           return response.result.instruments;
         });
@@ -223,7 +226,7 @@ export function WatchList() {
   const fetchInstruments = () => {
     if (groupSymbols.length) {
       (async () => {
-        await subscribeInstruments(groupSymbols);
+        await subscribeInstruments({ instruments: groupSymbols });
         const response = await searchInstruments(groupSymbols);
         if (response.type === "success") {
           setInstruments(response.result);
@@ -240,7 +243,7 @@ export function WatchList() {
 
   useEffect(() => {
     return () => {
-      unsubscribeInstruments(groupSymbols);
+      unsubscribeInstruments({ instruments: groupSymbols });
     };
   }, []);
 
@@ -251,9 +254,29 @@ export function WatchList() {
     })();
   }, []);
 
-  const handleInstrumentExpand = (id) => {
+  const handleInstrumentExpand = async (id) => {
     setInstruments((prev) =>
       prev.map((instrument) => {
+        instrument.ExchangeInstrumentID === id &&
+          (instrument.isExpanded
+            ? subscribeInstruments({
+                instruments: [
+                  {
+                    exchangeSegment: instrument.ExchangeSegment,
+                    exchangeInstrumentID: instrument.ExchangeInstrumentID,
+                  },
+                ],
+                xtsMessageCode: 1502,
+              })
+            : unsubscribeInstruments({
+                instruments: [
+                  {
+                    exchangeSegment: instrument.ExchangeSegment,
+                    exchangeInstrumentID: instrument.ExchangeInstrumentID,
+                  },
+                ],
+                xtsMessageCode: 1502,
+              }));
         return instrument.ExchangeInstrumentID === id
           ? { ...instrument, isExpanded: !instrument.isExpanded }
           : instrument;
@@ -327,9 +350,20 @@ export function WatchList() {
         })
       );
     });
+    socket.on("1502-json-full", (res) => {
+      const data = JSON.parse(res);
+      setInstruments((instruments) =>
+        instruments.map((instrument) => {
+          return instrument.ExchangeInstrumentID === data.ExchangeInstrumentID
+            ? { ...instrument, ...data }
+            : instrument;
+        })
+      );
+    });
 
     return () => {
       socket.off("1501-json-full");
+      socket.off("1502-json-full");
     };
   }, []);
 
@@ -602,33 +636,37 @@ export function WatchList() {
                         </tr>
                       </thead>
                       <tbody>
-                        {instrument.Bids.map((bid, i) => (
+                        {instrument?.Bids?.map((bid, i) => (
                           <tr key={i} className="text-xs">
-                            <td className="p-1.5 text-success">{bid.Size}</td>
                             <td className="p-1.5 text-success">
-                              {bid.TotalOrders}
+                              {bid?.Size || 0}
                             </td>
-                            <td className="p-1.5 text-success">{bid.Price}</td>
-                            <td className="p-1.5 text-failure">
-                              {instrument.Asks[i].Price}
+                            <td className="p-1.5 text-success">
+                              {bid?.TotalOrders || 0}
+                            </td>
+                            <td className="p-1.5 text-success">
+                              {bid?.Price || 0}
                             </td>
                             <td className="p-1.5 text-failure">
-                              {instrument.Asks[i].Size}
+                              {instrument?.Asks[i]?.Price || 0}
                             </td>
                             <td className="p-1.5 text-failure">
-                              {instrument.Asks[i].TotalOrders}
+                              {instrument?.Asks[i]?.Size || 0}
+                            </td>
+                            <td className="p-1.5 text-failure">
+                              {instrument?.Asks[i]?.TotalOrders || 0}
                             </td>
                           </tr>
                         ))}
                         <tr className="text-xs">
                           <td className="p-1.5 text-success">
-                            {instrument?.Touchline?.TotalBuyQuantity}
+                            {instrument?.Touchline?.TotalBuyQuantity || 0}
                           </td>
                           <td className="p-1.5 text-secondary" colSpan={4}>
                             Total
                           </td>
                           <td className="p-1.5 text-failure">
-                            {instrument?.Touchline?.TotalSellQuantity}
+                            {instrument?.Touchline?.TotalSellQuantity || 0}
                           </td>
                         </tr>
                       </tbody>
