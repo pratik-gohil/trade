@@ -79,7 +79,7 @@ export function OrderModal() {
       exchangeSegment,
       exchangeInstrumentID: instrument?.ExchangeInstrumentID,
       productType:
-        tradeType === "LONGTERM"
+        tradeType === "INTRADAY"
           ? "MIS"
           : exchangeSegment === "NSECM" || exchangeSegment === "BSECM"
           ? "CNC"

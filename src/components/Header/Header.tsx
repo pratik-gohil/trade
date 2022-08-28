@@ -61,17 +61,17 @@ export const Header = () => {
       const response = await searchInstruments(pinnedInstrumentsIds);
       if (response.type === "success") {
         setPinnedInstruments(response.result);
-        await subscribeInstruments(pinnedInstrumentsIds);
+        await subscribeInstruments({ instruments: pinnedInstrumentsIds });
       }
     })();
 
     return () => {
-      unsubscribeInstruments(pinnedInstruments);
+      unsubscribeInstruments({ instruments: pinnedInstruments });
     };
   }, []);
 
   useEffect(() => {
-    socket.on("1502-json-full", (res) => {
+    socket.on("1501-json-full", (res) => {
       const data = JSON.parse(res);
       setPinnedInstruments((instruments) =>
         instruments.map((instrument) => {
@@ -83,7 +83,7 @@ export const Header = () => {
     });
 
     return () => {
-      socket.off("1502-json-full");
+      socket.off("1501-json-full");
     };
   }, []);
 
