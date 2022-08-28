@@ -25,6 +25,8 @@ module.exports = {
         successHighlight: "rgba(var(--success), 0.1)",
         failure: "rgba(var(--failure), 1)",
         failureHighlight: "rgba(var(--failure), 0.1)",
+        warning: "rgba(var(--warning), 1)",
+        warningHighlight: "rgba(var(--warning), 0.1)",
         blue: "rgba(var(--blue), 1)",
         blueHighlight: "rgba(var(--blue), 0.1)",
         purple: "rgba(var(--purple), 1)",
