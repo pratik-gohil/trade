@@ -50,25 +50,25 @@ export default function ExecutedOrders({ orders }) {
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, name: number) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected: readonly number[] = [];
+  // const handleClick = (event: React.MouseEvent<unknown>, name: number) => {
+  //   const selectedIndex = selected.indexOf(name);
+  //   let newSelected: readonly number[] = [];
 
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
+  //   if (selectedIndex === -1) {
+  //     newSelected = newSelected.concat(selected, name);
+  //   } else if (selectedIndex === 0) {
+  //     newSelected = newSelected.concat(selected.slice(1));
+  //   } else if (selectedIndex === selected.length - 1) {
+  //     newSelected = newSelected.concat(selected.slice(0, -1));
+  //   } else if (selectedIndex > 0) {
+  //     newSelected = newSelected.concat(
+  //       selected.slice(0, selectedIndex),
+  //       selected.slice(selectedIndex + 1)
+  //     );
+  //   }
 
-    setSelected(newSelected);
-  };
+  //   setSelected(newSelected);
+  // };
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -82,6 +82,52 @@ export default function ExecutedOrders({ orders }) {
   };
 
   const isSelected = (name: number) => selected.indexOf(name) !== -1;
+
+  const handleSort = (a, b) => {
+    let key;
+    switch (orderBy) {
+      case "time":
+        key = "ExchangeTransactTime";
+        break;
+      case "action":
+        key = "OrderSide";
+        break;
+      case "scrips":
+        key = "TradingSymbol";
+        break;
+      case "qty":
+        key = "OrderQuantity";
+        break;
+      case "product":
+        key = "ProductType";
+        break;
+      case "orderPrice":
+        key = "OrderPrice";
+        break;
+      case "ltp":
+        key = "LastTradedPrice";
+        break;
+      default:
+        key = undefined;
+    }
+
+    if (key !== undefined) {
+      if (typeof a[key] === "number" && typeof b[key] === "number") {
+        console.log(a[key], b[key], a[key] - b[key]);
+        if (order === "asc") {
+          return a[key] - b[key];
+        } else {
+          return b[key] - a[key];
+        }
+      } else if (typeof a[key] === "string" && typeof b[key] === "string") {
+        if (order === "asc") {
+          return a[key].localeCompare(b[key]);
+        } else {
+          return b[key].localeCompare(a[key]);
+        }
+      }
+    }
+  };
 
   return (
     <div className="p-5">
@@ -107,6 +153,7 @@ export default function ExecutedOrders({ orders }) {
             />
             <TableBody className="max-h-28 overflow-auto">
               {executedOrders
+                .sort(handleSort)
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.AppOrderID);
@@ -176,7 +223,7 @@ export default function ExecutedOrders({ orders }) {
                       </TableCell>
                       <TableCell align="right">
                         <span className="text-[#a9a9a9] text-base">
-                          {row.OrderPrice}
+                          {row.OrderQuantity}
                         </span>
                       </TableCell>
                       <TableCell align="right">
