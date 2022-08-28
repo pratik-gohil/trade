@@ -1,7 +1,6 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Box from "@mui/material/Box";
-import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
@@ -11,8 +10,10 @@ import Checkbox from "@mui/material/Checkbox";
 import { EnhancedTableToolbar } from "./EnhancedTableToolbar";
 import { EnhancedTableHead } from "./EnhancedTableHead";
 import { Data, Order } from "./Orders";
+import { getGTTOrders } from "../../http/getGTTOrders/getGTTOrders";
 
-export default function OpenOrders({ orders }) {
+export default function GTTOrders() {
+  const [orders, setOrders] = useState<any>([]);
   const [allowSelection, setAllowSelection] = useState(false);
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("time");
@@ -21,13 +22,11 @@ export default function OpenOrders({ orders }) {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [search, setSearch] = useState("");
 
-  const openOrders = useMemo(() => {
-    return orders.filter(
-      (order) =>
-        !!~["New", "Open", "PendingNew"].indexOf(order.OrderStatus) &&
-        order.TradingSymbol.toLowerCase().includes(search.toLowerCase())
-    );
-  }, [orders, search]);
+  useEffect(() => {
+    getGTTOrders().then((res) => {
+      res.type === "success" && setOrders(res.result);
+    });
+  }, []);
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -128,11 +127,11 @@ export default function OpenOrders({ orders }) {
     }
   };
 
-  return (
+  return orders.length > 0 ? (
     <div className="p-5">
       <Box sx={{ width: "100%" }}>
         <EnhancedTableToolbar
-          heading="Open Orders"
+          heading="GTT Orders"
           allowSelection={allowSelection}
           setAllowSelection={setAllowSelection}
           numSelected={selected.length}
@@ -140,18 +139,18 @@ export default function OpenOrders({ orders }) {
           setSearch={setSearch}
         />
         <TableContainer>
-          <Table sx={{ minWidth: 750 }}>
+          <TableContainer sx={{ minWidth: 750 }}>
             <EnhancedTableHead
               allowSelection={allowSelection}
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}
-              onSelectAllClick={(e) => handleSelectAllClick(e, openOrders)}
+              onSelectAllClick={(e) => handleSelectAllClick(e, orders)}
               onRequestSort={handleRequestSort}
-              rowCount={openOrders.length}
+              rowCount={orders.length}
             />
             <TableBody className="max-h-28 overflow-auto">
-              {openOrders
+              {orders
                 .sort(handleSort)
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
@@ -191,13 +190,26 @@ export default function OpenOrders({ orders }) {
                           {row.ExchangeTransactTime.split(" ")[1]}
                         </span>
                       </TableCell>
-                      <TableCell align="right">
+                      <TableCell className="!flex !gap-2" align="right">
+                        <span
+                          className={`${
+                            row.OrderStatus === "Filled"
+                              ? "text-success bg-successHighlight"
+                              : row.OrderStatus === "Rejected"
+                              ? "text-failure bg-failureHighlight"
+                              : "text-warning bg-warningHighlight"
+                          } text-xs rounded-[4px] py-[5px] px-[6px] font-medium`}
+                        >
+                          {row.OrderStatus === "Filled"
+                            ? "Executed"
+                            : row.OrderStatus}
+                        </span>
                         <span
                           className={`${
                             row.OrderSide === "BUY"
                               ? "text-success bg-successHighlight"
                               : "text-failure bg-failureHighlight"
-                          } text-xs rounded-[4px] py-[5px] px-[6px]`}
+                          } text-xs rounded-[4px] py-[5px] px-[6px] font-medium`}
                         >
                           {row.OrderSide}
                         </span>
@@ -209,7 +221,7 @@ export default function OpenOrders({ orders }) {
                       </TableCell>
                       <TableCell align="right">
                         <span className="text-[#a9a9a9] text-base">
-                          {row.OrderPrice}
+                          {row.OrderQuantity}
                         </span>
                       </TableCell>
                       <TableCell align="right">
@@ -238,26 +250,18 @@ export default function OpenOrders({ orders }) {
                   );
                 })}
             </TableBody>
-          </Table>
+          </TableContainer>
         </TableContainer>
         <TablePagination
           rowsPerPageOptions={[5, 10, 15]}
           component="div"
-          count={openOrders.length}
+          count={orders.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Box>
-      <div className="flex gap-[10px]">
-        <button className="text-white bg-red-gradient px-2 py-1 rounded-md text-lg font-medium">
-          Cancel Orders
-        </button>
-        <button className="text-white bg-green-gradient px-2 py-1 rounded-md text-lg font-medium">
-          Push to Market
-        </button>
-      </div>
     </div>
-  );
+  ) : null;
 }

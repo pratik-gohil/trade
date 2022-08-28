@@ -113,7 +113,6 @@ export default function ExecutedOrders({ orders }) {
 
     if (key !== undefined) {
       if (typeof a[key] === "number" && typeof b[key] === "number") {
-        console.log(a[key], b[key], a[key] - b[key]);
         if (order === "asc") {
           return a[key] - b[key];
         } else {

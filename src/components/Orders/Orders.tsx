@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import OpenOrders from "./OpenOrders";
 import ExecutedOrders from "./ExecutedOrders";
+import GTTOrders from "./GTTOrders";
 
 export interface Data {
   id: string;
@@ -134,6 +135,7 @@ export function Orders() {
     <>
       {openOrders.length > 0 && <OpenOrders orders={orders} />}
       {executedOrders.length > 0 && <ExecutedOrders orders={orders} />}
+      <GTTOrders />
     </>
   );
 }
