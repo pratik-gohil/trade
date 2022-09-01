@@ -14,6 +14,10 @@ import CustomRadio from "../Radio/Radio";
 import { orderEntry } from "../../http/orderEntry/orderEntry";
 import { constants } from "../../constants/global";
 import { getUserBalance } from "../../http/userBalance/userBalance";
+import { IOrderWithMarketDepth } from "../Orders";
+import { IInstrument } from "../../types/interfaces/instrument.interfaces.types";
+import { Touchline } from "../../types/interfaces/marketDepth.interfaces.types";
+import { Segments } from "../../types/enums/segment.enums.types";
 const { USER_ID, CLIENT_ID } = constants;
 
 let margin = 50;
@@ -28,7 +32,7 @@ export function OrderModal() {
   const [timeInForce, setTimeInForce] = useState("DAY");
   const [order, setOrder] = useState("REGULAR");
   const [orderType, setOrderType] = useState("MARKET");
-  const { orderSide, instrument } = useSelector(
+  const { orderSide, instrument, isModify } = useSelector(
     (state: RootState) => state.orderModal.order
   );
   const [tradeType, setTradeType] = useState("INTRADAY");
@@ -41,8 +45,26 @@ export function OrderModal() {
   const isOpen = useSelector((state: RootState) => state.orderModal.visible);
   const dispatch = useDispatch();
 
+  console.log(instrument);
+  const intitialPrice =
+    (isModify
+      ? (instrument as IOrderWithMarketDepth)?.OrderPrice
+      : instrument?.Touchline.LastTradedPrice) || 0;
+
   useEffect(() => {
-    setPrice(instrument?.Touchline?.LastTradedPrice || 0);
+    if (isModify) {
+      setOrderQuantity((instrument as IOrderWithMarketDepth).OrderQuantity);
+      setTriggerPrice((instrument as IOrderWithMarketDepth).OrderStopPrice);
+      setDisclosedQuantity(
+        (instrument as IOrderWithMarketDepth).OrderDisclosedQuantity
+      );
+      setOrderType(
+        (instrument as IOrderWithMarketDepth).OrderType.toUpperCase()
+      );
+      setTimeInForce((instrument as IOrderWithMarketDepth).TimeInForce);
+    }
+
+    setPrice(intitialPrice || 0);
 
     getUserBalance().then((res) => {
       res.type === "success" && setUserBalanceList(res.result);
@@ -69,8 +91,6 @@ export function OrderModal() {
     setPosition({ y: vh, x: vw / 2 });
   }, [vh, vw]);
 
-  if (!isOpen) return null;
-
   const handleOrder = async (e) => {
     e.preventDefault();
     const response = await orderEntry({
@@ -89,9 +109,9 @@ export function OrderModal() {
       timeInForce,
       disclosedQuantity,
       orderQuantity,
-      limitPrice: orderType === "MARKET" || orderType === "SL-M" ? 0 : price,
+      limitPrice: price,
       stopPrice:
-        orderType === "MARKET" || orderType === "SL-M" ? 0 : triggerPrice,
+        orderType === "MARKET" || orderType === "SL-M" ? 0.0 : triggerPrice,
       isAMO: order === "AMO",
     });
 
@@ -105,6 +125,8 @@ export function OrderModal() {
     }
     alert(response.description);
   };
+
+  if (!isOpen) return null;
 
   return (
     instrument && (
@@ -151,7 +173,9 @@ export function OrderModal() {
             >
               <div className="flex flex-col gap-1">
                 <div className="text-md font-medium text-[#333]">
-                  {instrument.DisplayName}
+                  {isModify
+                    ? (instrument as IOrderWithMarketDepth).TradingSymbol
+                    : (instrument as IInstrument).DisplayName}
                 </div>
                 <RadioGroup
                   sx={{ display: "flex", flexDirection: "row", gap: 2 }}
@@ -175,7 +199,7 @@ export function OrderModal() {
                     value="NSE"
                     label={
                       <span className="text-xs font-medium block">
-                        NSE - {instrument?.Touchline?.LastTradedPrice}
+                        NSE - {intitialPrice}
                       </span>
                     }
                   />
@@ -195,7 +219,7 @@ export function OrderModal() {
                     value="BSE"
                     label={
                       <span className="text-xs font-medium block">
-                        BSE - {instrument?.Touchline?.LastTradedPrice}
+                        BSE - {intitialPrice}
                       </span>
                     }
                   />
@@ -320,7 +344,8 @@ export function OrderModal() {
                 />
                 <NumberInput
                   label="Price"
-                  value={orderType === "MARKET" ? 0 : price}
+                  // value={orderType === "MARKET" ? 0 : price}
+                  value={price}
                   onChange={(value) => setPrice(value)}
                   step={0.05}
                   disabled={orderType === "MARKET" || orderType === "SL-M"}
@@ -328,11 +353,12 @@ export function OrderModal() {
                 />
                 <NumberInput
                   label="Trigger price"
-                  value={
-                    orderType === "MARKET" || orderType === "SL-M"
-                      ? 0
-                      : triggerPrice
-                  }
+                  // value={
+                  //   orderType === "MARKET" || orderType === "SL-M"
+                  //     ? 0
+                  //     : triggerPrice
+                  // }
+                  value={triggerPrice}
                   onChange={(value) => setTriggerPrice(value)}
                   step={0.05}
                   disabled={orderType === "MARKET" || orderType === "LIMIT"}
@@ -472,8 +498,8 @@ export function OrderModal() {
                       }}
                       control={
                         <CustomRadio
-                          checked={timeInForce === "IMMEDIATE"}
-                          onChange={() => setTimeInForce("IMMEDIATE")}
+                          checked={timeInForce === "IOC"}
+                          onChange={() => setTimeInForce("IOC")}
                         />
                       }
                       value="immediate"
@@ -502,11 +528,7 @@ export function OrderModal() {
                 <div className="flex gap-6">
                   <div>Approx. Margin</div>
                   <div className="flex gap-2 translate-x-[29px]">
-                    <div>
-                      {(
-                        instrument?.Touchline?.LastTradedPrice * orderQuantity
-                      ).toFixed(2)}
-                    </div>
+                    <div>{(intitialPrice * orderQuantity).toFixed(2)}</div>
                     <Replay
                       className="text-blue cursor-pointer"
                       fontSize="small"

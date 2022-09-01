@@ -26,4 +26,22 @@ export default class HTTP {
       .then((data) => data)
       .catch((err) => err);
   }
+
+  static async delete({
+    url,
+    requestOptions = {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  }: {
+    url: string;
+    requestOptions: any;
+  }) {
+    return await fetch(url, requestOptions)
+      .then((res) => res.json())
+      .then((data) => data)
+      .catch((err) => err);
+  }
 }
