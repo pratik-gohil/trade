@@ -8,8 +8,8 @@ import { PasswordInput } from "../PasswordInput/PasswordInput";
 
 export function ClientLoginPassword({ setLoginFlowCurrentState }) {
   const dispatch = useDispatch();
-  const [userID, setUserID] = useState("TEST03");
-  const [password, setPassword] = useState("Jul@2022");
+  const [userID, setUserID] = useState("");
+  const [password, setPassword] = useState("");
 
   const handlevalidateUser = async () => {
     const data = await validateUser({

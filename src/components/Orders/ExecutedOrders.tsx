@@ -7,16 +7,18 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import Checkbox from "@mui/material/Checkbox";
 import { EnhancedTableToolbar } from "./EnhancedTableToolbar";
 import { EnhancedTableHead } from "./EnhancedTableHead";
-import { Data, Order } from "./Orders";
+import { Data, IOrderWithMarketDepth, Order } from "./Orders";
 
-export default function ExecutedOrders({ orders }) {
-  const [allowSelection, setAllowSelection] = useState(false);
+interface IExecutedOrders {
+  orders: IOrderWithMarketDepth[];
+  fetchOrders?: () => void;
+}
+
+export default function ExecutedOrders({ orders }: IExecutedOrders) {
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("time");
-  const [selected, setSelected] = React.useState<readonly number[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [search, setSearch] = useState("");
@@ -38,38 +40,6 @@ export default function ExecutedOrders({ orders }) {
     setOrderBy(property);
   };
 
-  const handleSelectAllClick = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    orders
-  ) => {
-    if (event.target.checked) {
-      const newSelecteds = orders.map((n) => n.AppOrderID);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
-
-  // const handleClick = (event: React.MouseEvent<unknown>, name: number) => {
-  //   const selectedIndex = selected.indexOf(name);
-  //   let newSelected: readonly number[] = [];
-
-  //   if (selectedIndex === -1) {
-  //     newSelected = newSelected.concat(selected, name);
-  //   } else if (selectedIndex === 0) {
-  //     newSelected = newSelected.concat(selected.slice(1));
-  //   } else if (selectedIndex === selected.length - 1) {
-  //     newSelected = newSelected.concat(selected.slice(0, -1));
-  //   } else if (selectedIndex > 0) {
-  //     newSelected = newSelected.concat(
-  //       selected.slice(0, selectedIndex),
-  //       selected.slice(selectedIndex + 1)
-  //     );
-  //   }
-
-  //   setSelected(newSelected);
-  // };
-
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -80,8 +50,6 @@ export default function ExecutedOrders({ orders }) {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
-  const isSelected = (name: number) => selected.indexOf(name) !== -1;
 
   const handleSort = (a, b) => {
     let key;
@@ -133,20 +101,14 @@ export default function ExecutedOrders({ orders }) {
       <Box sx={{ width: "100%" }}>
         <EnhancedTableToolbar
           heading="Executed Orders"
-          allowSelection={allowSelection}
-          setAllowSelection={setAllowSelection}
-          numSelected={selected.length}
           search={search}
           setSearch={setSearch}
         />
         <TableContainer>
           <Table sx={{ minWidth: 750 }}>
             <EnhancedTableHead
-              allowSelection={allowSelection}
-              numSelected={selected.length}
               order={order}
               orderBy={orderBy}
-              onSelectAllClick={(e) => handleSelectAllClick(e, executedOrders)}
               onRequestSort={handleRequestSort}
               rowCount={executedOrders.length}
             />
@@ -155,32 +117,18 @@ export default function ExecutedOrders({ orders }) {
                 .sort(handleSort)
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.AppOrderID);
                   const labelId = `enhanced-table-checkbox-${index}`;
                   return (
                     <TableRow
-                      hover
+                      // hover
                       // onClick={(event) => {
                       //   setAllowSelection(true);
                       //   handleClick(event, row.AppOrderID);
                       // }}
                       role="checkbox"
-                      aria-checked={isItemSelected}
                       tabIndex={-1}
                       key={row.AppOrderID}
-                      selected={isItemSelected}
                     >
-                      {allowSelection && (
-                        <TableCell padding="checkbox">
-                          <Checkbox
-                            color="secondary"
-                            checked={isItemSelected}
-                            inputProps={{
-                              "aria-labelledby": labelId,
-                            }}
-                          />
-                        </TableCell>
-                      )}
                       <TableCell
                         component="th"
                         id={labelId}
@@ -239,7 +187,7 @@ export default function ExecutedOrders({ orders }) {
                       </TableCell>
                       <TableCell>
                         <span className="text-primary text-base">
-                          {row.OrderPrice}
+                          {row.OrderAverageTradedPrice || "-"}
                         </span>
                       </TableCell>
                       <TableCell>

@@ -74,16 +74,16 @@ const headCells: readonly HeadCell[] = [
 ];
 
 interface EnhancedTableProps {
-  allowSelection: boolean;
-  numSelected: number;
   onRequestSort: (
     event: React.MouseEvent<unknown>,
     property: keyof Data
   ) => void;
-  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
   order: Order;
   orderBy: string;
   rowCount: number;
+  numSelected?: number;
+  allowSelection?: boolean;
+  onSelectAllClick?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export function EnhancedTableHead(props: EnhancedTableProps) {
@@ -108,7 +108,11 @@ export function EnhancedTableHead(props: EnhancedTableProps) {
           <TableCell padding="checkbox">
             <Checkbox
               color="secondary"
-              indeterminate={numSelected > 0 && numSelected < rowCount}
+              indeterminate={
+                numSelected
+                  ? numSelected > 0 && numSelected < rowCount
+                  : undefined
+              }
               checked={rowCount > 0 && numSelected === rowCount}
               onChange={onSelectAllClick}
             />

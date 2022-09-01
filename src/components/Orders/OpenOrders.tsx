@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { Fragment, useMemo, useState } from "react";
 
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
@@ -11,8 +11,13 @@ import Checkbox from "@mui/material/Checkbox";
 import { EnhancedTableToolbar } from "./EnhancedTableToolbar";
 import { EnhancedTableHead } from "./EnhancedTableHead";
 import { Data, Order } from "./Orders";
+import { deleteOrder } from "../../http/deleteOrder/deleteOrder";
+import { DeleteOutline, EditOutlined, Widgets } from "@mui/icons-material";
+import { useDispatch } from "react-redux";
+import { visiblityReducer } from "../../features/orderModal/orderModal";
 
-export default function OpenOrders({ orders }) {
+export default function OpenOrders({ orders, fetchOrders }) {
+  const dispatch = useDispatch();
   const [allowSelection, setAllowSelection] = useState(false);
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("time");
@@ -20,6 +25,10 @@ export default function OpenOrders({ orders }) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [search, setSearch] = useState("");
+  const [selectedOption, setSelectedOption] = useState({
+    type: "",
+    id: "",
+  });
 
   const openOrders = useMemo(() => {
     return orders.filter(
@@ -38,6 +47,20 @@ export default function OpenOrders({ orders }) {
     setOrderBy(property);
   };
 
+  const handleCancelAll = () => {
+    selected.map((id) =>
+      deleteOrder({ appOrderID: id }).then(() => {
+        fetchOrders();
+      })
+    );
+  };
+
+  const handleCancel = (id) => {
+    deleteOrder({ appOrderID: id }).then(() => {
+      fetchOrders();
+    });
+  };
+
   const handleSelectAllClick = (
     event: React.ChangeEvent<HTMLInputElement>,
     orders
@@ -50,25 +73,25 @@ export default function OpenOrders({ orders }) {
     setSelected([]);
   };
 
-  // const handleClick = (event: React.MouseEvent<unknown>, name: number) => {
-  //   const selectedIndex = selected.indexOf(name);
-  //   let newSelected: readonly number[] = [];
+  const handleClick = (event: React.MouseEvent<unknown>, name: number) => {
+    const selectedIndex = selected.indexOf(name);
+    let newSelected: readonly number[] = [];
 
-  //   if (selectedIndex === -1) {
-  //     newSelected = newSelected.concat(selected, name);
-  //   } else if (selectedIndex === 0) {
-  //     newSelected = newSelected.concat(selected.slice(1));
-  //   } else if (selectedIndex === selected.length - 1) {
-  //     newSelected = newSelected.concat(selected.slice(0, -1));
-  //   } else if (selectedIndex > 0) {
-  //     newSelected = newSelected.concat(
-  //       selected.slice(0, selectedIndex),
-  //       selected.slice(selectedIndex + 1)
-  //     );
-  //   }
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, name);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1)
+      );
+    }
 
-  //   setSelected(newSelected);
-  // };
+    setSelected(newSelected);
+  };
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -158,83 +181,193 @@ export default function OpenOrders({ orders }) {
                   const isItemSelected = isSelected(row.AppOrderID);
                   const labelId = `enhanced-table-checkbox-${index}`;
                   return (
-                    <TableRow
-                      hover
-                      // onClick={(event) => {
-                      //   setAllowSelection(true);
-                      //   handleClick(event, row.AppOrderID);
-                      // }}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.AppOrderID}
-                      selected={isItemSelected}
-                    >
-                      {allowSelection && (
-                        <TableCell padding="checkbox">
-                          <Checkbox
-                            color="secondary"
-                            checked={isItemSelected}
-                            inputProps={{
-                              "aria-labelledby": labelId,
-                            }}
-                          />
-                        </TableCell>
-                      )}
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        padding="none"
+                    <Fragment key={row.AppOrderID}>
+                      <TableRow
+                        sx={{
+                          "& td":
+                            selectedOption.type === "delete"
+                              ? { border: 0 }
+                              : {},
+                        }}
+                        className="group"
+                        // hover
+                        // onClick={(event) => {
+                        //   setAllowSelection(true);
+                        //   handleClick(event, row.AppOrderID);
+                        // }}
+                        // onMouseLeave={() =>
+                        //   setSelectedOption({ type: "", id: "" })
+                        // }
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        selected={isItemSelected}
                       >
-                        <span className="text-base">
-                          {row.ExchangeTransactTime.split(" ")[1]}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span
-                          className={`${
-                            row.OrderSide === "BUY"
-                              ? "text-success bg-successHighlight"
-                              : "text-failure bg-failureHighlight"
-                          } text-xs rounded-[4px] py-[5px] px-[6px]`}
-                        >
-                          {row.OrderSide}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-base text-primary">
-                          {row.TradingSymbol}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-[#a9a9a9] text-base">
-                          {row.OrderPrice}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span
-                          className={`${
+                        {allowSelection && (
+                          <TableCell
+                            // className={`${
+                            //   selectedOption.type === "delete" && "!border-b-0"
+                            // }`}
+                            padding="checkbox"
+                          >
+                            <Checkbox
+                              onClick={(event) => {
+                                handleClick(event, row.AppOrderID);
+                              }}
+                              color="secondary"
+                              checked={isItemSelected}
+                              inputProps={{
+                                "aria-labelledby": labelId,
+                              }}
+                            />
+                          </TableCell>
+                        )}
+                        <TableCell id={labelId} scope="row" padding="none">
+                          <span className="text-base">
+                            {row.ExchangeTransactTime.split(" ")[1]}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <span
+                            className={`${
+                              row.OrderSide === "BUY"
+                                ? "text-success bg-successHighlight"
+                                : "text-failure bg-failureHighlight"
+                            } text-xs rounded-[4px] py-[5px] px-[6px]`}
+                          >
+                            {row.OrderSide}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-base text-primary">
+                            {row.TradingSymbol}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-[#a9a9a9] text-base">
+                            {row.OrderQuantity}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <span
+                            className={`
+                            ${
+                              selectedOption.type === "delete" &&
+                              selectedOption.id === row.AppOrderID
+                                ? "hidden"
+                                : "group-hover:hidden inline"
+                            }
+                          ${
                             row.ProductType === "MIS" ||
                             row.ProductType === "INTRA"
                               ? "text-purple bg-purpleHighlight"
                               : "text-blue bg-blueHighlight"
                           } text-xs rounded-[4px] py-[5px] px-[6px]`}
+                          >
+                            {row.ProductType}
+                          </span>
+                          <div
+                            className={`${
+                              selectedOption.type === "delete" &&
+                              selectedOption.id === row.AppOrderID
+                                ? "flex"
+                                : "group-hover:flex hidden"
+                            } gap-2 text-primary`}
+                          >
+                            <div
+                              onClick={() => {
+                                setSelectedOption({
+                                  type: "edit",
+                                  id: row.AppOrderID,
+                                });
+                                dispatch(
+                                  visiblityReducer({
+                                    visible: true,
+                                    order: {
+                                      orderSide: row.OrderSide,
+                                      instrument: row,
+                                      isModify: true,
+                                    },
+                                  })
+                                );
+                              }}
+                              className="border border-secondary !w-[28px] !h-[28px] rounded-lg cursor-pointer flex justify-center items-center"
+                            >
+                              <EditOutlined className="!w-[20px] !h-[20px]" />
+                            </div>
+                            <div
+                              onClick={() =>
+                                setSelectedOption({
+                                  type: "delete",
+                                  id: row.AppOrderID,
+                                })
+                              }
+                              className={`${
+                                selectedOption.type === "delete" &&
+                                selectedOption.id === row.AppOrderID
+                                  ? "border-blue text-blue"
+                                  : "border-secondary"
+                              } border !w-[28px] !h-[28px] rounded-lg cursor-pointer flex justify-center items-center`}
+                            >
+                              <DeleteOutline className="!w-[20px] !h-[20px]" />
+                            </div>
+                            <div
+                              onClick={() =>
+                                setSelectedOption({
+                                  type: "options",
+                                  id: row.AppOrderID,
+                                })
+                              }
+                              className="border border-secondary !w-[28px] !h-[28px] rounded-lg cursor-pointer flex justify-center items-center"
+                            >
+                              <Widgets className="!w-[20px] !h-[20px]" />
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-[#a9a9a9] text-base">
+                            {row.OrderPrice}
+                          </span>
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-primary text-base">
+                            {row?.Touchline?.LastTradedPrice || 0}
+                          </span>
+                        </TableCell>
+                      </TableRow>
+                      {selectedOption.id === row.AppOrderID && (
+                        <tr
+                          className={`${
+                            selectedOption.type === "delete"
+                              ? "table-row"
+                              : "hidden"
+                          }`}
                         >
-                          {row.ProductType}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-primary text-base">
-                          {row.OrderPrice}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-primary text-base">
-                          {row?.Touchline?.LastTradedPrice || 0}
-                        </span>
-                      </TableCell>
-                    </TableRow>
+                          <td
+                            colSpan={7}
+                            className="text-center py-6 border-b border-border"
+                          >
+                            <span className="mr-4 text-lg font-medium text-primary">
+                              Are you sure you want to cancel SBIN order?
+                            </span>
+                            <button
+                              onClick={() => handleCancel(row.AppOrderID)}
+                              className="mr-4 bg-failure text-white px-3 py-1 rounded-lg text-lg font-medium min-w-[114px]"
+                            >
+                              Cancel Order
+                            </button>
+                            <button
+                              onClick={() =>
+                                setSelectedOption({ type: "", id: "" })
+                              }
+                              className="text-secondary border border-secondary px-3 py-1 rounded-lg text-lg font-medium min-w-[114px]"
+                            >
+                              Close
+                            </button>
+                          </td>
+                        </tr>
+                      )}
+                    </Fragment>
                   );
                 })}
             </TableBody>
@@ -251,7 +384,11 @@ export default function OpenOrders({ orders }) {
         />
       </Box>
       <div className="flex gap-[10px]">
-        <button className="text-white bg-red-gradient px-2 py-1 rounded-md text-lg font-medium">
+        <button
+          onClick={handleCancelAll}
+          type="button"
+          className="text-white bg-red-gradient px-2 py-1 rounded-md text-lg font-medium"
+        >
           Cancel Orders
         </button>
         <button className="text-white bg-green-gradient px-2 py-1 rounded-md text-lg font-medium">

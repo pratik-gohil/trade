@@ -88,25 +88,26 @@ export function Orders() {
     );
   }, [orders]);
 
+  const fetchOrders = async () => {
+    let orderIds;
+    const response = await getOrders();
+    if (response.type === "success") {
+      setOrders(response.result);
+      orderIds = response.result.map((order) => ({
+        exchangeSegment: Segments[order.ExchangeSegment],
+        exchangeInstrumentID: order.ExchangeInstrumentID,
+      }));
+      subscribeInstruments({ instruments: orderIds });
+
+      return orderIds;
+    }
+  };
+
   useEffect(() => {
     let orderIds;
 
-    const fetchOrders = async () => {
-      const response = await getOrders();
-      if (response.type === "success") {
-        setOrders(response.result);
-        orderIds = response.result.map((order) => ({
-          exchangeSegment: Segments[order.ExchangeSegment],
-          exchangeInstrumentID: order.ExchangeInstrumentID,
-        }));
-        subscribeInstruments({ instruments: orderIds });
-
-        return orderIds;
-      }
-    };
-
     if (!isOpen) {
-      fetchOrders();
+      orderIds = fetchOrders();
     }
 
     return () => {
@@ -133,9 +134,13 @@ export function Orders() {
 
   return (
     <>
-      {openOrders.length > 0 && <OpenOrders orders={orders} />}
-      {executedOrders.length > 0 && <ExecutedOrders orders={orders} />}
-      <GTTOrders />
+      {openOrders.length > 0 && (
+        <OpenOrders orders={orders} fetchOrders={fetchOrders} />
+      )}
+      {executedOrders.length > 0 && (
+        <ExecutedOrders orders={orders} fetchOrders={fetchOrders} />
+      )}
+      <GTTOrders fetchOrders={fetchOrders} />
     </>
   );
 }

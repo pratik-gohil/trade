@@ -12,7 +12,7 @@ import { EnhancedTableHead } from "./EnhancedTableHead";
 import { Data, Order } from "./Orders";
 import { getGTTOrders } from "../../http/getGTTOrders/getGTTOrders";
 
-export default function GTTOrders() {
+export default function GTTOrders({ fetchOrders }) {
   const [orders, setOrders] = useState<any>([]);
   const [allowSelection, setAllowSelection] = useState(false);
   const [order, setOrder] = React.useState<Order>("asc");

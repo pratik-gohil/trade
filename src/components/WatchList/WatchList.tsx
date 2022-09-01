@@ -40,6 +40,7 @@ import CustomRadio from "../Radio/Radio";
 import { percDiff } from "../../utils/percentageDiffrence";
 import CustomCheckbox from "../Checkbox/Checkbox";
 import { mapMaster } from "./masters";
+import useDebounce from "../../hooks/useDebouce";
 const { USER_ID } = constants;
 
 interface IMasterInstrument {
@@ -81,7 +82,11 @@ export function WatchList() {
   const [search, setSearch] = useState<any>(null);
   const [selectedIndiceType, setSelectedIndiceType] = useState("Indian");
   const [selectedGroup, setSelectedGroup] = useState("Indices");
-  const [instrumentSearch, setInstrumentSearch] = useState("");
+  const instrumentSearchRef = useRef<HTMLInputElement>(null);
+  const instrumentSearch = useDebounce(
+    instrumentSearchRef?.current?.value || "",
+    500
+  );
   const [master, setMaster] = useState<IMasterInstrument[]>([]);
   const [instruments, setInstruments] = useState<IInstrument[]>([]);
   const [groupSymbols, setGroupSymbols] = useState<IGroupSymbol[]>([]);
@@ -148,6 +153,10 @@ export function WatchList() {
     if (node) observer?.current?.observe(node);
   }, []);
 
+  // useEffect(() => {
+
+  // }, [instrumentSearchRef.current])
+
   useEffect(() => {
     setSearch(new JsSearch.Search("DisplayName"));
   }, []);
@@ -164,6 +173,7 @@ export function WatchList() {
   const masterSearchResult = useMemo(() => {
     if (search !== null && instrumentSearch !== "") {
       const result = search.search(instrumentSearch);
+      console.log(result);
       return result;
     }
   }, [instrumentSearch, master, search]);
@@ -399,10 +409,11 @@ export function WatchList() {
               <input
                 autoFocus
                 type="text"
-                value={instrumentSearch}
-                onChange={(e) => {
-                  setInstrumentSearch(e.target.value);
-                }}
+                ref={instrumentSearchRef}
+                // value={instrumentSearch}
+                // onChange={(e) => {
+                //   setInstrumentSearch(e.target.value);
+                // }}
                 placeholder="Search eg: infy bse, nifty fut, nifty weekly"
                 className="w-full outline-none bg-transparent"
               />
@@ -410,7 +421,10 @@ export function WatchList() {
                 <CancelOutlined
                   color="inherit"
                   fontSize="small"
-                  onClick={() => setInstrumentSearch("")}
+                  onClick={() => {
+                    instrumentSearchRef.current !== null &&
+                      (instrumentSearchRef.current.value = "");
+                  }}
                   className="cursor-pointer"
                 />
               ) : (

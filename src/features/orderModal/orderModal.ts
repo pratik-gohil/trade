@@ -1,11 +1,13 @@
-import { IInstrument } from "./../../types/interfaces/instrument.interfaces.types";
 import { createSlice } from "@reduxjs/toolkit";
+import { IInstrument } from "./../../types/interfaces/instrument.interfaces.types";
+import { IOrderWithMarketDepth } from "./../../components/Orders/Orders";
 
 interface IOrderModal {
   visible: boolean;
   order: {
     orderSide: string | null;
-    instrument: IInstrument | null;
+    instrument: IInstrument | IOrderWithMarketDepth | null;
+    isModify?: boolean | null;
   };
 }
 
@@ -14,6 +16,7 @@ const initialState: IOrderModal = {
   order: {
     orderSide: null,
     instrument: null,
+    isModify: null,
   },
 };
 
