@@ -210,7 +210,7 @@ export function Positions() {
   const { socket } = useContext(SocketContext) as { socket: any };
 
   useEffect(() => {
-    socket.on("1501-json-full", (res) => {
+    const listener = (res) => {
       const data = JSON.parse(res);
       setNetPositions((positions) => {
         return positions.map((position) => {
@@ -219,10 +219,11 @@ export function Positions() {
             : position;
         });
       });
-    });
+    };
+    socket.on("1501-json-full", listener);
 
     return () => {
-      socket.off("1501-json-full");
+      socket.off("1501-json-full", listener);
     };
   }, []);
 
@@ -459,7 +460,7 @@ export function Positions() {
           />
         </Box>
       </div>
-      <div className="fixed flex gap-4 bottom-0 w-full border-t px-5 py-2 bg-white">
+      <div className="sticky flex gap-4 bottom-0 w-full border-t px-5 py-2 bg-white">
         {filters.map((filter) => (
           <div
             key={filter.name}

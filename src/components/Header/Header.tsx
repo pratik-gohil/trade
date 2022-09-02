@@ -71,7 +71,7 @@ export const Header = () => {
   }, []);
 
   useEffect(() => {
-    socket.on("1501-json-full", (res) => {
+    const listener = (res) => {
       const data = JSON.parse(res);
       setPinnedInstruments((instruments) =>
         instruments.map((instrument) => {
@@ -80,10 +80,11 @@ export const Header = () => {
             : instrument;
         })
       );
-    });
+    };
+    socket.on("1501-json-full", listener);
 
     return () => {
-      socket.off("1501-json-full");
+      socket.off("1501-json-full", listener);
     };
   }, []);
 
