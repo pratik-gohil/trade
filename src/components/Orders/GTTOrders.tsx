@@ -236,7 +236,7 @@ export default function GTTOrders({ fetchOrders }) {
                           {row.ExchangeTransactTime.split(" ")[1]}
                         </span>
                       </TableCell>
-                      <TableCell className="!flex !gap-2" align="right">
+                      <TableCell className="!flex !gap-2">
                         <span
                           className={`${
                             row.OrderStatus === "Filled"
@@ -260,17 +260,17 @@ export default function GTTOrders({ fetchOrders }) {
                           {row.OrderSide}
                         </span>
                       </TableCell>
-                      <TableCell align="right">
+                      <TableCell>
                         <span className="text-base text-primary">
                           {row.TradingSymbol}
                         </span>
                       </TableCell>
-                      <TableCell align="right">
+                      <TableCell>
                         <span className="text-[#a9a9a9] text-base">
                           {row.OrderQuantity}
                         </span>
                       </TableCell>
-                      <TableCell align="right">
+                      <TableCell>
                         <span
                           className={`${
                             row.ProductType === "MIS" ||
@@ -282,12 +282,12 @@ export default function GTTOrders({ fetchOrders }) {
                           {row.ProductType}
                         </span>
                       </TableCell>
-                      <TableCell align="right">
+                      <TableCell>
                         <span className="text-primary text-base">
                           {row.OrderPrice}
                         </span>
                       </TableCell>
-                      <TableCell align="right">
+                      <TableCell>
                         <span className="text-primary text-base">
                           {row?.Touchline?.LastTradedPrice || 0}
                         </span>
