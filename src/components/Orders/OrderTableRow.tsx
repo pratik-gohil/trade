@@ -15,6 +15,7 @@ import {
   EditOutlined,
   Widgets,
   MoreVert,
+  Repeat,
 } from "@mui/icons-material";
 import { visiblityReducer } from "../../features/orderModal/orderModal";
 import { useDispatch } from "react-redux";
@@ -26,11 +27,15 @@ export const OrderTableRow = ({
   index,
   setShowDetails,
   allowSelection,
+  showOrderStatus = false,
+  isExecuted = false,
 }: {
   row: IOrderWithMarketDepth;
   index: number;
   allowSelection?: boolean;
   setShowDetails: Dispatch<SetStateAction<IOrderWithMarketDepth | null>>;
+  showOrderStatus?: boolean;
+  isExecuted?: boolean;
 }) => {
   const dispatch = useDispatch();
   const [selected, setSelected] = React.useState<readonly number[]>([]);
@@ -101,7 +106,20 @@ export const OrderTableRow = ({
           {row.ExchangeTransactTime.split(" ")[1]}
         </span>
       </TableCell>
-      <TableCell>
+      <TableCell className={`${showOrderStatus && "!flex !gap-2"}`}>
+        {showOrderStatus && (
+          <span
+            className={`${
+              row.OrderStatus === "Filled"
+                ? "text-success bg-successHighlight"
+                : row.OrderStatus === "Rejected"
+                ? "text-failure bg-failureHighlight"
+                : "text-warning bg-warningHighlight"
+            } text-xs rounded-[4px] py-[5px] px-[6px] font-medium`}
+          >
+            {row.OrderStatus === "Filled" ? "Executed" : row.OrderStatus}
+          </span>
+        )}
         <span
           className={`${
             row.OrderSide === "BUY"
@@ -149,43 +167,51 @@ export const OrderTableRow = ({
               : "group-hover:flex hidden"
           } gap-2 text-primary`}
         >
-          <div
-            onClick={() => {
-              setSelectedOption({
-                type: "edit",
-                id: row.AppOrderID.toString(),
-              });
-              dispatch(
-                visiblityReducer({
-                  visible: true,
-                  order: {
-                    orderSide: row.OrderSide,
-                    instrument: row,
-                    isModify: true,
-                  },
-                })
-              );
-            }}
-            className="border border-secondary !w-[28px] !h-[28px] rounded-lg cursor-pointer flex justify-center items-center"
-          >
-            <EditOutlined className="!w-[20px] !h-[20px]" />
-          </div>
-          <div
-            onClick={() =>
-              setSelectedOption({
-                type: "delete",
-                id: row.AppOrderID.toString(),
-              })
-            }
-            className={`${
-              selectedOption.type === "delete" &&
-              selectedOption.id === row.AppOrderID.toString()
-                ? "border-blue text-blue"
-                : "border-secondary"
-            } border !w-[28px] !h-[28px] rounded-lg cursor-pointer flex justify-center items-center`}
-          >
-            <DeleteOutline className="!w-[20px] !h-[20px]" />
-          </div>
+          {isExecuted ? (
+            <div className="border border-secondary !w-[28px] !h-[28px] rounded-lg cursor-pointer flex justify-center items-center">
+              <Repeat className="!w-[20px] !h-[20px]" />
+            </div>
+          ) : (
+            <>
+              <div
+                onClick={() => {
+                  setSelectedOption({
+                    type: "edit",
+                    id: row.AppOrderID.toString(),
+                  });
+                  dispatch(
+                    visiblityReducer({
+                      visible: true,
+                      order: {
+                        orderSide: row.OrderSide,
+                        instrument: row,
+                        isModify: true,
+                      },
+                    })
+                  );
+                }}
+                className="border border-secondary !w-[28px] !h-[28px] rounded-lg cursor-pointer flex justify-center items-center"
+              >
+                <EditOutlined className="!w-[20px] !h-[20px]" />
+              </div>
+              <div
+                onClick={() =>
+                  setSelectedOption({
+                    type: "delete",
+                    id: row.AppOrderID.toString(),
+                  })
+                }
+                className={`${
+                  selectedOption.type === "delete" &&
+                  selectedOption.id === row.AppOrderID.toString()
+                    ? "border-blue text-blue"
+                    : "border-secondary"
+                } border !w-[28px] !h-[28px] rounded-lg cursor-pointer flex justify-center items-center`}
+              >
+                <DeleteOutline className="!w-[20px] !h-[20px]" />
+              </div>
+            </>
+          )}
           <div
             onClick={(e) => {
               setSelectedOption({

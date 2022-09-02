@@ -168,6 +168,8 @@ export default function ExecutedOrders({ orders }: IExecutedOrders) {
                 .map((row, index) => {
                   return (
                     <OrderTableRow
+                      isExecuted
+                      showOrderStatus
                       key={index}
                       row={row}
                       index={index}
