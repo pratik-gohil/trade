@@ -210,24 +210,6 @@ export function Positions() {
   const { socket } = useContext(SocketContext) as { socket: any };
 
   useEffect(() => {
-    const listener = (res) => {
-      const data = JSON.parse(res);
-      setNetPositions((positions) => {
-        return positions.map((position) =>
-          position.ExchangeInstrumentId === data.ExchangeInstrumentID.toString()
-            ? { ...position, ...data }
-            : position
-        );
-      });
-    };
-    socket.on("1501-json-full", listener);
-
-    return () => {
-      socket.off("1501-json-full", listener);
-    };
-  }, []);
-
-  useEffect(() => {
     let orderIds;
     getNetPositions().then((res) => {
       if (res.type === "success") {
@@ -242,6 +224,26 @@ export function Positions() {
 
     return () => {
       unsubscribeInstruments({ instruments: orderIds });
+    };
+  }, []);
+
+  useEffect(() => {
+    const listener = (res) => {
+      const data = JSON.parse(res);
+      setNetPositions((positions) => {
+        console.log(positions);
+        return positions.map((position) =>
+          position.ExchangeInstrumentId.toString() ===
+          data.ExchangeInstrumentID.toString()
+            ? { ...position, ...data }
+            : position
+        );
+      });
+    };
+    socket.on("1501-json-full", listener);
+
+    return () => {
+      socket.off("1501-json-full", listener);
     };
   }, []);
 
