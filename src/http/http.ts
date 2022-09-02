@@ -27,10 +27,28 @@ export default class HTTP {
       .catch((err) => err);
   }
 
+  static async put({
+    url,
+    requestOptions = {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  }: {
+    url: string;
+    requestOptions: any;
+  }) {
+    return await fetch(url, requestOptions)
+      .then((res) => res.json())
+      .then((data) => data)
+      .catch((err) => err);
+  }
+
   static async delete({
     url,
     requestOptions = {
-      method: "DELETE",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },

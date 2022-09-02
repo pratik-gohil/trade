@@ -9,12 +9,57 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Checkbox from "@mui/material/Checkbox";
 import { EnhancedTableToolbar } from "./EnhancedTableToolbar";
-import { EnhancedTableHead } from "./EnhancedTableHead";
+import { EnhancedTableHead, HeadCell } from "./EnhancedTableHead";
 import { Data, Order } from "./Orders";
 import { deleteOrder } from "../../http/deleteOrder/deleteOrder";
 import { DeleteOutline, EditOutlined, Widgets } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
 import { visiblityReducer } from "../../features/orderModal/orderModal";
+
+const headCells: readonly HeadCell[] = [
+  {
+    id: "time",
+    numeric: false,
+    disablePadding: true,
+    label: "Time",
+  },
+  {
+    id: "action",
+    numeric: true,
+    disablePadding: false,
+    label: "Action",
+  },
+  {
+    id: "scrips",
+    numeric: true,
+    disablePadding: false,
+    label: "Scrips",
+  },
+  {
+    id: "qty",
+    numeric: true,
+    disablePadding: false,
+    label: "Qty",
+  },
+  {
+    id: "product",
+    numeric: true,
+    disablePadding: false,
+    label: "Product",
+  },
+  {
+    id: "orderPrice",
+    numeric: true,
+    disablePadding: false,
+    label: "Order Price",
+  },
+  {
+    id: "ltp",
+    numeric: true,
+    disablePadding: false,
+    label: "LTP",
+  },
+];
 
 export default function OpenOrders({ orders, fetchOrders }) {
   const dispatch = useDispatch();
@@ -165,6 +210,7 @@ export default function OpenOrders({ orders, fetchOrders }) {
         <TableContainer>
           <Table sx={{ minWidth: 750 }}>
             <EnhancedTableHead
+              headCells={headCells}
               allowSelection={allowSelection}
               numSelected={selected.length}
               order={order}

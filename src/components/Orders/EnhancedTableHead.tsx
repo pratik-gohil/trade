@@ -8,85 +8,27 @@ import {
 } from "@mui/material";
 import { visuallyHidden } from "@mui/utils";
 
-interface Data {
-  id: string;
-  time: string;
-  action: string;
-  scrips: string;
-  qty: string;
-  product: string;
-  orderPrice: number;
-  ltp: number;
-}
-
 type Order = "asc" | "desc";
 
-interface HeadCell {
+export interface HeadCell {
   disablePadding: boolean;
-  id: keyof Data;
+  id: string;
   label: string;
   numeric: boolean;
 }
 
-const headCells: readonly HeadCell[] = [
-  {
-    id: "time",
-    numeric: false,
-    disablePadding: true,
-    label: "Time",
-  },
-  {
-    id: "action",
-    numeric: true,
-    disablePadding: false,
-    label: "Action",
-  },
-  {
-    id: "scrips",
-    numeric: true,
-    disablePadding: false,
-    label: "Scrips",
-  },
-  {
-    id: "qty",
-    numeric: true,
-    disablePadding: false,
-    label: "Qty",
-  },
-  {
-    id: "product",
-    numeric: true,
-    disablePadding: false,
-    label: "Product",
-  },
-  {
-    id: "orderPrice",
-    numeric: true,
-    disablePadding: false,
-    label: "Order Price",
-  },
-  {
-    id: "ltp",
-    numeric: true,
-    disablePadding: false,
-    label: "LTP",
-  },
-];
-
-interface EnhancedTableProps {
-  onRequestSort: (
-    event: React.MouseEvent<unknown>,
-    property: keyof Data
-  ) => void;
+interface EnhancedTableHeadProps {
+  onRequestSort: (event: React.MouseEvent<unknown>, property: string) => void;
   order: Order;
   orderBy: string;
   rowCount: number;
   numSelected?: number;
   allowSelection?: boolean;
+  headCells: readonly HeadCell[];
   onSelectAllClick?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export function EnhancedTableHead(props: EnhancedTableProps) {
+export function EnhancedTableHead(props: EnhancedTableHeadProps) {
   const {
     allowSelection,
     onSelectAllClick,
@@ -94,10 +36,11 @@ export function EnhancedTableHead(props: EnhancedTableProps) {
     orderBy,
     numSelected,
     rowCount,
+    headCells,
     onRequestSort,
   } = props;
   const createSortHandler =
-    (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
+    (property: string) => (event: React.MouseEvent<unknown>) => {
       onRequestSort(event, property);
     };
 

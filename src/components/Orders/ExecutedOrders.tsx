@@ -8,8 +8,53 @@ import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import { EnhancedTableToolbar } from "./EnhancedTableToolbar";
-import { EnhancedTableHead } from "./EnhancedTableHead";
+import { EnhancedTableHead, HeadCell } from "./EnhancedTableHead";
 import { Data, IOrderWithMarketDepth, Order } from "./Orders";
+
+const headCells: readonly HeadCell[] = [
+  {
+    id: "time",
+    numeric: false,
+    disablePadding: true,
+    label: "Time",
+  },
+  {
+    id: "action",
+    numeric: true,
+    disablePadding: false,
+    label: "Action",
+  },
+  {
+    id: "scrips",
+    numeric: true,
+    disablePadding: false,
+    label: "Scrips",
+  },
+  {
+    id: "qty",
+    numeric: true,
+    disablePadding: false,
+    label: "Qty",
+  },
+  {
+    id: "product",
+    numeric: true,
+    disablePadding: false,
+    label: "Product",
+  },
+  {
+    id: "orderPrice",
+    numeric: true,
+    disablePadding: false,
+    label: "Order Price",
+  },
+  {
+    id: "ltp",
+    numeric: true,
+    disablePadding: false,
+    label: "LTP",
+  },
+];
 
 interface IExecutedOrders {
   orders: IOrderWithMarketDepth[];
@@ -107,6 +152,7 @@ export default function ExecutedOrders({ orders }: IExecutedOrders) {
         <TableContainer>
           <Table sx={{ minWidth: 750 }}>
             <EnhancedTableHead
+              headCells={headCells}
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}

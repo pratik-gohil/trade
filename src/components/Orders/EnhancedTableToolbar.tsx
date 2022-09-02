@@ -11,19 +11,24 @@ interface EnhancedTableToolbarProps {
 }
 
 export const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
-  const { numSelected, allowSelection, setAllowSelection } = props;
+  const {
+    numSelected,
+    allowSelection,
+    setAllowSelection,
+    heading,
+    setSearch,
+    search,
+  } = props;
 
   const handleSearch = (e) => {
-    props.setSearch(e.target.value);
+    setSearch(e.target.value);
   };
 
   return (
     <div className="flex justify-between items-center mb-6">
       {
         <div className="flex items-center gap-4">
-          <div className="text-primary text-2xl font-semibold">
-            {props.heading}
-          </div>
+          <div className="text-primary text-2xl font-semibold">{heading}</div>
           {setAllowSelection && (
             <div
               onClick={() => setAllowSelection((prev) => !prev)}
@@ -43,8 +48,8 @@ export const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         <input
           type="text"
           className="outline-none"
-          placeholder={`Search in ${props.heading}`}
-          value={props.search}
+          placeholder={`Search in ${heading}`}
+          value={search}
           onChange={handleSearch}
         />
       </div>

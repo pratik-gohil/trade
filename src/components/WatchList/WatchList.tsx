@@ -173,7 +173,6 @@ export function WatchList() {
   const masterSearchResult = useMemo(() => {
     if (search !== null && instrumentSearch !== "") {
       const result = search.search(instrumentSearch);
-      console.log(result);
       return result;
     }
   }, [instrumentSearch, master, search]);
