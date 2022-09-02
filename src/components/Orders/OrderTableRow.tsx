@@ -30,6 +30,8 @@ export const OrderTableRow = ({
   allowSelection,
   showOrderStatus = false,
   isExecuted = false,
+  selectedOption,
+  setSelectedOption,
 }: {
   row: IOrderWithMarketDepth;
   index: number;
@@ -37,13 +39,15 @@ export const OrderTableRow = ({
   setShowDetails: Dispatch<SetStateAction<IOrderWithMarketDepth | null>>;
   showOrderStatus?: boolean;
   isExecuted?: boolean;
+  selectedOption?: any;
+  setSelectedOption?: any;
 }) => {
   const dispatch = useDispatch();
   const [selected, setSelected] = React.useState<readonly number[]>([]);
-  const [selectedOption, setSelectedOption] = useState({
-    type: "",
-    id: "",
-  });
+  // const [selectedOption, setSelectedOption] = useState({
+  //   type: "",
+  //   id: "",
+  // });
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const toggleShowShowOptions = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -76,7 +80,7 @@ export const OrderTableRow = ({
   return (
     <TableRow
       sx={{
-        "& td": selectedOption.type === "delete" ? { border: 0 } : {},
+        "& td": selectedOption?.type === "delete" ? { border: 0 } : {},
       }}
       className="group"
       role="checkbox"
@@ -143,11 +147,12 @@ export const OrderTableRow = ({
         <span
           className={`
                             ${
-                              (selectedOption.type === "delete" &&
-                                selectedOption.id ===
+                              (selectedOption?.type === "delete" &&
+                                selectedOption?.id ===
                                   row.AppOrderID.toString()) ||
                               (showOrderOptions &&
-                                selectedOption.id === row.AppOrderID.toString())
+                                selectedOption?.id ===
+                                  row.AppOrderID.toString())
                                 ? "hidden"
                                 : "group-hover:hidden inline"
                             }
@@ -162,10 +167,10 @@ export const OrderTableRow = ({
         </span>
         <div
           className={`${
-            (selectedOption.type === "delete" &&
-              selectedOption.id === row.AppOrderID.toString()) ||
+            (selectedOption?.type === "delete" &&
+              selectedOption?.id === row.AppOrderID.toString()) ||
             (showOrderOptions &&
-              selectedOption.id === row.AppOrderID.toString())
+              selectedOption?.id === row.AppOrderID.toString())
               ? "flex"
               : "group-hover:flex hidden"
           } gap-2 text-primary`}
@@ -205,8 +210,8 @@ export const OrderTableRow = ({
                   })
                 }
                 className={`${
-                  selectedOption.type === "delete" &&
-                  selectedOption.id === row.AppOrderID.toString()
+                  selectedOption?.type === "delete" &&
+                  selectedOption?.id === row.AppOrderID.toString()
                     ? "border-blue text-blue"
                     : "border-secondary"
                 } border !w-[28px] !h-[28px] rounded-lg cursor-pointer flex justify-center items-center`}

@@ -1,4 +1,4 @@
-import React, { Fragment, useMemo, useState } from "react";
+import React, { Fragment, useEffect, useMemo, useState } from "react";
 
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
@@ -173,6 +173,10 @@ export default function OpenOrders({ orders, fetchOrders }) {
     }
   };
 
+  useEffect(() => {
+    console.log(selectedOption);
+  }, [selectedOption]);
+
   return (
     <div className="p-5">
       <Box sx={{ width: "100%" }}>
@@ -208,8 +212,10 @@ export default function OpenOrders({ orders, fetchOrders }) {
                         index={index}
                         setShowDetails={setShowDetails}
                         allowSelection={allowSelection}
+                        selectedOption={selectedOption}
+                        setSelectedOption={setSelectedOption}
                       />
-                      {selectedOption.id === row.AppOrderID && (
+                      {selectedOption.id === row.AppOrderID.toString() && (
                         <tr
                           className={`${
                             selectedOption.type === "delete"

@@ -62,10 +62,10 @@ export function OrderModal() {
         (instrument as IOrderWithMarketDepth).OrderType.toUpperCase()
       );
       setTimeInForce((instrument as IOrderWithMarketDepth).TimeInForce);
+    } else {
+      setOrderQuantity((instrument as IInstrument)?.LotSize);
+      setPrice(intitialPrice || 0);
     }
-
-    setOrderQuantity((instrument as IInstrument)?.LotSize);
-    setPrice(intitialPrice || 0);
 
     getUserBalance().then((res) => {
       res.type === "success" && setUserBalanceList(res.result);
@@ -376,7 +376,10 @@ export function OrderModal() {
                   autoFocus
                   label="Qty"
                   required
-                  step={(instrument as IInstrument)?.LotSize}
+                  step={
+                    (instrument as IInstrument)?.LotSize ||
+                    (instrument as IOrderWithMarketDepth)?.OrderQuantity
+                  }
                   value={orderQuantity}
                   onChange={(value) => setOrderQuantity(value)}
                 />
