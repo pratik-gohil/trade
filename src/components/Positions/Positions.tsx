@@ -213,11 +213,11 @@ export function Positions() {
     const listener = (res) => {
       const data = JSON.parse(res);
       setNetPositions((positions) => {
-        return positions.map((position) => {
-          return position.ExchangeInstrumentId == data.ExchangeInstrumentID
+        return positions.map((position) =>
+          position.ExchangeInstrumentId === data.ExchangeInstrumentID.toString()
             ? { ...position, ...data }
-            : position;
-        });
+            : position
+        );
       });
     };
     socket.on("1501-json-full", listener);
