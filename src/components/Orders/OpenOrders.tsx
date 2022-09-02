@@ -1,7 +1,5 @@
-import React, { Fragment, useMemo, useState, useEffect, useRef } from "react";
+import React, { Fragment, useMemo, useState } from "react";
 
-import { IconButton } from "@mui/material";
-import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -11,8 +9,6 @@ import { EnhancedTableToolbar } from "./EnhancedTableToolbar";
 import { EnhancedTableHead, HeadCell } from "./EnhancedTableHead";
 import { Data, IOrderWithMarketDepth, Order } from "./Orders";
 import { deleteOrder } from "../../http/deleteOrder/deleteOrder";
-import { CloseOutlined } from "@mui/icons-material";
-import { useDispatch } from "react-redux";
 import { OrderTableRow } from "./OrderTableRow";
 import OrderDetailsModal from "./OrderDetailsModal";
 
@@ -73,7 +69,6 @@ export default function OpenOrders({ orders, fetchOrders }) {
     type: "",
     id: "",
   });
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [showDetails, setShowDetails] = useState<IOrderWithMarketDepth | null>(
     null
   );
@@ -81,8 +76,9 @@ export default function OpenOrders({ orders, fetchOrders }) {
   const openOrders = useMemo(() => {
     return orders.filter(
       (order) =>
-        !!~["New", "Open", "PendingNew"].indexOf(order.OrderStatus) &&
-        order.TradingSymbol.toLowerCase().includes(search.toLowerCase())
+        !!~["New", "Open", "PendingNew", "PendingReplace", "Replaced"].indexOf(
+          order.OrderStatus
+        ) && order.TradingSymbol.toLowerCase().includes(search.toLowerCase())
     );
   }, [orders, search]);
 
@@ -131,8 +127,6 @@ export default function OpenOrders({ orders, fetchOrders }) {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
-  const isSelected = (name: number) => selected.indexOf(name) !== -1;
 
   const handleSort = (a, b) => {
     let key;

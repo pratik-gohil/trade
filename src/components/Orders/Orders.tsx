@@ -75,18 +75,6 @@ export function Orders() {
   const [orders, setOrders] = useState<IOrderWithMarketDepth[]>([]);
   const { socket } = useContext(SocketContext) as { socket: any };
   const isOpen = useSelector((state: RootState) => state.orderModal.visible);
-  const openOrders = useMemo(() => {
-    return orders.filter(
-      (order) => !!~["New", "Open", "PendingNew"].indexOf(order.OrderStatus)
-    );
-  }, [orders]);
-
-  const executedOrders = useMemo(() => {
-    return orders.filter(
-      (order) =>
-        !!~["Filled", "Cancelled", "Rejected"].indexOf(order.OrderStatus)
-    );
-  }, [orders]);
 
   const fetchOrders = async () => {
     let orderIds;
@@ -140,12 +128,8 @@ export function Orders() {
 
   return (
     <>
-      {openOrders.length > 0 && (
-        <OpenOrders orders={orders} fetchOrders={fetchOrders} />
-      )}
-      {executedOrders.length > 0 && (
-        <ExecutedOrders orders={orders} fetchOrders={fetchOrders} />
-      )}
+      <OpenOrders orders={orders} fetchOrders={fetchOrders} />
+      <ExecutedOrders orders={orders} fetchOrders={fetchOrders} />
       <GTTOrders fetchOrders={fetchOrders} />
     </>
   );
