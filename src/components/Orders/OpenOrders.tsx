@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useMemo, useState } from "react";
+import React, { Fragment, useMemo, useState } from "react";
 
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
@@ -172,10 +172,6 @@ export default function OpenOrders({ orders, fetchOrders }) {
       }
     }
   };
-
-  useEffect(() => {
-    console.log(selectedOption);
-  }, [selectedOption]);
 
   return (
     <div className="p-5">
