@@ -71,7 +71,7 @@ export const ClientLoginPIN = ({ setLoginFlowCurrentState }) => {
       />
       <div
         className="flex flex-col gap-[30px] justify-center
-           items-center mt-auto"
+            items-center mt-auto"
       >
         <button
           onClick={async () =>
