@@ -18,6 +18,7 @@ import { IOrderWithMarketDepth } from "../Orders";
 import { IInstrument } from "../../types/interfaces/instrument.interfaces.types";
 import { Touchline } from "../../types/interfaces/marketDepth.interfaces.types";
 import { Segments } from "../../types/enums/segment.enums.types";
+import { modifyOrder } from "../../http/modifyOrder/modifyOrder";
 const { USER_ID, CLIENT_ID } = constants;
 
 let margin = 50;
@@ -45,11 +46,10 @@ export function OrderModal() {
   const isOpen = useSelector((state: RootState) => state.orderModal.visible);
   const dispatch = useDispatch();
 
-  console.log(instrument);
   const intitialPrice =
     (isModify
       ? (instrument as IOrderWithMarketDepth)?.OrderPrice
-      : instrument?.Touchline.LastTradedPrice) || 0;
+      : (instrument as IInstrument)?.Touchline?.LastTradedPrice) || 0;
 
   useEffect(() => {
     if (isModify) {
@@ -91,29 +91,52 @@ export function OrderModal() {
     setPosition({ y: vh, x: vw / 2 });
   }, [vh, vw]);
 
+  const handleFormReset = () => {};
+
   const handleOrder = async (e) => {
     e.preventDefault();
-    const response = await orderEntry({
-      clientID: localStorage.getItem(CLIENT_ID),
-      userID: localStorage.getItem(USER_ID),
-      exchangeSegment,
-      exchangeInstrumentID: instrument?.ExchangeInstrumentID,
-      productType:
-        tradeType === "INTRADAY"
-          ? "MIS"
-          : exchangeSegment === "NSECM" || exchangeSegment === "BSECM"
-          ? "CNC"
-          : "NRML",
-      orderType,
-      orderSide,
-      timeInForce,
-      disclosedQuantity,
-      orderQuantity,
-      limitPrice: price,
-      stopPrice:
-        orderType === "MARKET" || orderType === "SL-M" ? 0.0 : triggerPrice,
-      isAMO: order === "AMO",
-    });
+    let response;
+    if (isModify) {
+      response = await modifyOrder({
+        appOrderID: (instrument as IOrderWithMarketDepth).AppOrderID,
+        modifiedProductType:
+          tradeType === "INTRADAY"
+            ? "MIS"
+            : exchangeSegment === "NSECM" || exchangeSegment === "BSECM"
+            ? "CNC"
+            : "NRML",
+        modifiedOrderType: orderType,
+        modifiedOrderQuantity: orderQuantity,
+        modifiedDisclosedQuantity: disclosedQuantity,
+        modifiedLimitPrice: price,
+        modifiedStopPrice: triggerPrice,
+        modifiedTimeInForce: timeInForce,
+        clientID: localStorage.getItem(CLIENT_ID),
+        userID: localStorage.getItem(USER_ID),
+      });
+    } else {
+      response = await orderEntry({
+        clientID: localStorage.getItem(CLIENT_ID),
+        userID: localStorage.getItem(USER_ID),
+        exchangeSegment,
+        exchangeInstrumentID: instrument?.ExchangeInstrumentID,
+        productType:
+          tradeType === "INTRADAY"
+            ? "MIS"
+            : exchangeSegment === "NSECM" || exchangeSegment === "BSECM"
+            ? "CNC"
+            : "NRML",
+        orderType,
+        orderSide,
+        timeInForce,
+        disclosedQuantity,
+        orderQuantity,
+        limitPrice: price,
+        stopPrice:
+          orderType === "MARKET" || orderType === "SL-M" ? 0.0 : triggerPrice,
+        isAMO: order === "AMO",
+      });
+    }
 
     if (response.type === "success") {
       dispatch(
@@ -558,14 +581,15 @@ export function OrderModal() {
                 </button>
                 <button
                   type="button"
-                  onClick={() =>
+                  onClick={() => {
                     dispatch(
                       visiblityReducer({
                         visible: false,
                         order: {},
                       })
-                    )
-                  }
+                    );
+                    handleFormReset();
+                  }}
                   className="bg-white w-[105px] h-[45px] rounded-lg font-medium border-2 border-[#a9a9a9] text-[#a9a9a9] text-3xl"
                 >
                   Cancel
