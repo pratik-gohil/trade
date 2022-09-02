@@ -16,7 +16,6 @@ import { constants } from "../../constants/global";
 import { getUserBalance } from "../../http/userBalance/userBalance";
 import { IOrderWithMarketDepth } from "../Orders";
 import { IInstrument } from "../../types/interfaces/instrument.interfaces.types";
-import { Touchline } from "../../types/interfaces/marketDepth.interfaces.types";
 import { Segments } from "../../types/enums/segment.enums.types";
 import { modifyOrder } from "../../http/modifyOrder/modifyOrder";
 const { USER_ID, CLIENT_ID } = constants;
