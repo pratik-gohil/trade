@@ -11,6 +11,7 @@ export function NumberInput({
   pattern = "",
   min = 1,
   max = Infinity,
+  required = false,
 }) {
   const id = useId();
   return (
@@ -40,12 +41,13 @@ export function NumberInput({
 
         <input
           id={id}
-          pattern={pattern}
           type="number"
+          // pattern={pattern}
           placeholder=""
           autoCorrect="off"
-          min={min}
-          max={max}
+          required={required}
+          // min={min}
+          // max={max}
           autoFocus={autoFocus}
           className={`${
             disabled ? "cursor-not-allowed" : ""

@@ -64,6 +64,7 @@ export function OrderModal() {
       setTimeInForce((instrument as IOrderWithMarketDepth).TimeInForce);
     }
 
+    setOrderQuantity((instrument as IInstrument)?.LotSize);
     setPrice(intitialPrice || 0);
 
     getUserBalance().then((res) => {
@@ -118,8 +119,15 @@ export function OrderModal() {
       response = await orderEntry({
         clientID: localStorage.getItem(CLIENT_ID),
         userID: localStorage.getItem(USER_ID),
-        exchangeSegment,
-        exchangeInstrumentID: instrument?.ExchangeInstrumentID,
+        exchangeSegment:
+          Segments[(instrument as IInstrument)?.ExchangeSegment] === "NSE" ||
+          Segments[(instrument as IInstrument)?.ExchangeSegment] === "BSE"
+            ? exchangeSegment
+            : Segments[(instrument as IInstrument)?.ExchangeSegment],
+        exchangeInstrumentID:
+          exchangeSegment === "BSECM"
+            ? (instrument as IInstrument)?.OppositeExchangeInstrumentID
+            : (instrument as IInstrument)?.ExchangeInstrumentID,
         productType:
           tradeType === "INTRADAY"
             ? "MIS"
@@ -200,53 +208,58 @@ export function OrderModal() {
                     ? (instrument as IOrderWithMarketDepth).TradingSymbol
                     : (instrument as IInstrument).DisplayName}
                 </div>
-                <RadioGroup
-                  sx={{ display: "flex", flexDirection: "row", gap: 2 }}
-                  aria-labelledby="radio-order-modal-exchange"
-                  name="radio-order-modal-exchange"
-                  defaultValue="NSE"
-                >
-                  <FormControlLabel
-                    sx={{
-                      fontSize: "12px",
-                      margin: 0,
-                      display: "flex",
-                      gap: 0.5,
-                    }}
-                    control={
-                      <CustomRadio
-                        checked={exchangeSegment === "NSECM"}
-                        onChange={() => setExchangeSegment("NSECM")}
-                      />
-                    }
-                    value="NSE"
-                    label={
-                      <span className="text-xs font-medium block">
-                        NSE - {intitialPrice}
-                      </span>
-                    }
-                  />
-                  <FormControlLabel
-                    sx={{
-                      fontSize: "12px",
-                      margin: 0,
-                      display: "flex",
-                      gap: 0.5,
-                    }}
-                    control={
-                      <CustomRadio
-                        checked={exchangeSegment === "BSECM"}
-                        onChange={() => setExchangeSegment("BSECM")}
-                      />
-                    }
-                    value="BSE"
-                    label={
-                      <span className="text-xs font-medium block">
-                        BSE - {intitialPrice}
-                      </span>
-                    }
-                  />
-                </RadioGroup>
+                {(Segments[(instrument as IInstrument)?.ExchangeSegment] ===
+                  "NSE" ||
+                  Segments[(instrument as IInstrument)?.ExchangeSegment] ===
+                    "BSE") && (
+                  <RadioGroup
+                    sx={{ display: "flex", flexDirection: "row", gap: 2 }}
+                    aria-labelledby="radio-order-modal-exchange"
+                    name="radio-order-modal-exchange"
+                    defaultValue="NSE"
+                  >
+                    <FormControlLabel
+                      sx={{
+                        fontSize: "12px",
+                        margin: 0,
+                        display: "flex",
+                        gap: 0.5,
+                      }}
+                      control={
+                        <CustomRadio
+                          checked={exchangeSegment === "NSECM"}
+                          onChange={() => setExchangeSegment("NSECM")}
+                        />
+                      }
+                      value="NSE"
+                      label={
+                        <span className="text-xs font-medium block">
+                          NSE - {intitialPrice}
+                        </span>
+                      }
+                    />
+                    <FormControlLabel
+                      sx={{
+                        fontSize: "12px",
+                        margin: 0,
+                        display: "flex",
+                        gap: 0.5,
+                      }}
+                      control={
+                        <CustomRadio
+                          checked={exchangeSegment === "BSECM"}
+                          onChange={() => setExchangeSegment("BSECM")}
+                        />
+                      }
+                      value="BSE"
+                      label={
+                        <span className="text-xs font-medium block">
+                          BSE - {intitialPrice}
+                        </span>
+                      }
+                    />
+                  </RadioGroup>
+                )}
               </div>
               <div>
                 <button
@@ -362,16 +375,20 @@ export function OrderModal() {
                 <NumberInput
                   autoFocus
                   label="Qty"
+                  required
+                  step={(instrument as IInstrument)?.LotSize}
                   value={orderQuantity}
                   onChange={(value) => setOrderQuantity(value)}
                 />
                 <NumberInput
                   label="Price"
                   // value={orderType === "MARKET" ? 0 : price}
+                  required
                   value={price}
                   onChange={(value) => setPrice(value)}
                   step={0.05}
                   disabled={orderType === "MARKET" || orderType === "SL-M"}
+
                   // min={0.01}
                 />
                 <NumberInput
