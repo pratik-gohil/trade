@@ -33,6 +33,7 @@ export interface IOrder {
   OrderCategoryType: string;
   ExchangeSegment: string;
   ExchangeInstrumentID: number;
+  OppositeExchangeInstrumentID: number;
   OrderSide: string;
   OrderType: string;
   ProductType: string;
