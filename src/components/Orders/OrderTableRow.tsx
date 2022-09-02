@@ -216,7 +216,7 @@ export const OrderTableRow = ({
               <ListItemIcon>
                 <MoreVert fontSize="small" />
               </ListItemIcon>
-              <ListItemText>Details {row.TradingSymbol}</ListItemText>
+              <ListItemText>Details</ListItemText>
             </MenuItem>
           </MenuList>
         </Menu>
