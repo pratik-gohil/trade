@@ -58,6 +58,10 @@
     -webkit-text-fill-color: transparent;
   }
 
+  .bg-neutral-gradient {
+    @apply bg-gradient-to-r from-[#eceef280] to-[#eceef2];
+  }
+
   .sidebar-width {
     min-width: 428px;
     width: 428px;
