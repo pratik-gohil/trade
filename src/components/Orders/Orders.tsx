@@ -117,7 +117,7 @@ export function Orders() {
   }, [isOpen]);
 
   useEffect(() => {
-    socket.on("1501-json-full", (res) => {
+    const listener = (res) => {
       const data = JSON.parse(res);
       setOrders((orders) => {
         return orders.map((order) =>
@@ -126,10 +126,11 @@ export function Orders() {
             : order
         );
       });
-    });
+    };
+    socket.on("1501-json-full", listener);
 
     return () => {
-      socket.off("1501-json-full");
+      socket.off("1501-json-full", listener);
     };
   }, []);
 

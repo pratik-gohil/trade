@@ -349,7 +349,7 @@ export function WatchList() {
   };
 
   useEffect(() => {
-    socket.on("1501-json-full", (res) => {
+    const listener1501 = (res) => {
       const data = JSON.parse(res);
       setInstruments((instruments) =>
         instruments.map((instrument) => {
@@ -358,8 +358,10 @@ export function WatchList() {
             : instrument;
         })
       );
-    });
-    socket.on("1502-json-full", (res) => {
+    };
+    socket.on("1501-json-full", listener1501);
+
+    const listener1502 = (res) => {
       const data = JSON.parse(res);
       setInstruments((instruments) =>
         instruments.map((instrument) => {
@@ -368,11 +370,12 @@ export function WatchList() {
             : instrument;
         })
       );
-    });
+    };
+    socket.on("1502-json-full", listener1502);
 
     return () => {
-      socket.off("1501-json-full");
-      socket.off("1502-json-full");
+      socket.off("1501-json-full", listener1501);
+      socket.off("1502-json-full", listener1502);
     };
   }, []);
 

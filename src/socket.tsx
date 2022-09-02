@@ -21,17 +21,19 @@ const SocketProvider = ({ children }) => {
       },
       transports: ["websocket"],
     });
+
     setSocket(socketinstance);
-    if (socket) {
-      socket?.on("disconnect", () => {
-        console.log("disconnected");
-      });
-    }
+
+    // if (socket) {
+    //   socket?.on("disconnect", () => {
+    //     console.log("disconnected");
+    //   });
+    // }
+
     return () => {
-      if (socket) {
-        socket.off("connect");
-        socket.off("disconnect");
-      }
+      // if (socket) {
+      //   socket.off("disconnect");
+      // }
     };
   }, []);
 
