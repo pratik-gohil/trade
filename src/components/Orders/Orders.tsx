@@ -105,10 +105,11 @@ export function Orders() {
 
   useEffect(() => {
     let orderIds;
-
-    if (!isOpen) {
-      orderIds = fetchOrders();
-    }
+    (async () => {
+      if (!isOpen) {
+        orderIds = await fetchOrders();
+      }
+    })();
 
     return () => {
       unsubscribeInstruments({ instruments: orderIds });

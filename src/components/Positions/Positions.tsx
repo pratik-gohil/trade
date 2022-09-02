@@ -1,4 +1,10 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { Search } from "@mui/icons-material";
 
 import Box from "@mui/material/Box";
@@ -6,194 +12,18 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import TableSortLabel from "@mui/material/TableSortLabel";
 import Checkbox from "@mui/material/Checkbox";
-import { visuallyHidden } from "@mui/utils";
-
-interface Data {
-  id: string;
-  scrips: string;
-  qty: string;
-  product: string;
-  avgPrice: number;
-  ltp: number;
-  mtm: string;
-  perChg: string;
-}
-
-function createData(
-  id: string,
-  scrips: string,
-  qty: string,
-  product: string,
-  avgPrice: number,
-  ltp: number,
-  mtm: string,
-  perChg: string
-): Data {
-  return {
-    id,
-    scrips,
-    qty,
-    product,
-    avgPrice,
-    ltp,
-    mtm,
-    perChg,
-  };
-}
-
-const rows = [
-  createData(
-    "1",
-    "TECHM",
-    "1000",
-    "DEL",
-    422.75,
-    422.75,
-    "+9,00,000.0",
-    "3.1%"
-  ),
-  createData(
-    "2",
-    "TECHM",
-    "1000",
-    "DEL",
-    422.75,
-    422.75,
-    "+9,00,000.0",
-    "3.1%"
-  ),
-  createData(
-    "3",
-    "TECHM",
-    "1000",
-    "DEL",
-    422.75,
-    422.75,
-    "+9,00,000.0",
-    "3.1%"
-  ),
-  createData(
-    "4",
-    "TECHM",
-    "1000",
-    "DEL",
-    422.75,
-    422.75,
-    "+9,00,000.0",
-    "3.1%"
-  ),
-  createData(
-    "5",
-    "TECHM",
-    "1000",
-    "DEL",
-    422.75,
-    422.75,
-    "+9,00,000.0",
-    "3.1%"
-  ),
-  createData(
-    "6",
-    "TECHM",
-    "1000",
-    "DEL",
-    422.75,
-    422.75,
-    "+9,00,000.0",
-    "3.1%"
-  ),
-  createData(
-    "7",
-    "TECHM",
-    "1000",
-    "DEL",
-    422.75,
-    422.75,
-    "+9,00,000.0",
-    "3.1%"
-  ),
-  createData(
-    "8",
-    "TECHM",
-    "1000",
-    "DEL",
-    422.75,
-    422.75,
-    "+9,00,000.0",
-    "3.1%"
-  ),
-  createData(
-    "9",
-    "TECHM",
-    "1000",
-    "DEL",
-    422.75,
-    422.75,
-    "+9,00,000.0",
-    "3.1%"
-  ),
-  createData(
-    "10",
-    "TECHM",
-    "1000",
-    "DEL",
-    422.75,
-    422.75,
-    "+9,00,000.0",
-    "3.1%"
-  ),
-  createData(
-    "11",
-    "TECHM",
-    "1000",
-    "DEL",
-    422.75,
-    422.75,
-    "+9,00,000.0",
-    "3.1%"
-  ),
-  createData(
-    "12",
-    "TECHM",
-    "1000",
-    "DEL",
-    422.75,
-    422.75,
-    "+9,00,000.0",
-    "3.1%"
-  ),
-];
+import { getNetPositions } from "../../http/getNetPositions/getNetPositions";
+import { EnhancedTableHead, HeadCell } from "../Orders/EnhancedTableHead";
+import { subscribeInstruments } from "../../http/subscribeInstruments/subscribeInstruments";
+import { unsubscribeInstruments } from "../../http/unsubscribeInstruments/unsubscribeInstruments";
+import { Segments } from "../../types/enums/segment.enums.types";
+import { SocketContext } from "../../socket";
+import { Touchline } from "../../types/interfaces/marketDepth.interfaces.types";
 
 type Order = "asc" | "desc";
-
-// This method is created for cross-browser compatibility, if you don't
-// need to support IE11, you can use Array.prototype.sort() directly
-// function stableSort<T>(
-//   array: readonly T[],
-//   comparator: (a: T, b: T) => number
-// ) {
-//   const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-//   stabilizedThis.sort((a, b) => {
-//     const order = comparator(a[0], b[0]);
-//     if (order !== 0) {
-//       return order;
-//     }
-//     return a[1] - b[1];
-//   });
-//   return stabilizedThis.map((el) => el[0]);
-// }
-
-interface HeadCell {
-  disablePadding: boolean;
-  id: keyof Data;
-  label: string;
-  numeric: boolean;
-}
 
 const headCells: readonly HeadCell[] = [
   {
@@ -218,7 +48,7 @@ const headCells: readonly HeadCell[] = [
     id: "avgPrice",
     numeric: false,
     disablePadding: true,
-    label: "Time",
+    label: "Avg Price",
   },
   {
     id: "ltp",
@@ -230,96 +60,39 @@ const headCells: readonly HeadCell[] = [
     id: "mtm",
     numeric: true,
     disablePadding: false,
-    label: "Action",
+    label: "MTM",
   },
 
   {
     id: "perChg",
     numeric: true,
     disablePadding: false,
-    label: "Order Price",
+    label: "% Chg",
   },
 ];
-
-interface EnhancedTableProps {
-  allowSelection: boolean;
-  numSelected: number;
-  onRequestSort: (
-    event: React.MouseEvent<unknown>,
-    property: keyof Data
-  ) => void;
-  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  order: Order;
-  orderBy: string;
-  rowCount: number;
-}
-
-function EnhancedTableHead(props: EnhancedTableProps) {
-  const {
-    allowSelection,
-    onSelectAllClick,
-    order,
-    orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort,
-  } = props;
-  const createSortHandler =
-    (property: keyof Data) => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property);
-    };
-
-  return (
-    <TableHead>
-      <TableRow>
-        {allowSelection && (
-          <TableCell padding="checkbox">
-            <Checkbox
-              color="primary"
-              indeterminate={numSelected > 0 && numSelected < rowCount}
-              checked={rowCount > 0 && numSelected === rowCount}
-              onChange={onSelectAllClick}
-              inputProps={{
-                "aria-label": "select all desserts",
-              }}
-            />
-          </TableCell>
-        )}
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
-            padding={headCell.disablePadding ? "none" : "normal"}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
-                </Box>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
-}
 
 interface EnhancedTableToolbarProps {
   numSelected: number;
   allowSelection: boolean;
   setAllowSelection: Dispatch<SetStateAction<boolean>>;
   filter: string;
+  search: string;
+  setSearch: Dispatch<SetStateAction<string>>;
 }
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
-  const { numSelected, allowSelection, setAllowSelection, filter } = props;
+  const {
+    numSelected,
+    allowSelection,
+    setAllowSelection,
+    filter,
+    search,
+    setSearch,
+  } = props;
+
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
+  };
 
   return (
     <div className="flex justify-between items-stretch mb-6">
@@ -347,6 +120,8 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
                 type="text"
                 className="outline-none"
                 placeholder="Search in Positions"
+                value={search}
+                onChange={handleSearch}
               />
             </div>
           </div>
@@ -359,19 +134,119 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     </div>
   );
 };
+interface IPosition {
+  AccountID: string;
+  TradingSymbol: string;
+  ExchangeSegment: string;
+  ExchangeInstrumentId: string;
+  ProductType: string;
+  Marketlot: string;
+  Multiplier: string;
+  BuyAveragePrice: string;
+  SellAveragePrice: string;
+  OpenBuyQuantity: string;
+  OpenSellQuantity: string;
+  Quantity: string;
+  BuyAmount: string;
+  SellAmount: string;
+  NetAmount: string;
+  UnrealizedMTM: string;
+  RealizedMTM: string;
+  MTM: string;
+  BEP: string;
+  SumOfTradedQuantityAndPriceBuy: string;
+  SumOfTradedQuantityAndPriceSell: string;
+  StatisticsLevel: string;
+  IsInterOpPosition: boolean;
+  childPositions: ChildPosition[];
+  MessageCode: number;
+  MessageVersion: number;
+  TokenID: number;
+  ApplicationType: number;
+  SequenceNumber: number;
+}
+
+interface IPositionWithTouchline extends IPosition {
+  Touchline: Touchline;
+}
+
+interface ChildPosition {
+  AccountID: string;
+  TradingSymbol: string;
+  ExchangeSegment: string;
+  ExchangeInstrumentId: string;
+  ProductType: string;
+  Marketlot: string;
+  Multiplier: string;
+  BuyAveragePrice: string;
+  SellAveragePrice: string;
+  OpenBuyQuantity: string;
+  OpenSellQuantity: string;
+  Quantity: string;
+  BuyAmount: string;
+  SellAmount: string;
+  NetAmount: string;
+  UnrealizedMTM: string;
+  RealizedMTM: string;
+  MTM: string;
+  BEP: string;
+  SumOfTradedQuantityAndPriceBuy: string;
+  SumOfTradedQuantityAndPriceSell: string;
+  StatisticsLevel: string;
+  IsInterOpPosition: boolean;
+}
 
 export function Positions() {
   const [allowSelection, setAllowSelection] = useState(false);
-
+  const [netPositions, setNetPositions] = useState<IPositionWithTouchline[]>(
+    []
+  );
   const [order, setOrder] = React.useState<Order>("asc");
-  const [orderBy, setOrderBy] = React.useState<keyof Data>("scrips");
+  const [orderBy, setOrderBy] = React.useState<any>("scrips");
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [search, setSearch] = useState("");
+  const { socket } = useContext(SocketContext) as { socket: any };
+
+  useEffect(() => {
+    socket.on("1501-json-full", (res) => {
+      const data = JSON.parse(res);
+      setNetPositions((positions) => {
+        return positions.map((position) => {
+          return position.ExchangeInstrumentId == data.ExchangeInstrumentID
+            ? { ...position, ...data }
+            : position;
+        });
+      });
+    });
+
+    return () => {
+      socket.off("1501-json-full");
+    };
+  }, []);
+
+  useEffect(() => {
+    let orderIds;
+    getNetPositions().then((res) => {
+      if (res.type === "success") {
+        setNetPositions(res.result.positionList);
+        orderIds = netPositions.map((position) => ({
+          exchangeSegment: Segments[position.ExchangeSegment],
+          exchangeInstrumentID: position.ExchangeInstrumentId,
+        }));
+        subscribeInstruments({ instruments: orderIds });
+      }
+    });
+
+    return () => {
+      unsubscribeInstruments({ instruments: orderIds });
+    };
+  }, []);
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
-    property: keyof Data
+    property: string
   ) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -380,7 +255,7 @@ export function Positions() {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.id);
+      const newSelecteds = netPositions.map((n, i) => i.toString());
       setSelected(newSelecteds);
       return;
     }
@@ -429,21 +304,58 @@ export function Positions() {
     { name: "TradeBox", filter: "TradeBox" },
   ];
 
+  const handleSort = (a, b) => {
+    let key;
+    switch (orderBy) {
+      case "scrips":
+        key = "TradingSymbol";
+        break;
+      case "qty":
+        key = "Quantity";
+        break;
+      case "product":
+        key = "ProductType";
+        break;
+      case "avgPrice":
+        key = "BuyAveragePrice";
+        break;
+      case "ltp":
+        key = "LastTradedPrice";
+        break;
+      case "mtm":
+        key = "MTM";
+        break;
+      case "perChg":
+        key = "";
+        break;
+      default:
+        key = undefined;
+    }
+
+    if (key !== undefined) {
+      if (typeof a[key] === "number" && typeof b[key] === "number") {
+        if (order === "asc") {
+          return a[key] - b[key];
+        } else {
+          return b[key] - a[key];
+        }
+      } else if (typeof a[key] === "string" && typeof b[key] === "string") {
+        if (order === "asc") {
+          return a[key].localeCompare(b[key]);
+        } else {
+          return b[key].localeCompare(a[key]);
+        }
+      }
+    }
+  };
+
   return (
     <>
       <div className="p-5">
-        {/* <div style={{ height: 400, width: "100%" }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
-          checkboxSelection={allowSelection}
-        />
-      </div> */}
         <Box sx={{ width: "100%" }}>
-          {/* <Paper sx={{ width: "100%", mb: 2 }}> */}
           <EnhancedTableToolbar
+            search={search}
+            setSearch={setSearch}
             filter={filterType}
             allowSelection={allowSelection}
             setAllowSelection={setAllowSelection}
@@ -452,39 +364,41 @@ export function Positions() {
           <TableContainer>
             <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
               <EnhancedTableHead
-                allowSelection={allowSelection}
-                numSelected={selected.length}
+                headCells={headCells}
                 order={order}
                 orderBy={orderBy}
-                onSelectAllClick={handleSelectAllClick}
                 onRequestSort={handleRequestSort}
-                rowCount={rows.length}
+                rowCount={netPositions.length}
+                allowSelection={allowSelection}
+                numSelected={selected.length}
+                onSelectAllClick={handleSelectAllClick}
               />
               <TableBody className="max-h-28 overflow-auto">
-                {rows
-                  .sort()
+                {netPositions
+                  .filter((p) => p.TradingSymbol.includes(search.toUpperCase()))
+                  .sort(handleSort)
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => {
-                    const isItemSelected = isSelected(row.id);
+                    const isItemSelected = isSelected(index.toString());
                     const labelId = `enhanced-table-checkbox-${index}`;
 
                     return (
                       <TableRow
-                        hover
+                        // hover
                         onClick={(event) => {
                           setAllowSelection(true);
-                          handleClick(event, row.id);
+                          handleClick(event, index.toString());
                         }}
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
-                        key={row.id}
+                        key={index.toString()}
                         selected={isItemSelected}
                       >
                         {allowSelection && (
                           <TableCell padding="checkbox">
                             <Checkbox
-                              color="primary"
+                              color="secondary"
                               checked={isItemSelected}
                               inputProps={{
                                 "aria-labelledby": labelId,
@@ -498,24 +412,36 @@ export function Positions() {
                           scope="row"
                           padding="none"
                         >
-                          {row.scrips}
+                          {row.TradingSymbol}
                         </TableCell>
-                        <TableCell align="right">{row.qty}</TableCell>
-                        <TableCell align="right">
+                        <TableCell>{row.Quantity}</TableCell>
+                        <TableCell>
                           <span
                             className={`${
-                              row.product === "MIS" || row.product === "INTRA"
+                              row.ProductType === "MIS" ||
+                              row.ProductType === "INTRA"
                                 ? "text-purple bg-purpleHighlight"
                                 : "text-blue bg-blueHighlight"
                             } text-xs rounded-[4px] py-[5px] px-[6px]`}
                           >
-                            {row.product}
+                            {row.ProductType}
                           </span>
                         </TableCell>
-                        <TableCell align="right">{row.avgPrice}</TableCell>
-                        <TableCell align="right">{row.ltp}</TableCell>
-                        <TableCell align="right">{row.mtm}</TableCell>
-                        <TableCell align="right">{row.perChg}</TableCell>
+                        <TableCell>{row.BuyAveragePrice}</TableCell>
+                        <TableCell>
+                          {row.Touchline?.LastTradedPrice || 0}
+                        </TableCell>
+                        <TableCell>{row.MTM}</TableCell>
+                        <TableCell>
+                          {row.Touchline?.LastTradedPrice
+                            ? (
+                                ((Number(row.BuyAveragePrice) -
+                                  (row.Touchline?.LastTradedPrice || 0)) /
+                                  (row.Touchline?.LastTradedPrice || 0)) *
+                                100
+                              ).toFixed(2)
+                            : 0}
+                        </TableCell>
                       </TableRow>
                     );
                   })}
@@ -525,13 +451,12 @@ export function Positions() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 15]}
             component="div"
-            count={rows.length}
+            count={netPositions.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
-          {/* </Paper> */}
         </Box>
       </div>
       <div className="fixed flex gap-4 bottom-0 w-full border-t px-5 py-2 bg-white">

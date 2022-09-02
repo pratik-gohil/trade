@@ -108,7 +108,7 @@ export interface IInstrument {
   SequenceNumber: number;
 }
 
-interface Touchline {
+export interface Touchline {
   BidInfo: Bid;
   AskInfo: Bid;
   LastTradedPrice: number;

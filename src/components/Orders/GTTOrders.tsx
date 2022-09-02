@@ -8,9 +8,54 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Checkbox from "@mui/material/Checkbox";
 import { EnhancedTableToolbar } from "./EnhancedTableToolbar";
-import { EnhancedTableHead } from "./EnhancedTableHead";
+import { EnhancedTableHead, HeadCell } from "./EnhancedTableHead";
 import { Data, Order } from "./Orders";
 import { getGTTOrders } from "../../http/getGTTOrders/getGTTOrders";
+
+const headCells: readonly HeadCell[] = [
+  {
+    id: "time",
+    numeric: false,
+    disablePadding: true,
+    label: "Time",
+  },
+  {
+    id: "action",
+    numeric: true,
+    disablePadding: false,
+    label: "Action",
+  },
+  {
+    id: "scrips",
+    numeric: true,
+    disablePadding: false,
+    label: "Scrips",
+  },
+  {
+    id: "qty",
+    numeric: true,
+    disablePadding: false,
+    label: "Qty",
+  },
+  {
+    id: "product",
+    numeric: true,
+    disablePadding: false,
+    label: "Product",
+  },
+  {
+    id: "orderPrice",
+    numeric: true,
+    disablePadding: false,
+    label: "Order Price",
+  },
+  {
+    id: "ltp",
+    numeric: true,
+    disablePadding: false,
+    label: "LTP",
+  },
+];
 
 export default function GTTOrders({ fetchOrders }) {
   const [orders, setOrders] = useState<any>([]);
@@ -141,6 +186,7 @@ export default function GTTOrders({ fetchOrders }) {
         <TableContainer>
           <TableContainer sx={{ minWidth: 750 }}>
             <EnhancedTableHead
+              headCells={headCells}
               allowSelection={allowSelection}
               numSelected={selected.length}
               order={order}
