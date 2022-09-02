@@ -61,6 +61,7 @@ export function OrderModal() {
         (instrument as IOrderWithMarketDepth).OrderType.toUpperCase()
       );
       setTimeInForce((instrument as IOrderWithMarketDepth).TimeInForce);
+      setPrice((instrument as IOrderWithMarketDepth).OrderPrice);
     } else {
       setOrderQuantity((instrument as IInstrument)?.LotSize);
       setPrice(intitialPrice || 0);

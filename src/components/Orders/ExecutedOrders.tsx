@@ -70,7 +70,10 @@ export default function ExecutedOrders({ orders }: IExecutedOrders) {
   const [showDetails, setShowDetails] = useState<IOrderWithMarketDepth | null>(
     null
   );
-
+  const [selectedOption, setSelectedOption] = useState({
+    type: "",
+    id: "",
+  });
   const executedOrders = useMemo(() => {
     return orders.filter(
       (order) =>
@@ -174,6 +177,8 @@ export default function ExecutedOrders({ orders }: IExecutedOrders) {
                       row={row}
                       index={index}
                       setShowDetails={setShowDetails}
+                      selectedOption={selectedOption}
+                      setSelectedOption={setSelectedOption}
                     />
                   );
                 })}
