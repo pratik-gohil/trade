@@ -7,6 +7,7 @@ import {
   ListItemIcon,
   Menu,
 } from "@mui/material";
+import Tooltip from "@mui/material/Tooltip";
 import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import Checkbox from "@mui/material/Checkbox";
@@ -108,17 +109,19 @@ export const OrderTableRow = ({
       </TableCell>
       <TableCell className={`${showOrderStatus && "!flex !gap-2"}`}>
         {showOrderStatus && (
-          <span
-            className={`${
-              row.OrderStatus === "Filled"
-                ? "text-success bg-successHighlight"
-                : row.OrderStatus === "Rejected"
-                ? "text-failure bg-failureHighlight"
-                : "text-warning bg-warningHighlight"
-            } text-xs rounded-[4px] py-[5px] px-[6px] font-medium`}
-          >
-            {row.OrderStatus === "Filled" ? "Executed" : row.OrderStatus}
-          </span>
+          <Tooltip title={row.CancelRejectReason} arrow>
+            <span
+              className={`${
+                row.OrderStatus === "Filled"
+                  ? "text-success bg-successHighlight"
+                  : row.OrderStatus === "Rejected"
+                  ? "text-failure bg-failureHighlight"
+                  : "text-warning bg-warningHighlight"
+              } text-xs rounded-[4px] py-[5px] px-[6px] font-medium`}
+            >
+              {row.OrderStatus === "Filled" ? "Executed" : row.OrderStatus}
+            </span>
+          </Tooltip>
         )}
         <span
           className={`${
