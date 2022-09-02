@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useRef } from "react";
+import React, { useMemo, useState } from "react";
 
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
@@ -166,9 +166,9 @@ export default function ExecutedOrders({ orders }: IExecutedOrders) {
                 .sort(handleSort)
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const labelId = `enhanced-table-checkbox-${index}`;
                   return (
                     <OrderTableRow
+                      key={index}
                       row={row}
                       index={index}
                       setShowDetails={setShowDetails}
