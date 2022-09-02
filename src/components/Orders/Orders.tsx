@@ -75,7 +75,6 @@ export function Orders() {
   const [orders, setOrders] = useState<IOrderWithMarketDepth[]>([]);
   const { socket } = useContext(SocketContext) as { socket: any };
   const isOpen = useSelector((state: RootState) => state.orderModal.visible);
-
   const openOrders = useMemo(() => {
     return orders.filter(
       (order) => !!~["New", "Open", "PendingNew"].indexOf(order.OrderStatus)

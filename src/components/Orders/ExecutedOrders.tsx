@@ -1,15 +1,15 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useRef } from "react";
 
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
 import { EnhancedTableToolbar } from "./EnhancedTableToolbar";
 import { EnhancedTableHead, HeadCell } from "./EnhancedTableHead";
 import { Data, IOrderWithMarketDepth, Order } from "./Orders";
+import { OrderTableRow } from "./OrderTableRow";
+import OrderDetailsModal from "./OrderDetailsModal";
 
 const headCells: readonly HeadCell[] = [
   {
@@ -67,6 +67,9 @@ export default function ExecutedOrders({ orders }: IExecutedOrders) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [search, setSearch] = useState("");
+  const [showDetails, setShowDetails] = useState<IOrderWithMarketDepth | null>(
+    null
+  );
 
   const executedOrders = useMemo(() => {
     return orders.filter(
@@ -165,83 +168,11 @@ export default function ExecutedOrders({ orders }: IExecutedOrders) {
                 .map((row, index) => {
                   const labelId = `enhanced-table-checkbox-${index}`;
                   return (
-                    <TableRow
-                      // hover
-                      // onClick={(event) => {
-                      //   setAllowSelection(true);
-                      //   handleClick(event, row.AppOrderID);
-                      // }}
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={row.AppOrderID}
-                    >
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        padding="none"
-                      >
-                        <span className="text-base">
-                          {row.ExchangeTransactTime.split(" ")[1]}
-                        </span>
-                      </TableCell>
-                      <TableCell className="!flex !gap-2">
-                        <span
-                          className={`${
-                            row.OrderStatus === "Filled"
-                              ? "text-success bg-successHighlight"
-                              : row.OrderStatus === "Rejected"
-                              ? "text-failure bg-failureHighlight"
-                              : "text-warning bg-warningHighlight"
-                          } text-xs rounded-[4px] py-[5px] px-[6px] font-medium`}
-                        >
-                          {row.OrderStatus === "Filled"
-                            ? "Executed"
-                            : row.OrderStatus}
-                        </span>
-                        <span
-                          className={`${
-                            row.OrderSide === "BUY"
-                              ? "text-success bg-successHighlight"
-                              : "text-failure bg-failureHighlight"
-                          } text-xs rounded-[4px] py-[5px] px-[6px] font-medium`}
-                        >
-                          {row.OrderSide}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-base text-primary">
-                          {row.TradingSymbol}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-[#a9a9a9] text-base">
-                          {row.OrderQuantity}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span
-                          className={`${
-                            row.ProductType === "MIS" ||
-                            row.ProductType === "INTRA"
-                              ? "text-purple bg-purpleHighlight"
-                              : "text-blue bg-blueHighlight"
-                          } text-xs rounded-[4px] py-[5px] px-[6px]`}
-                        >
-                          {row.ProductType}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-primary text-base">
-                          {row.OrderAverageTradedPrice || "-"}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-primary text-base">
-                          {row?.Touchline?.LastTradedPrice || 0}
-                        </span>
-                      </TableCell>
-                    </TableRow>
+                    <OrderTableRow
+                      row={row}
+                      index={index}
+                      setShowDetails={setShowDetails}
+                    />
                   );
                 })}
             </TableBody>
@@ -257,6 +188,11 @@ export default function ExecutedOrders({ orders }: IExecutedOrders) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Box>
+
+      <OrderDetailsModal
+        setShowDetails={setShowDetails}
+        showDetails={showDetails}
+      />
     </div>
   );
 }
