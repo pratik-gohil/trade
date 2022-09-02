@@ -1,5 +1,17 @@
-import React, { Fragment, useMemo, useState } from "react";
+import React, { Fragment, useMemo, useState, useEffect, useRef } from "react";
 
+import {
+  Paper,
+  MenuList,
+  MenuItem,
+  ListItemText,
+  ListItemIcon,
+  Divider,
+  Typography,
+  Menu,
+  IconButton,
+} from "@mui/material";
+import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -10,11 +22,22 @@ import TableRow from "@mui/material/TableRow";
 import Checkbox from "@mui/material/Checkbox";
 import { EnhancedTableToolbar } from "./EnhancedTableToolbar";
 import { EnhancedTableHead, HeadCell } from "./EnhancedTableHead";
-import { Data, Order } from "./Orders";
+import { Data, IOrderWithMarketDepth, Order } from "./Orders";
 import { deleteOrder } from "../../http/deleteOrder/deleteOrder";
-import { DeleteOutline, EditOutlined, Widgets } from "@mui/icons-material";
+import {
+  Cloud,
+  DeleteOutline,
+  EditOutlined,
+  Widgets,
+  ContentPaste,
+  ContentCopy,
+  ContentCut,
+  MoreVert,
+  CloseOutlined,
+} from "@mui/icons-material";
 import { useDispatch } from "react-redux";
 import { visiblityReducer } from "../../features/orderModal/orderModal";
+import useModal from "../../hooks/useModal";
 
 const headCells: readonly HeadCell[] = [
   {
@@ -74,6 +97,25 @@ export default function OpenOrders({ orders, fetchOrders }) {
     type: "",
     id: "",
   });
+  const orderOptionsPopupRef = useRef(null);
+  const orderOptionsPopupToggleButtonRef = useRef(null);
+  // const [showOrderOptions] = useModal(
+  //   orderOptionsPopupRef,
+  //   orderOptionsPopupToggleButtonRef
+  // );
+  const [showOrderOptions, setShowOrderOptions] = useState(false);
+  const [showDetails, setShowDetails] = useState<IOrderWithMarketDepth | null>(
+    null
+  );
+
+  // useEffect(() => {
+  //   if (showOrderOptions) {
+  //     setSelectedOption(() => ({
+  //       type: "",
+  //       id: "",
+  //     }));
+  //   }
+  // }, [showOrderOptions]);
 
   const openOrders = useMemo(() => {
     return orders.filter(
@@ -298,8 +340,9 @@ export default function OpenOrders({ orders, fetchOrders }) {
                           <span
                             className={`
                             ${
-                              selectedOption.type === "delete" &&
-                              selectedOption.id === row.AppOrderID
+                              (selectedOption.type === "delete" &&
+                                selectedOption.id === row.AppOrderID) ||
+                              showOrderOptions
                                 ? "hidden"
                                 : "group-hover:hidden inline"
                             }
@@ -314,8 +357,9 @@ export default function OpenOrders({ orders, fetchOrders }) {
                           </span>
                           <div
                             className={`${
-                              selectedOption.type === "delete" &&
-                              selectedOption.id === row.AppOrderID
+                              (selectedOption.type === "delete" &&
+                                selectedOption.id === row.AppOrderID) ||
+                              showOrderOptions
                                 ? "flex"
                                 : "group-hover:flex hidden"
                             } gap-2 text-primary`}
@@ -358,15 +402,40 @@ export default function OpenOrders({ orders, fetchOrders }) {
                               <DeleteOutline className="!w-[20px] !h-[20px]" />
                             </div>
                             <div
+                              ref={orderOptionsPopupToggleButtonRef}
                               onClick={() =>
-                                setSelectedOption({
-                                  type: "options",
-                                  id: row.AppOrderID,
-                                })
+                                setShowOrderOptions(!showOrderOptions)
                               }
-                              className="border border-secondary !w-[28px] !h-[28px] rounded-lg cursor-pointer flex justify-center items-center"
+                              className={`${
+                                showOrderOptions
+                                  ? "border-blue text-blue"
+                                  : "border-secondary"
+                              } relative border border-secondary !w-[28px] !h-[28px] rounded-lg cursor-pointer flex justify-center items-center`}
                             >
                               <Widgets className="!w-[20px] !h-[20px]" />
+
+                              <Menu
+                                id="basic-menu"
+                                anchorEl={
+                                  orderOptionsPopupToggleButtonRef.current
+                                }
+                                open={showOrderOptions}
+                                onClose={() => setShowOrderOptions(false)}
+                                // className={`${
+                                //   showOrderOptions ? "block" : "hidden"
+                                // } absolute`}
+                                // ref={orderOptionsPopupRef}
+                                sx={{ width: 320, maxWidth: "100%" }}
+                              >
+                                <MenuList>
+                                  <MenuItem onClick={() => setShowDetails(row)}>
+                                    <ListItemIcon>
+                                      <MoreVert fontSize="small" />
+                                    </ListItemIcon>
+                                    <ListItemText>Details</ListItemText>
+                                  </MenuItem>
+                                </MenuList>
+                              </Menu>
                             </div>
                           </div>
                         </TableCell>
@@ -441,6 +510,171 @@ export default function OpenOrders({ orders, fetchOrders }) {
           Push to Market
         </button>
       </div>
+
+      <Modal
+        open={!!showDetails}
+        onClose={() => setShowDetails(null)}
+        aria-labelledby="parent-modal-title"
+        aria-describedby="parent-modal-description"
+      >
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg w-[542px] overflow-hidden">
+          <div
+            className="bg-neutral-gradient p-5 flex items-center
+            w-full justify-between
+          "
+          >
+            <div className="flex items-end gap-2 leading-3">
+              <span className="font-semibold text-2xl text-primary">
+                {showDetails?.TradingSymbol}
+              </span>
+              <span className="text-xs text-secondary">BSE</span>
+              <span
+                className={`${
+                  showDetails?.OrderSide === "BUY"
+                    ? "text-success bg-successHighlight"
+                    : "text-failure bg-failureHighlight"
+                } text-xs rounded-[4px] py-[5px] px-[6px] font-medium`}
+              >
+                {showDetails?.OrderSide}
+              </span>
+              <span
+                className={`${
+                  true
+                    ? "text-success bg-successHighlight"
+                    : "text-failure bg-failureHighlight"
+                } text-xs rounded-[4px] py-[5px] px-[6px] font-medium`}
+              >
+                {showDetails?.OrderStatus}
+              </span>
+            </div>
+            <div onClick={() => setShowDetails(null)}>
+              <IconButton aria-label="close">
+                <CloseOutlined />
+              </IconButton>
+            </div>
+          </div>
+          <div
+            className="
+
+            flex flex-col gap-2
+          px-10 py-6"
+          >
+            <div
+              className="
+            flex justify-between"
+            >
+              <span className="text-sm text-secondary">Qty</span>
+              <span className="text-lg text-primary font-medium">
+                {showDetails?.OrderQuantity}
+              </span>
+            </div>
+            <div
+              className="
+            flex justify-between"
+            >
+              <span className="text-sm text-secondary">Price</span>
+              <span className="text-lg text-primary font-medium">
+                {showDetails?.OrderPrice}
+              </span>
+            </div>
+            <div
+              className="
+            flex justify-between"
+            >
+              <span className="text-sm text-secondary">Avg. Price</span>
+              <span className="text-lg text-primary font-medium">
+                {showDetails?.AverageTradedPrice}
+              </span>
+            </div>
+            <div
+              className="
+            flex justify-between"
+            >
+              <span className="text-sm text-secondary">Trigger Price</span>
+              <span className="text-lg text-primary font-medium">
+                {showDetails?.OrderStopPrice}
+              </span>
+            </div>
+            <div
+              className="
+            flex justify-between"
+            >
+              <span className="text-sm text-secondary">Order Type</span>
+              <span className="text-lg text-primary font-medium">
+                {showDetails?.OrderType}
+              </span>
+            </div>
+            <div
+              className="
+            flex justify-between"
+            >
+              <span className="text-sm text-secondary">Product</span>
+              <span className="text-lg text-primary font-medium">
+                {showDetails?.ProductType}
+              </span>
+            </div>
+            <div
+              className="
+            flex justify-between"
+            >
+              <span className="text-sm text-secondary">Validity</span>
+              <span className="text-lg text-primary font-medium">
+                {showDetails?.TimeInForce}
+              </span>
+            </div>
+            <div
+              className="
+            flex justify-between"
+            >
+              <span className="text-sm text-secondary">Order ID</span>
+              <span className="text-lg text-primary font-medium">
+                {showDetails?.AppOrderID}
+              </span>
+            </div>
+            <div
+              className="
+            flex justify-between"
+            >
+              <span className="text-sm text-secondary">Exchange Order ID</span>
+              <span className="text-lg text-primary font-medium">
+                {showDetails?.ExchangeOrderID}
+              </span>
+            </div>
+            <div
+              className="
+            flex justify-between"
+            >
+              <span className="text-sm text-secondary">Time</span>
+              <span className="text-lg text-primary font-medium">
+                {showDetails?.OrderGeneratedDateTime}
+              </span>
+            </div>
+            <div
+              className="
+            flex justify-between"
+            >
+              <span className="text-sm text-secondary">Exchange Time</span>
+              <span className="text-lg text-primary font-medium">
+                {showDetails?.ExchangeTransactTime}
+              </span>
+            </div>
+            <div
+              className="
+            flex justify-between"
+            >
+              <span className="text-sm text-secondary">Placed by</span>
+              <span className="text-lg text-primary font-medium">
+                {showDetails?.ClientID}
+              </span>
+            </div>
+            <div className="self-center">
+              <button className="m-auto bg-blue text-white rounded-lg px-6 py-2">
+                View History
+              </button>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

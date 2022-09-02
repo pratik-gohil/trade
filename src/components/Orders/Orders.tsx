@@ -43,6 +43,7 @@ export interface IOrder {
   OrderStopPrice: number;
   TradingSymbol: string;
   OrderStatus: string;
+  AverageTradedPrice: string;
   OrderAverageTradedPrice: string;
   LeavesQuantity: number;
   CumulativeQuantity: number;
@@ -97,7 +98,9 @@ export function Orders() {
         exchangeSegment: Segments[order.ExchangeSegment],
         exchangeInstrumentID: order.ExchangeInstrumentID,
       }));
-      subscribeInstruments({ instruments: orderIds });
+      if (orderIds) {
+        subscribeInstruments({ instruments: orderIds });
+      }
 
       return orderIds;
     }
@@ -112,7 +115,9 @@ export function Orders() {
     })();
 
     return () => {
-      unsubscribeInstruments({ instruments: orderIds });
+      if (orderIds) {
+        unsubscribeInstruments({ instruments: orderIds });
+      }
     };
   }, [isOpen]);
 

@@ -130,10 +130,10 @@ export function WatchList() {
     { exchangeSegment: 1, exchangeInstrumentID: 26060 },
   ];
   const filterModalRef = useRef(null);
-  const filterModalToggleButton = useRef(null);
+  const filterModalToggleButtonRef = useRef(null);
   const [showWatchListFilters] = useModal(
     filterModalRef,
-    filterModalToggleButton
+    filterModalToggleButtonRef
   );
   const dispatch = useDispatch();
   const { socket } = useContext(SocketContext) as { socket: any };
@@ -997,7 +997,7 @@ export function WatchList() {
               </div>
             </div>
             <SettingsOutlined
-              ref={filterModalToggleButton}
+              ref={filterModalToggleButtonRef}
               className={`${
                 showWatchListFilters ? "rotate-90" : "rotate-0"
               } cursor-pointer text-[#333] transition !w-[20px] !h-[20px]`}
