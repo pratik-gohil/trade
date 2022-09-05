@@ -3,6 +3,7 @@ import Modal from "@mui/material/Modal";
 import IconButton from "@mui/material/IconButton";
 
 import { CloseOutlined } from "@mui/icons-material";
+import { Segments } from "../../types/enums/segment.enums.types";
 
 export default function OrderDetailsModal({ showDetails, setShowDetails }) {
   return (
@@ -22,7 +23,9 @@ export default function OrderDetailsModal({ showDetails, setShowDetails }) {
             <span className="font-semibold text-2xl text-primary">
               {showDetails?.TradingSymbol}
             </span>
-            <span className="text-xs text-secondary">BSE</span>
+            <span className="text-xs text-secondary">
+              {Segments[showDetails?.ExchangeSegment]}
+            </span>
             <span
               className={`${
                 showDetails?.OrderSide === "BUY"
