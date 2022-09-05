@@ -78,6 +78,7 @@ interface EnhancedTableToolbarProps {
   filter: string;
   search: string;
   setSearch: Dispatch<SetStateAction<string>>;
+  PandL: number;
 }
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
@@ -88,6 +89,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     filter,
     search,
     setSearch,
+    PandL,
   } = props;
 
   const handleSearch = (e) => {
@@ -129,7 +131,9 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
       </div>
       <div className="bg-green-50 flex items-center p-2 text-xl gap-4 rounded-[4px]">
         {filter} P&L{" "}
-        <span className="text-4xl text-success font-medium">+9,79,817.70</span>
+        <span className="text-4xl text-success font-medium">
+          {(PandL > 0 ? "+" : "-") + PandL.toFixed(2)}
+        </span>
       </div>
     </div>
   );
@@ -164,6 +168,8 @@ interface IPosition {
   TokenID: number;
   ApplicationType: number;
   SequenceNumber: number;
+  AverageTradedPrice: number;
+  LastTradedPrice: number;
 }
 
 interface IPositionWithTouchline extends IPosition {
@@ -208,6 +214,7 @@ export function Positions() {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [search, setSearch] = useState("");
   const { socket } = useContext(SocketContext) as { socket: any };
+  const [PandL, setPandL] = useState(0);
 
   useEffect(() => {
     let orderIds;
@@ -231,7 +238,6 @@ export function Positions() {
     const listener = (res) => {
       const data = JSON.parse(res);
       setNetPositions((positions) => {
-        console.log(positions);
         return positions.map((position) =>
           position.ExchangeInstrumentId.toString() ===
           data.ExchangeInstrumentID.toString()
@@ -239,6 +245,10 @@ export function Positions() {
             : position
         );
       });
+
+      if (data.LastTradedPrice) {
+        setPandL((PandL) => PandL + data.LastTradedPrice);
+      }
     };
     socket.on("1501-json-full", listener);
 
@@ -363,6 +373,7 @@ export function Positions() {
             allowSelection={allowSelection}
             setAllowSelection={setAllowSelection}
             numSelected={selected.length}
+            PandL={PandL}
           />
           <TableContainer>
             <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
@@ -431,16 +442,19 @@ export function Positions() {
                           </span>
                         </TableCell>
                         <TableCell>{row.BuyAveragePrice}</TableCell>
+                        <TableCell>{row.LastTradedPrice || 0}</TableCell>
                         <TableCell>
-                          {row.Touchline?.LastTradedPrice || 0}
+                          {(
+                            (row.LastTradedPrice - row.AverageTradedPrice) *
+                              Number(row.Quantity) || 0
+                          ).toFixed(2)}
                         </TableCell>
-                        <TableCell>{row.MTM}</TableCell>
                         <TableCell>
-                          {row.Touchline?.LastTradedPrice
+                          {row.LastTradedPrice
                             ? (
                                 ((Number(row.BuyAveragePrice) -
-                                  (row.Touchline?.LastTradedPrice || 0)) /
-                                  (row.Touchline?.LastTradedPrice || 0)) *
+                                  (row.LastTradedPrice || 0)) /
+                                  (row.LastTradedPrice || 0)) *
                                 100
                               ).toFixed(2)
                             : 0}
