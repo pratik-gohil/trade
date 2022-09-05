@@ -147,6 +147,8 @@ export default function ExecutedOrders({ orders }: IExecutedOrders) {
     }
   };
 
+  if (!(executedOrders.length > 0)) return null;
+
   return (
     <div className="p-5">
       <Box sx={{ width: "100%" }}>

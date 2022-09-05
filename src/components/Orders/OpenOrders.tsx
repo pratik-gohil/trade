@@ -173,6 +173,8 @@ export default function OpenOrders({ orders, fetchOrders }) {
     }
   };
 
+  if (!(openOrders.length > 0)) return null;
+
   return (
     <div className="p-5">
       <Box sx={{ width: "100%" }}>
@@ -224,7 +226,8 @@ export default function OpenOrders({ orders, fetchOrders }) {
                             className="text-center py-6 border-b border-border"
                           >
                             <span className="mr-4 text-lg font-medium text-primary">
-                              Are you sure you want to cancel SBIN order?
+                              Are you sure you want to cancel{" "}
+                              {row.TradingSymbol} order?
                             </span>
                             <button
                               onClick={() => handleCancel(row.AppOrderID)}
