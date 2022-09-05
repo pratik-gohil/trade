@@ -45,6 +45,17 @@ export function OrderModal() {
   const isOpen = useSelector((state: RootState) => state.orderModal.visible);
   const dispatch = useDispatch();
 
+  const isCM =
+    Segments[(instrument as IInstrument)?.ExchangeSegment] === "NSECM" ||
+    Segments[(instrument as IInstrument)?.ExchangeSegment] === "BSECM";
+  const exchangeInstrumentID =
+    (Segments[(instrument as IInstrument)?.ExchangeSegment] === "NSECM" &&
+      exchangeSegment === "NSECM") ||
+    (Segments[(instrument as IInstrument)?.ExchangeSegment] === "BSECM" &&
+      exchangeSegment === "BSECM")
+      ? (instrument as IInstrument)?.ExchangeInstrumentID
+      : (instrument as IInstrument)?.OppositeExchangeInstrumentID;
+
   const intitialPrice =
     (isModify
       ? (instrument as IOrderWithMarketDepth)?.OrderPrice
@@ -62,7 +73,18 @@ export function OrderModal() {
       );
       setTimeInForce((instrument as IOrderWithMarketDepth).TimeInForce);
       setPrice((instrument as IOrderWithMarketDepth).OrderPrice);
+      setExchangeSegment(
+        Segments[(instrument as IOrderWithMarketDepth).ExchangeSegment]
+      );
+      setTradeType(
+        (instrument as IOrderWithMarketDepth).ProductType === "MIS"
+          ? "INTRADAY"
+          : "LONGTERM"
+      );
     } else {
+      setExchangeSegment(
+        Segments[(instrument as IInstrument)?.ExchangeSegment]
+      );
       setOrderQuantity((instrument as IInstrument)?.LotSize);
       setPrice(intitialPrice || 0);
     }
@@ -119,15 +141,12 @@ export function OrderModal() {
       response = await orderEntry({
         clientID: localStorage.getItem(CLIENT_ID),
         userID: localStorage.getItem(USER_ID),
-        exchangeSegment:
-          Segments[(instrument as IInstrument)?.ExchangeSegment] === "NSE" ||
-          Segments[(instrument as IInstrument)?.ExchangeSegment] === "BSE"
-            ? exchangeSegment
-            : Segments[(instrument as IInstrument)?.ExchangeSegment],
-        exchangeInstrumentID:
-          exchangeSegment === "BSECM"
-            ? (instrument as IInstrument)?.OppositeExchangeInstrumentID
-            : (instrument as IInstrument)?.ExchangeInstrumentID,
+        exchangeSegment: isCM
+          ? exchangeSegment
+          : Segments[(instrument as IInstrument)?.ExchangeSegment],
+        exchangeInstrumentID: isCM
+          ? exchangeInstrumentID
+          : (instrument as IInstrument)?.ExchangeInstrumentID,
         productType:
           tradeType === "INTRADAY"
             ? "MIS"
@@ -208,10 +227,7 @@ export function OrderModal() {
                     ? (instrument as IOrderWithMarketDepth).TradingSymbol
                     : (instrument as IInstrument).DisplayName}
                 </div>
-                {(Segments[(instrument as IInstrument)?.ExchangeSegment] ===
-                  "NSE" ||
-                  Segments[(instrument as IInstrument)?.ExchangeSegment] ===
-                    "BSE") && (
+                {isCM && (
                   <RadioGroup
                     sx={{ display: "flex", flexDirection: "row", gap: 2 }}
                     aria-labelledby="radio-order-modal-exchange"

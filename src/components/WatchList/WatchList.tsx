@@ -399,7 +399,7 @@ export function WatchList() {
             ))}
           </div>
         ) : (
-          <div className="px-5 py-3 w-full">
+          <div className="px-5 py-3 w-full sticky top-0 bg-white opacity-100 z-10">
             <div
               className={`${
                 instrumentSearch
