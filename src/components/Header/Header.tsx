@@ -166,6 +166,9 @@ export const Header = () => {
           </span>
           <span>{user.userID || user.ClientId}</span>
         </div>
+        <div>
+          <NavLink to="/logout">LOGOUT</NavLink>
+        </div>
       </div>
     </div>
   );
