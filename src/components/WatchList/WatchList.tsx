@@ -153,12 +153,12 @@ export function WatchList() {
     if (node) observer?.current?.observe(node);
   }, []);
 
-  // useEffect(() => {
-
-  // }, [instrumentSearchRef.current])
-
   useEffect(() => {
-    setSearch(new JsSearch.Search("DisplayName"));
+    const search = new JsSearch.Search("DisplayName");
+    search.indexStrategy = new JsSearch.AllSubstringsIndexStrategy();
+    search.searchIndex = new JsSearch.UnorderedSearchIndex();
+
+    setSearch(search);
   }, []);
 
   useEffect(() => {
