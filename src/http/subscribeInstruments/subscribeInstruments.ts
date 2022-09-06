@@ -1,4 +1,3 @@
-import { IInstrument } from "./../../types/interfaces/instrument.interfaces.types";
 import { constants } from "../../constants/global";
 import HTTP from "../http";
 const { TOKEN } = constants;
