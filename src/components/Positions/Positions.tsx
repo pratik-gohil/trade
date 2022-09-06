@@ -3,6 +3,7 @@ import React, {
   SetStateAction,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import { Search } from "@mui/icons-material";
@@ -132,7 +133,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
       <div className="bg-green-50 flex items-center p-2 text-xl gap-4 rounded-[4px]">
         {filter} P&L{" "}
         <span className="text-4xl text-success font-medium">
-          {(PandL > 0 ? "+" : "-") + PandL.toFixed(2)}
+          {(PandL >= 0 ? "+" : "-") + PandL.toFixed(2)}
         </span>
       </div>
     </div>
@@ -216,6 +217,12 @@ export function Positions() {
   const { socket } = useContext(SocketContext) as { socket: any };
   const [PandL, setPandL] = useState(0);
 
+  const filteredNetPositions = useMemo(() => {
+    return netPositions.filter((p) =>
+      p.TradingSymbol.includes(search.toUpperCase())
+    );
+  }, [search]);
+
   useEffect(() => {
     let orderIds;
     getNetPositions().then((res) => {
@@ -268,7 +275,7 @@ export function Positions() {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelecteds = netPositions.map((n, i) => i.toString());
+      const newSelecteds = filteredNetPositions.map((n, i) => i.toString());
       setSelected(newSelecteds);
       return;
     }
@@ -382,14 +389,13 @@ export function Positions() {
                 order={order}
                 orderBy={orderBy}
                 onRequestSort={handleRequestSort}
-                rowCount={netPositions.length}
+                rowCount={filteredNetPositions.length}
                 allowSelection={allowSelection}
                 numSelected={selected.length}
                 onSelectAllClick={handleSelectAllClick}
               />
               <TableBody className="max-h-28 overflow-auto">
-                {netPositions
-                  .filter((p) => p.TradingSymbol.includes(search.toUpperCase()))
+                {filteredNetPositions
                   .sort(handleSort)
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => {
@@ -468,7 +474,7 @@ export function Positions() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 15]}
             component="div"
-            count={netPositions.length}
+            count={filteredNetPositions.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
