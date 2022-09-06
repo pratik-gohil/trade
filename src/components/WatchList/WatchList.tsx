@@ -154,7 +154,7 @@ export function WatchList() {
   }, []);
 
   useEffect(() => {
-    const search = new JsSearch.Search("DisplayName");
+    const search = new JsSearch.Search("name");
     search.indexStrategy = new JsSearch.AllSubstringsIndexStrategy();
     search.searchIndex = new JsSearch.UnorderedSearchIndex();
 
@@ -163,19 +163,19 @@ export function WatchList() {
 
   useEffect(() => {
     if (search && master) {
-      search.addIndex("name");
+      search.addIndex("DisplayName");
       search.addIndex("description");
 
       search.addDocuments(master);
     }
-  }, [search, master]);
+  }, [master]);
 
   const masterSearchResult = useMemo(() => {
     if (search !== null && instrumentSearch !== "") {
       const result = search.search(instrumentSearch);
       return result;
     }
-  }, [instrumentSearch, master, search]);
+  }, [instrumentSearch]);
 
   useEffect(() => {
     (async () => {
