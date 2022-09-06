@@ -79,9 +79,10 @@ export const OrderTableRow = ({
 
   return (
     <TableRow
-      sx={{
-        "& td": selectedOption?.type === "delete" ? { border: 0 } : {},
-      }}
+      sx={(theme) => ({
+        "&": { borderBottom: `1px solid ${theme.palette.border.main}` },
+        "& td": { border: 0 },
+      })}
       className="group"
       role="checkbox"
       aria-checked={isSelected(row.AppOrderID)}
