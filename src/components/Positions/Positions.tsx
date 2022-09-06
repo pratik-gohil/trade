@@ -219,7 +219,7 @@ export function Positions() {
 
   const filteredNetPositions = useMemo(() => {
     return netPositions.filter((p) =>
-      p.TradingSymbol.includes(search.toUpperCase())
+      p.TradingSymbol.toLowerCase().includes(search.trim().toLowerCase())
     );
   }, [search, netPositions]);
 
@@ -371,7 +371,7 @@ export function Positions() {
 
   return (
     <>
-      <div className="p-5">
+      <div className="p-5 h-full">
         <Box sx={{ width: "100%" }}>
           <EnhancedTableToolbar
             search={search}
