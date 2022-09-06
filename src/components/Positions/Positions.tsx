@@ -221,7 +221,7 @@ export function Positions() {
     return netPositions.filter((p) =>
       p.TradingSymbol.includes(search.toUpperCase())
     );
-  }, [search]);
+  }, [search, netPositions]);
 
   useEffect(() => {
     let orderIds;
