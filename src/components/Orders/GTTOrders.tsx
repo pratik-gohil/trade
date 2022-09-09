@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
-import TablePagination from "@mui/material/TablePagination";
+
 import TableRow from "@mui/material/TableRow";
 import Checkbox from "@mui/material/Checkbox";
 import { EnhancedTableToolbar } from "./EnhancedTableToolbar";
@@ -63,8 +63,7 @@ export default function GTTOrders({ fetchOrders }) {
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("time");
   const [selected, setSelected] = React.useState<readonly number[]>([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
   const [search, setSearch] = useState("");
 
   useEffect(() => {
@@ -113,17 +112,6 @@ export default function GTTOrders({ fetchOrders }) {
 
   //   setSelected(newSelected);
   // };
-
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
 
   const isSelected = (name: number) => selected.indexOf(name) !== -1;
 
@@ -198,7 +186,7 @@ export default function GTTOrders({ fetchOrders }) {
             <TableBody className="max-h-28 overflow-auto">
               {orders
                 .sort(handleSort)
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.AppOrderID);
                   const labelId = `enhanced-table-checkbox-${index}`;
@@ -298,15 +286,6 @@ export default function GTTOrders({ fetchOrders }) {
             </TableBody>
           </TableContainer>
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 15]}
-          component="div"
-          count={orders.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
       </Box>
     </div>
   ) : null;

@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
-import TablePagination from "@mui/material/TablePagination";
+
 import { EnhancedTableToolbar } from "./EnhancedTableToolbar";
 import { EnhancedTableHead, HeadCell } from "./EnhancedTableHead";
 import { Data, IOrderWithMarketDepth, Order } from "./Orders";
@@ -64,8 +64,7 @@ interface IExecutedOrders {
 export default function ExecutedOrders({ orders }: IExecutedOrders) {
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("time");
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
   const [search, setSearch] = useState("");
   const [showDetails, setShowDetails] = useState<IOrderWithMarketDepth | null>(
     null
@@ -89,17 +88,6 @@ export default function ExecutedOrders({ orders }: IExecutedOrders) {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
-  };
-
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
   };
 
   const handleSort = (a, b) => {
@@ -169,7 +157,7 @@ export default function ExecutedOrders({ orders }: IExecutedOrders) {
             <TableBody className="max-h-28 overflow-auto">
               {executedOrders
                 .sort(handleSort)
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+
                 .map((row, index) => {
                   return (
                     <OrderTableRow
@@ -187,17 +175,7 @@ export default function ExecutedOrders({ orders }: IExecutedOrders) {
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 15]}
-          component="div"
-          count={executedOrders.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
       </Box>
-
       <OrderDetailsModal
         setShowDetails={setShowDetails}
         showDetails={showDetails}
