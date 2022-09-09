@@ -13,7 +13,7 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
-import TablePagination from "@mui/material/TablePagination";
+
 import TableRow from "@mui/material/TableRow";
 import Checkbox from "@mui/material/Checkbox";
 import { getNetPositions } from "../../http/getNetPositions/getNetPositions";
@@ -211,8 +211,7 @@ export function Positions() {
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<any>("scrips");
   const [selected, setSelected] = React.useState<readonly string[]>([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
   const [search, setSearch] = useState("");
   const { socket } = useContext(SocketContext) as { socket: any };
   const [PandL, setPandL] = useState(0);
@@ -302,17 +301,6 @@ export function Positions() {
     setSelected(newSelected);
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
   const [filterType, setFilterType] = useState("All");
@@ -397,7 +385,7 @@ export function Positions() {
               <TableBody className="max-h-28 overflow-auto">
                 {filteredNetPositions
                   .sort(handleSort)
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  //
                   .map((row, index) => {
                     const isItemSelected = isSelected(index.toString());
                     const labelId = `enhanced-table-checkbox-${index}`;
@@ -471,15 +459,6 @@ export function Positions() {
               </TableBody>
             </Table>
           </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 15]}
-            component="div"
-            count={filteredNetPositions.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
         </Box>
       </div>
       <div className="sticky flex gap-4 bottom-0 w-full border-t px-5 py-2 bg-white">

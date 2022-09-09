@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
-import TablePagination from "@mui/material/TablePagination";
+
 import { EnhancedTableToolbar } from "./EnhancedTableToolbar";
 import { EnhancedTableHead, HeadCell } from "./EnhancedTableHead";
 import { Data, IOrderWithMarketDepth, Order } from "./Orders";
@@ -62,8 +62,7 @@ export default function OpenOrders({ orders, fetchOrders }) {
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("time");
   const [selected, setSelected] = React.useState<readonly number[]>([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
   const [search, setSearch] = useState("");
   const [selectedOption, setSelectedOption] = useState({
     type: "",
@@ -115,17 +114,6 @@ export default function OpenOrders({ orders, fetchOrders }) {
       return;
     }
     setSelected([]);
-  };
-
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
   };
 
   const handleSort = (a, b) => {
@@ -201,7 +189,7 @@ export default function OpenOrders({ orders, fetchOrders }) {
             <TableBody className="max-h-28 overflow-auto">
               {openOrders
                 .sort(handleSort)
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+
                 .map((row, index) => {
                   return (
                     <Fragment key={row.AppOrderID}>
@@ -252,15 +240,6 @@ export default function OpenOrders({ orders, fetchOrders }) {
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 15]}
-          component="div"
-          count={openOrders.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
       </Box>
       <div className="flex gap-[10px]">
         <button
