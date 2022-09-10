@@ -230,7 +230,7 @@ export function Positions() {
     getNetPositions().then((res) => {
       if (res.type === "success") {
         setNetPositions(res.result.positionList);
-        orderIds = netPositions.map((position) => ({
+        orderIds = res.result.positionList.map((position) => ({
           exchangeSegment: Segments[position.ExchangeSegment],
           exchangeInstrumentID: position.ExchangeInstrumentId,
         }));
