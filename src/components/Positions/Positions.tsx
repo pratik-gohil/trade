@@ -24,6 +24,7 @@ import { Segments } from "../../types/enums/segment.enums.types";
 import { SocketContext } from "../../socket";
 import { Touchline } from "../../types/interfaces/marketDepth.interfaces.types";
 import { toFixedN } from "../../utils/toFixedN";
+import { positions } from "@mui/system";
 
 type Order = "asc" | "desc";
 
@@ -209,6 +210,7 @@ export function Positions() {
   const [netPositions, setNetPositions] = useState<IPositionWithTouchline[]>(
     []
   );
+  console.log("", netPositions);
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<any>("scrips");
   const [selected, setSelected] = React.useState<readonly string[]>([]);
@@ -447,10 +449,13 @@ export function Positions() {
                         </TableCell>
                         <TableCell>
                           {row.LastTradedPrice
-                            ? ((Number(row.BuyAveragePrice) -
-                                (row.LastTradedPrice || 0)) /
-                                (row.LastTradedPrice || 0)) *
-                              100
+                            ? toFixedN(
+                                ((Number(row.BuyAveragePrice) -
+                                  (row.LastTradedPrice || 0)) /
+                                  (row.LastTradedPrice || 0)) *
+                                  100,
+                                2
+                              )
                             : 0}
                         </TableCell>
                       </TableRow>
