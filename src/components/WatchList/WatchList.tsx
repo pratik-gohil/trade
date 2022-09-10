@@ -41,6 +41,7 @@ import { percDiff } from "../../utils/percentageDiffrence";
 import CustomCheckbox from "../Checkbox/Checkbox";
 import { mapMaster } from "./masters";
 import useDebounce from "../../hooks/useDebouce";
+import { toFixedN } from "../../utils/toFixedN";
 const { USER_ID } = constants;
 
 interface IMasterInstrument {
@@ -526,14 +527,14 @@ export function WatchList() {
               (filters.changeBy === "close"
                 ? instrument?.Touchline?.Close
                 : instrument?.Touchline?.Open) || 0;
-            const diffrence =
-              Number(
-                (instrument?.Touchline?.LastTradedPrice - changeBy).toFixed(
-                  2
-                ) || 0
-              ) || 0;
-            const percentDiffrence =
-              percDiff(instrument?.Touchline?.LastTradedPrice, changeBy) || 0;
+            const diffrence = toFixedN(
+              instrument?.Touchline?.LastTradedPrice - changeBy,
+              2
+            );
+            const percentDiffrence = percDiff(
+              instrument?.Touchline?.LastTradedPrice,
+              changeBy
+            );
             return (
               <Fragment key={instrument.ExchangeInstrumentID}>
                 <div className="w-full relative group">
@@ -548,7 +549,7 @@ export function WatchList() {
                     </div>
                     <div className="text-right">
                       <div className="text-primary text-base">
-                        {instrument?.Touchline?.LastTradedPrice || 0}
+                        {toFixedN(instrument?.Touchline?.LastTradedPrice, 2)}
                       </div>
                       <div
                         className={`text-xs ${
@@ -559,7 +560,7 @@ export function WatchList() {
                       >
                         {filters.showChange && (
                           <span>
-                            {diffrence > 0 && "+"}
+                            {Number(diffrence) > 0 && "+"}
                             {diffrence} ({percentDiffrence}%)
                           </span>
                         )}

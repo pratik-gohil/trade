@@ -23,6 +23,7 @@ import { unsubscribeInstruments } from "../../http/unsubscribeInstruments/unsubs
 import { Segments } from "../../types/enums/segment.enums.types";
 import { SocketContext } from "../../socket";
 import { Touchline } from "../../types/interfaces/marketDepth.interfaces.types";
+import { toFixedN } from "../../utils/toFixedN";
 
 type Order = "asc" | "desc";
 
@@ -133,7 +134,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
       <div className="bg-green-50 flex items-center p-2 text-xl gap-4 rounded-[4px]">
         {filter} P&L{" "}
         <span className="text-4xl text-success font-medium">
-          {(PandL >= 0 ? "+" : "-") + PandL.toFixed(2)}
+          {(PandL >= 0 ? "+" : "-") + toFixedN(PandL, 2)}
         </span>
       </div>
     </div>
@@ -438,19 +439,18 @@ export function Positions() {
                         <TableCell>{row.BuyAveragePrice}</TableCell>
                         <TableCell>{row.LastTradedPrice || 0}</TableCell>
                         <TableCell>
-                          {(
-                            (row.LastTradedPrice - row.AverageTradedPrice) *
-                              Number(row.Quantity) || 0
-                          ).toFixed(2)}
+                          {toFixedN(
+                            row.LastTradedPrice -
+                              row.AverageTradedPrice * Number(row.Quantity),
+                            2
+                          )}
                         </TableCell>
                         <TableCell>
                           {row.LastTradedPrice
-                            ? (
-                                ((Number(row.BuyAveragePrice) -
-                                  (row.LastTradedPrice || 0)) /
-                                  (row.LastTradedPrice || 0)) *
-                                100
-                              ).toFixed(2)
+                            ? ((Number(row.BuyAveragePrice) -
+                                (row.LastTradedPrice || 0)) /
+                                (row.LastTradedPrice || 0)) *
+                              100
                             : 0}
                         </TableCell>
                       </TableRow>
