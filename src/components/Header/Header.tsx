@@ -10,6 +10,7 @@ import { percDiff } from "../../utils/percentageDiffrence";
 import { IInstrument } from "../../types/interfaces/instrument.interfaces.types";
 import trade from "../../assets/trade.png";
 import { unsubscribeInstruments } from "../../http/unsubscribeInstruments/unsubscribeInstruments";
+import { toFixedN } from "../../utils/toFixedN";
 
 const links = [
   {
@@ -96,18 +97,15 @@ export const Header = () => {
         </Link>
         <div className="flex text-right gap-4 text-xs font-medium mr-[10px]">
           {pinnedInstruments.map((instrument) => {
-            const diffrence =
-              Number(
-                (
-                  instrument?.Touchline?.LastTradedPrice -
-                  instrument?.Touchline?.Close
-                ).toFixed(2)
-              ) || 0;
-            const percentDiffrence =
-              percDiff(
-                instrument?.Touchline?.LastTradedPrice,
-                instrument?.Touchline?.Close
-              ) || 0;
+            const diffrence = toFixedN(
+              instrument?.Touchline?.LastTradedPrice -
+                instrument?.Touchline?.Close,
+              2
+            );
+            const percentDiffrence = percDiff(
+              instrument?.Touchline?.LastTradedPrice,
+              instrument?.Touchline?.Close
+            );
             return (
               <div key={instrument.ExchangeInstrumentID}>
                 <div className="flex gap-2">
@@ -119,11 +117,11 @@ export const Header = () => {
                         : "text-failure"
                     }`}
                   >
-                    {instrument?.Touchline?.LastTradedPrice || 0}
+                    {toFixedN(instrument?.Touchline?.LastTradedPrice, 2)}
                   </span>
                 </div>
                 <div className="text-secondary">
-                  {diffrence > 0 && "+"}
+                  {Number(diffrence) > 0 && "+"}
                   {diffrence} ({percentDiffrence}%)
                 </div>
               </div>

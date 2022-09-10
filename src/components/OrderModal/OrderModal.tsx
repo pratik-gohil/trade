@@ -18,6 +18,7 @@ import { IOrderWithMarketDepth } from "../Orders";
 import { IInstrument } from "../../types/interfaces/instrument.interfaces.types";
 import { Segments } from "../../types/enums/segment.enums.types";
 import { modifyOrder } from "../../http/modifyOrder/modifyOrder";
+import { toFixedN } from "../../utils/toFixedN";
 const { USER_ID, CLIENT_ID } = constants;
 
 let margin = 50;
@@ -587,7 +588,7 @@ export function OrderModal() {
                 <div className="flex gap-6">
                   <div>Approx. Margin</div>
                   <div className="flex gap-2 translate-x-[29px]">
-                    <div>{(intitialPrice * orderQuantity).toFixed(2)}</div>
+                    <div>{toFixedN(intitialPrice * orderQuantity, 2)}</div>
                     <Replay
                       className="text-blue cursor-pointer"
                       fontSize="small"

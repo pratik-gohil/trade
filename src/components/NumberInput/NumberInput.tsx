@@ -1,5 +1,6 @@
 import React, { useId } from "react";
 import { Add, Remove } from "@mui/icons-material";
+import { toFixedN } from "../../utils/toFixedN";
 
 export function NumberInput({
   label,
@@ -29,8 +30,8 @@ export function NumberInput({
           type="button"
           disabled={disabled}
           onClick={() => {
-            parseFloat(value) + step <= max &&
-              onChange(parseFloat((parseFloat(value) + step).toFixed(2)));
+            Number(value) + step <= max &&
+              onChange((Number(value) + step).toFixed(2));
           }}
           className={`${
             disabled ? "cursor-not-allowed invisible" : "cursor-pointer"
@@ -61,8 +62,7 @@ export function NumberInput({
           type="button"
           disabled={disabled}
           onClick={() => {
-            parseFloat(value) - step >= min &&
-              onChange(parseFloat((parseFloat(value) - step).toFixed(2)));
+            Number(value) - step >= min && onChange(Number(value) - step);
           }}
           className={`${
             disabled ? "cursor-not-allowed invisible" : "cursor-pointer"
