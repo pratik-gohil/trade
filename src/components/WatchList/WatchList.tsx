@@ -139,21 +139,6 @@ export function WatchList() {
   const dispatch = useDispatch();
   const { socket } = useContext(SocketContext) as { socket: any };
 
-  const increment = 10000;
-  const [searchIndex, setSearchIndex] = useState(increment);
-  const observer = useRef<IntersectionObserver | null>(null);
-  const endRef = useCallback((node) => {
-    if (observer.current) observer.current.disconnect();
-    observer.current = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        if (searchIndex < master.length) {
-          setSearchIndex(searchIndex + increment);
-        }
-      }
-    });
-    if (node) observer?.current?.observe(node);
-  }, []);
-
   useEffect(() => {
     const search = new JsSearch.Search("name");
     search.indexStrategy = new JsSearch.AllSubstringsIndexStrategy();
@@ -519,7 +504,6 @@ export function WatchList() {
                 </div>
               );
             })}
-            <div ref={endRef} />
           </>
         ) : (
           instruments.sort(filterInstruments).map((instrument) => {
