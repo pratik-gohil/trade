@@ -2,6 +2,7 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import { Orders } from "../Orders";
 import { Positions } from "../Positions";
+import { TVChartContainer } from "../TVChartContainer";
 import { WatchList } from "../WatchList";
 
 export function Main() {
@@ -10,14 +11,7 @@ export function Main() {
       <WatchList />
       <div className="w-full h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] overflow-y-auto">
         <Routes>
-          <Route
-            path="/"
-            element={
-              <div className="p-5" style={{ width: "100%", height: "200vh" }}>
-                Home
-              </div>
-            }
-          />
+          <Route path="/" element={<TVChartContainer />} />
           <Route
             path="/markets"
             element={
