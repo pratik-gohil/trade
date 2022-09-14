@@ -254,7 +254,7 @@ export function WatchList() {
       prev.map((instrument) => {
         instrument.ExchangeInstrumentID === id &&
           (instrument.isExpanded
-            ? subscribeInstruments({
+            ? unsubscribeInstruments({
                 instruments: [
                   {
                     exchangeSegment: instrument.ExchangeSegment,
@@ -263,7 +263,7 @@ export function WatchList() {
                 ],
                 xtsMessageCode: 1502,
               })
-            : unsubscribeInstruments({
+            : subscribeInstruments({
                 instruments: [
                   {
                     exchangeSegment: instrument.ExchangeSegment,
