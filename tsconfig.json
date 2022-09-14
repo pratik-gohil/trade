@@ -1,5 +1,10 @@
 {
   "compilerOptions": {
+    "plugins": [
+      {
+        "name": "typescript-tslint-plugin"
+      }
+    ],
     "noEmit": true,
     "target": "es6",
     "module": "esnext",
