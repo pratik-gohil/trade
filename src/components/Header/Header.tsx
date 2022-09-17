@@ -90,7 +90,7 @@ export const Header = () => {
   }, []);
 
   return (
-    <div className="max-h-16 h-16 flex justify-between items-center shadow-custom">
+    <div className="max-h-16 h-16 flex justify-between items-center shadow-custom relative z-50">
       <div className="flex justify-between items-center gap-4 sidebar-width overflow-hidden px-5">
         <Link to="/">
           <img src={trade} className="w-[89px] h-[9px]" />

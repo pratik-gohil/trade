@@ -213,7 +213,7 @@ export function OrderModal() {
           <form
             onSubmit={handleOrder}
             ref={modalRef}
-            className="absolute top-0 bg-white text-[#8c8c8c] rounded-[10px] overflow-hidden shadow-modal"
+            className="z-50 absolute top-0 bg-white text-[#8c8c8c] rounded-[10px] overflow-hidden shadow-modal"
           >
             <div
               className={`${
