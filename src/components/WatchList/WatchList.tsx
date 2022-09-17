@@ -7,7 +7,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import * as JsSearch from "js-search";
+import { Document } from "flexsearch";
 import {
   SettingsOutlined,
   EditOutlined,
@@ -139,27 +139,10 @@ export function WatchList() {
   const dispatch = useDispatch();
   const { socket } = useContext(SocketContext) as { socket: any };
 
-  useEffect(() => {
-    const search = new JsSearch.Search("name");
-    search.indexStrategy = new JsSearch.AllSubstringsIndexStrategy();
-    search.searchIndex = new JsSearch.UnorderedSearchIndex();
-
-    setSearch(search);
-  }, []);
-
-  useEffect(() => {
-    if (search && master) {
-      search.addIndex("DisplayName");
-      search.addIndex("description");
-
-      search.addDocuments(master);
-    }
-  }, [master]);
-
   const masterSearchResult = useMemo(() => {
     if (search !== null && instrumentSearch !== "") {
-      const result = search.search(instrumentSearch);
-      return result;
+      const result = search.search(instrumentSearch, { enrich: true });
+      return result?.[0]?.result || [];
     }
   }, [instrumentSearch]);
 
@@ -244,10 +227,22 @@ export function WatchList() {
 
   useEffect(() => {
     (async () => {
-      const response = await mapMaster(["NSECM", "BSECM", "NSECD", "NSEFO"]);
-      setMaster(response);
+      if (!search) {
+        const _search = new Document({
+          id: "exchangeInstrumentID",
+          index: [{ field: "DisplayName", tokenize: "full" }],
+          store: true,
+        });
+        setSearch(_search);
+      } else {
+        const response = await mapMaster(["NSECM", "BSECM", "NSECD", "NSEFO"]);
+
+        response.map((doc) => {
+          search.add(doc);
+        });
+      }
     })();
-  }, []);
+  }, [search]);
 
   const handleInstrumentExpand = async (id) => {
     setInstruments((prev) =>
@@ -398,10 +393,6 @@ export function WatchList() {
                 autoFocus
                 type="text"
                 ref={instrumentSearchRef}
-                // value={instrumentSearch}
-                // onChange={(e) => {
-                //   setInstrumentSearch(e.target.value);
-                // }}
                 placeholder="Search eg: infy bse, nifty fut, nifty weekly"
                 className="w-full outline-none bg-transparent"
               />
@@ -425,15 +416,12 @@ export function WatchList() {
 
         {instrumentSearch ? (
           <>
-            {masterSearchResult.map((instrument) => {
+            {masterSearchResult.map(({ id, doc: instrument }) => {
               const inWatchlist = groupSymbols
                 .map((e) => e.exchangeInstrumentID)
                 .includes(instrument.exchangeInstrumentID);
               return (
-                <div
-                  key={instrument.instrumentID}
-                  className="w-full relative group"
-                >
+                <div key={id} className="w-full relative group">
                   <div className="w-full  border-border border-b p-5 flex justify-between items-center">
                     <div>
                       <div className="text-primary text-sm">
