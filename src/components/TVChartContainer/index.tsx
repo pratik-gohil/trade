@@ -8,6 +8,7 @@ import {
 } from "../../charting_library";
 
 export interface ChartContainerProps {
+  debug?: ChartingLibraryWidgetOptions["debug"];
   symbol: ChartingLibraryWidgetOptions["symbol"];
   interval: ChartingLibraryWidgetOptions["interval"];
 
@@ -39,7 +40,8 @@ export class TVChartContainer extends React.PureComponent<
   ChartContainerState
 > {
   public static defaultProps: Omit<ChartContainerProps, "container"> = {
-    symbol: "RELIANCE",
+    debug: true,
+    symbol: "AAPL",
     interval: "D" as ResolutionString,
     datafeedUrl: "https://demo_feed.tradingview.com",
     libraryPath: "/charting_library/",
@@ -61,6 +63,7 @@ export class TVChartContainer extends React.PureComponent<
     }
 
     const widgetOptions: ChartingLibraryWidgetOptions = {
+      debug: this.props.debug as boolean,
       symbol: this.props.symbol as string,
       // BEWARE: no trailing slash is expected in feed URL
       // tslint:disable-next-line:no-any
