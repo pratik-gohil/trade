@@ -660,41 +660,47 @@ export function WatchList() {
                         </tr>
                       </tbody>
                     </table>
-                    <div>
+                    <div className="px-4">
                       <table className="w-full text-center">
                         <thead>
                           <tr className="text-xs text-secondary">
-                            <th className="p-2 font-normal">Open</th>
-                            <th className="p-2 font-normal">High</th>
-                            <th className="p-2 font-normal">Low</th>
-                            <th className="p-2 font-normal">Prev.Close</th>
+                            <th align="left" className=" font-normal">
+                              Open
+                            </th>
+                            <th className=" font-normal">High</th>
+                            <th className=" font-normal">Low</th>
+                            <th align="right" className=" font-normal">
+                              Prev.Close
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
                           <tr className="text-xs text-primary">
-                            <td>{instrument?.Touchline?.Open}</td>
+                            <td align="left">{instrument?.Touchline?.Open}</td>
                             <td>{instrument?.Touchline?.High}</td>
                             <td>{instrument?.Touchline?.Low}</td>
-                            <td>{instrument?.Touchline?.Close}</td>
+                            <td align="right">
+                              {instrument?.Touchline?.Close}
+                            </td>
                           </tr>
                         </tbody>
                       </table>
-                      <div className="w-full flex justify-between py-2 text-sm">
-                        <div className="flex justify-between w-full px-8">
+                      <div className="w-full flex justify-between py-2 gap-4 text-sm">
+                        <div className="flex justify-between w-full ">
                           <span className="text-secondary">Volume</span>
                           <span className="text-primary">
                             {instrument?.Touchline?.TotalTradedQuantity}
                           </span>
                         </div>
-                        <div className="flex justify-between w-full px-8">
+                        <div className="flex justify-between w-full ">
                           <span className="text-secondary">Avg. Price</span>
                           <span className="text-primary">
                             {instrument?.Touchline?.AverageTradedPrice}
                           </span>
                         </div>
                       </div>
-                      <div className="w-full flex justify-between py-2 text-sm">
-                        <div className="flex justify-between w-full px-8">
+                      <div className="w-full flex justify-between py-2 gap-4 text-sm">
+                        <div className="flex justify-between w-full ">
                           <span className="text-secondary">LTT</span>
                           <span className="text-primary">
                             {new Date(instrument?.Touchline?.LastTradedTime)
@@ -706,9 +712,12 @@ export function WatchList() {
                               .replace(/\//g, ":")}
                           </span>
                         </div>
-                        <div className="flex justify-between w-full px-8">
+                        <div className="flex justify-between w-full ">
                           <span className="text-secondary">LO/Up Cir.</span>
-                          <span className="text-primary">NA</span>
+                          <span className="text-primary">
+                            {instrument?.PriceBand.Low}/
+                            {instrument?.PriceBand.High}
+                          </span>
                         </div>
                       </div>
                     </div>
