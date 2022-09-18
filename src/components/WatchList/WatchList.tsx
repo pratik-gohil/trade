@@ -1004,7 +1004,7 @@ export function WatchList() {
             </div>
           )}
         </div>
-        <div className="mb-[86px]"></div>
+        <div className="w-full pb-[90px]"></div>
       </div>
     </>
   );

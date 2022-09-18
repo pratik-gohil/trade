@@ -95,6 +95,12 @@ html {
   box-sizing: inherit;
 }
 
+
+* {
+  scrollbar-color: #d6d6d6 transparent;
+  scrollbar-width: thin;
+}
+
 *::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -109,7 +115,7 @@ html {
   border-radius: 4px;
 }
 
-*::-webkit-scrollbar-thumb:hover {}
+/* *::-webkit-scrollbar-thumb:hover {} */
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
