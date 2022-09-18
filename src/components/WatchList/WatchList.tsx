@@ -362,7 +362,7 @@ export function WatchList() {
 
   return (
     <>
-      <div className="relative h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] overflow-y-auto sidebar-width flex flex-col items-center border-r border-border">
+      <div className="relative h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] scroll-container overflow-y-auto sidebar-width flex flex-col items-center border-r border-border">
         {selectedGroup === "Indices" ? (
           <div className="flex gap-2 w-full px-4 py-3">
             {indiceTypes.map((indice) => (
