@@ -912,8 +912,8 @@ export function WatchList() {
                         <div className="flex justify-between w-full ">
                           <span className="text-secondary">LO/Up Cir.</span>
                           <span className="text-primary">
-                            {/* {instrumentMarketDepth?.PriceBand.Low}/
-                              {instrumentMarketDepth?.PriceBand.High} */}
+                            {instrument?.PriceBand.Low}/
+                            {instrument?.PriceBand.High}
                           </span>
                         </div>
                       </div>
