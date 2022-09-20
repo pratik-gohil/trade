@@ -296,29 +296,52 @@ export function WatchList() {
     }
   };
 
-  const handleSearchResultInstrumentExpand = async (id, segment) => {
-    if (expandedSearchResultInstruments.includes(id)) {
+  const [searchInstrumentData, setSearchInstrumentData] = useState({});
+
+  const handleSearchResultInstrumentExpand = async (
+    exchangeInstrumentID,
+    exchangeSegment
+  ) => {
+    if (expandedSearchResultInstruments.includes(exchangeInstrumentID)) {
       unsubscribeInstruments({
         instruments: [
           {
-            exchangeSegment: segment,
-            exchangeInstrumentID: id,
+            exchangeSegment,
+            exchangeInstrumentID,
           },
         ],
         xtsMessageCode: 1502,
       });
-      setExpandedSearchResultInstruments((ins) => ins.filter((i) => i !== id));
+      setExpandedSearchResultInstruments((ins) =>
+        ins.filter((i) => i !== exchangeInstrumentID)
+      );
+      setSearchInstrumentData((ins) =>
+        filterObject(ins, (i) => i !== exchangeInstrumentID)
+      );
     } else {
       subscribeInstruments({
         instruments: [
           {
-            exchangeSegment: segment,
-            exchangeInstrumentID: id,
+            exchangeSegment: exchangeSegment,
+            exchangeInstrumentID: exchangeInstrumentID,
           },
         ],
         xtsMessageCode: 1502,
       });
-      setExpandedSearchResultInstruments((ins) => [...ins, id]);
+      setExpandedSearchResultInstruments((ins) => [
+        ...ins,
+        exchangeInstrumentID,
+      ]);
+      const response = await searchInstruments([
+        { exchangeSegment: Segments[exchangeSegment], exchangeInstrumentID },
+      ]);
+      if (response.type === "success") {
+        const [instrument] = response.result;
+        setSearchInstrumentData((ins) => ({
+          ...ins,
+          [instrument.ExchangeInstrumentID]: instrument,
+        }));
+      }
     }
   };
 
@@ -659,10 +682,19 @@ export function WatchList() {
                             </span>
                           </div>
                           <div className="flex justify-between w-full ">
-                            <span className="text-secondary">LO/Up Cir.</span>
+                            <span className="text-secondary">LO/UP Cir.</span>
                             <span className="text-primary">
-                              {/* {instrumentMarketDepth?.PriceBand.Low}/
-                              {instrumentMarketDepth?.PriceBand.High} */}
+                              {
+                                searchInstrumentData[
+                                  instrument.exchangeInstrumentID
+                                ]?.PriceBand.Low
+                              }
+                              /
+                              {
+                                searchInstrumentData[
+                                  instrument.exchangeInstrumentID
+                                ]?.PriceBand.High
+                              }
                             </span>
                           </div>
                         </div>
@@ -910,7 +942,7 @@ export function WatchList() {
                           </span>
                         </div>
                         <div className="flex justify-between w-full ">
-                          <span className="text-secondary">LO/Up Cir.</span>
+                          <span className="text-secondary">LO/UP Cir.</span>
                           <span className="text-primary">
                             {instrument?.PriceBand.Low}/
                             {instrument?.PriceBand.High}
