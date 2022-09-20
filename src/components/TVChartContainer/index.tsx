@@ -40,7 +40,7 @@ export class TVChartContainer extends React.PureComponent<
   ChartContainerState
 > {
   public static defaultProps: Omit<ChartContainerProps, "container"> = {
-    debug: true,
+    debug: false,
     symbol: "AAPL",
     interval: "D" as ResolutionString,
     datafeedUrl: "https://demo_feed.tradingview.com",

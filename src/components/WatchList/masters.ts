@@ -37,7 +37,6 @@ export const mapMaster = async (exchangeSegment) => {
           return {
             exchangeSegment: segment[0],
             exchangeInstrumentID: segment[1],
-            name: segment[3],
             DisplayName: segment[14],
           };
         } else if (segment[0] === "NSEFO") {
@@ -46,14 +45,12 @@ export const mapMaster = async (exchangeSegment) => {
             return {
               exchangeSegment: segment[0],
               exchangeInstrumentID: segment[1],
-              name: segment[3],
               DisplayName: segment.length > 17 ? segment[17] : "0.0",
             };
           } else {
             return {
               exchangeSegment: segment[0],
               exchangeInstrumentID: segment[1],
-              name: segment[3],
               DisplayName: segment.length > 19 ? segment[19] : "0.0",
             };
           }
@@ -62,14 +59,12 @@ export const mapMaster = async (exchangeSegment) => {
             return {
               exchangeSegment: segment[0],
               exchangeInstrumentID: segment[1],
-              name: segment[3],
               DisplayName: segment.length > 19 ? segment[19] : "0.0",
             };
           } else {
             return {
               exchangeSegment: segment[0],
               exchangeInstrumentID: segment[1],
-              name: segment[3],
               DisplayName: segment.length > 17 ? segment[17] : "0.0",
             };
           }

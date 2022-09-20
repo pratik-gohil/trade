@@ -112,7 +112,7 @@ html {
   -webkit-mask-image: linear-gradient(to top, transparent, black),
     linear-gradient(to left, transparent 17px, black 17px);
   -webkit-mask-size: 100% 20000px;
-  -webkit-mask-position: left bottom;
+  -webkit-mask-position: -1px bottom;
   transition: mask-position 0.3s, -webkit-mask-position 0.3s;
 }
 
