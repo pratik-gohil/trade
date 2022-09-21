@@ -1,10 +1,16 @@
 import { constants } from "../../constants/global";
 import HTTP from "../http";
-const { CLIENT_ID, TOKEN, USER_ID } = constants;
+const { TOKEN } = constants;
 
-export const ohcl = async () => {
+export const ohcl = async ({
+  exchangeSegment,
+  exchangeInstrumentID,
+  startTime,
+  endTime,
+  compressionValue = 60,
+}) => {
   return await HTTP.get({
-    url: `${process.env.REACT_APP_API_BASE_URL}/marketdata/instruments/ohlc?exchangeSegment=1&exchangeInstrumentID=22&startTime=Jul%2013%202020%20090000&endTime=Jul%2013%202020%20153000&compressionValue=60
+    url: `${process.env.REACT_APP_API_BASE_URL}/marketdata/instruments/ohlc?exchangeSegment=${exchangeSegment}&exchangeInstrumentID=${exchangeInstrumentID}&startTime=${startTime}&endTime=${endTime}&compressionValue=${compressionValue}
 `,
     requestOptions: {
       headers: {
