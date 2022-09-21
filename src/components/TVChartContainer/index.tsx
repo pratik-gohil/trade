@@ -6,6 +6,7 @@ import {
   IChartingLibraryWidget,
   ResolutionString,
 } from "../../charting_library";
+import Datafeed from "./datafeed";
 
 export interface ChartContainerProps {
   debug?: ChartingLibraryWidgetOptions["debug"];
@@ -41,7 +42,7 @@ export class TVChartContainer extends React.PureComponent<
 > {
   public static defaultProps: Omit<ChartContainerProps, "container"> = {
     debug: false,
-    symbol: "AAPL",
+    symbol: "NSECM:RELIANCE",
     interval: "D" as ResolutionString,
     datafeedUrl: "https://demo_feed.tradingview.com",
     libraryPath: "/charting_library/",
@@ -67,9 +68,7 @@ export class TVChartContainer extends React.PureComponent<
       symbol: this.props.symbol as string,
       // BEWARE: no trailing slash is expected in feed URL
       // tslint:disable-next-line:no-any
-      datafeed: new (window as any).Datafeeds.UDFCompatibleDatafeed(
-        this.props.datafeedUrl
-      ),
+      datafeed: Datafeed as any,
       interval: this.props.interval as ChartingLibraryWidgetOptions["interval"],
       container: this.ref.current,
       library_path: this.props.libraryPath as string,
