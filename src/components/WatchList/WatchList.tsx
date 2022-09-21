@@ -15,10 +15,9 @@ import {
   Search,
   MoreVert,
   CancelOutlined,
-  // Done,
-  Add,
   ArrowDropUp,
   ArrowDropDown,
+  Add,
   Done,
 } from "@mui/icons-material";
 import useModal from "../../hooks/useModal";
@@ -243,8 +242,15 @@ export function WatchList() {
     (async () => {
       if (!search) {
         const _search = new Document({
+          charset: "latin",
+          lang: "en",
           id: "exchangeInstrumentID",
-          index: [{ field: "DisplayName", tokenize: "full" }],
+          index: [
+            {
+              field: "DisplayName",
+              tokenize: "full",
+            },
+          ],
           store: true,
         });
         setSearch(_search);
