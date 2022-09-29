@@ -37,12 +37,16 @@ export default function OrderDetailsModal({ showDetails, setShowDetails }) {
             </span>
             <span
               className={`${
-                true
+                showDetails?.OrderStatus === "Filled"
                   ? "text-success bg-successHighlight"
-                  : "text-failure bg-failureHighlight"
+                  : showDetails?.OrderStatus === "Rejected"
+                  ? "text-failure bg-failureHighlight"
+                  : "text-warning bg-warningHighlight"
               } text-xs rounded-[4px] py-[5px] px-[6px] font-medium`}
             >
-              {showDetails?.OrderStatus}
+              {showDetails?.OrderStatus === "Filled"
+                ? "Executed"
+                : showDetails?.OrderStatus}
             </span>
           </div>
           <div onClick={() => setShowDetails(null)}>
