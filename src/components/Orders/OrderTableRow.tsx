@@ -256,10 +256,12 @@ export const OrderTableRow = ({
           </MenuList>
         </Menu>
       </TableCell>
-      <TableCell>
-        <span className="text-[#a9a9a9] text-base">{row.OrderPrice}</span>
+      <TableCell align="right">
+        <span className="text-[#a9a9a9] text-base text-right">
+          {row.OrderPrice}
+        </span>
       </TableCell>
-      <TableCell>
+      <TableCell align="right">
         <span className="text-primary text-base">
           {row?.Touchline?.LastTradedPrice || 0}
         </span>
