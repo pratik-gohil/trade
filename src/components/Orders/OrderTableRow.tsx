@@ -144,7 +144,7 @@ export const OrderTableRow = ({
       <TableCell>
         <span className="text-[#a9a9a9] text-base">{row.OrderQuantity}</span>
       </TableCell>
-      <TableCell>
+      <TableCell className="relative">
         <span
           className={`
                             ${
@@ -173,7 +173,7 @@ export const OrderTableRow = ({
             (showOrderOptions &&
               selectedOption?.id === row.AppOrderID.toString())
               ? "flex"
-              : "group-hover:flex hidden"
+              : "group-hover:flex justify-center items-center absolute inset-0 hidden"
           } gap-2 text-primary`}
         >
           {isExecuted ? (
