@@ -21,25 +21,25 @@ const headCells: readonly HeadCell[] = [
   },
   {
     id: "action",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Action",
   },
   {
     id: "scrips",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Scrips",
   },
   {
     id: "qty",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Qty",
   },
   {
     id: "product",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Product",
   },
@@ -200,6 +200,8 @@ export default function OpenOrders({ orders, fetchOrders }) {
                         allowSelection={allowSelection}
                         selectedOption={selectedOption}
                         setSelectedOption={setSelectedOption}
+                        selected={selected}
+                        setSelected={setSelected}
                       />
                       {selectedOption.id === row.AppOrderID.toString() && (
                         <tr
@@ -241,7 +243,7 @@ export default function OpenOrders({ orders, fetchOrders }) {
           </Table>
         </TableContainer>
       </Box>
-      <div className="flex gap-[10px]">
+      <div className="flex gap-[10px] mt-[10px]">
         <button
           onClick={handleCancelAll}
           type="button"

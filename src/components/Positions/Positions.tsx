@@ -37,19 +37,19 @@ const headCells: readonly HeadCell[] = [
   },
   {
     id: "qty",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Qty",
   },
   {
     id: "product",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Product",
   },
   {
     id: "avgPrice",
-    numeric: false,
+    numeric: true,
     disablePadding: true,
     label: "Avg Price",
   },
@@ -362,7 +362,7 @@ export function Positions() {
 
   return (
     <>
-      <div className="p-5 h-full">
+      <div className="p-5">
         <Box sx={{ width: "100%" }}>
           <EnhancedTableToolbar
             search={search}
@@ -438,16 +438,20 @@ export function Positions() {
                             {row.ProductType}
                           </span>
                         </TableCell>
-                        <TableCell>{row.BuyAveragePrice}</TableCell>
-                        <TableCell>{row.LastTradedPrice || 0}</TableCell>
-                        <TableCell>
+                        <TableCell align="right">
+                          {row.BuyAveragePrice}
+                        </TableCell>
+                        <TableCell align="right">
+                          {row.LastTradedPrice || 0}
+                        </TableCell>
+                        <TableCell align="right">
                           {toFixedN(
                             row.LastTradedPrice -
                               row.AverageTradedPrice * Number(row.Quantity),
                             2
                           )}
                         </TableCell>
-                        <TableCell>
+                        <TableCell align="right">
                           {row.LastTradedPrice
                             ? toFixedN(
                                 ((Number(row.BuyAveragePrice) -
