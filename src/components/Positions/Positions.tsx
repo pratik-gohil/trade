@@ -25,6 +25,7 @@ import { SocketContext } from "../../socket";
 import { Touchline } from "../../types/interfaces/marketDepth.interfaces.types";
 import { toFixedN } from "../../utils/toFixedN";
 import { positions } from "@mui/system";
+import { MTM } from "../../utils/MTM";
 
 type Order = "asc" | "desc";
 
@@ -177,6 +178,7 @@ interface IPosition {
 
 interface IPositionWithTouchline extends IPosition {
   Touchline: Touchline;
+  calculatedMTM: number;
 }
 
 interface ChildPosition {
@@ -210,7 +212,6 @@ export function Positions() {
   const [netPositions, setNetPositions] = useState<IPositionWithTouchline[]>(
     []
   );
-  console.log("", netPositions);
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<any>("scrips");
   const [selected, setSelected] = React.useState<readonly string[]>([]);
@@ -224,6 +225,43 @@ export function Positions() {
       p.TradingSymbol.toLowerCase().includes(search.trim().toLowerCase())
     );
   }, [search, netPositions]);
+
+  useEffect(() => {
+    const listener = (res) => {
+      const data = JSON.parse(res);
+      const calculatedMTM = MTM(
+        data?.Touchline?.LastTradedPrice,
+        data?.Touchline?.AverageTradedPrice,
+        Number(data?.Touchline?.LastTradedQunatity)
+      );
+      setNetPositions((positions) => {
+        return positions.map((position) => {
+          return position.ExchangeInstrumentId.toString() ==
+            data.ExchangeInstrumentID.toString()
+            ? {
+                ...position,
+                ...data,
+                calculatedMTM,
+              }
+            : position;
+        });
+      });
+    };
+
+    socket.on("1501-json-full", listener);
+
+    return () => {
+      socket.off("1501-json-full", listener);
+    };
+  }, []);
+
+  useEffect(() => {
+    netPositions.map((position) => {
+      setPandL((PandL) => PandL + Number(position.calculatedMTM));
+    });
+
+    return () => setPandL(0);
+  }, [netPositions]);
 
   useEffect(() => {
     let orderIds;
@@ -240,29 +278,6 @@ export function Positions() {
 
     return () => {
       unsubscribeInstruments({ instruments: orderIds });
-    };
-  }, []);
-
-  useEffect(() => {
-    const listener = (res) => {
-      const data = JSON.parse(res);
-      setNetPositions((positions) => {
-        return positions.map((position) =>
-          position.ExchangeInstrumentId.toString() ===
-          data.ExchangeInstrumentID.toString()
-            ? { ...position, ...data }
-            : position
-        );
-      });
-
-      if (data.LastTradedPrice) {
-        setPandL((PandL) => PandL + data.LastTradedPrice);
-      }
-    };
-    socket.on("1501-json-full", listener);
-
-    return () => {
-      socket.off("1501-json-full", listener);
     };
   }, []);
 
@@ -442,21 +457,24 @@ export function Positions() {
                           {row.BuyAveragePrice}
                         </TableCell>
                         <TableCell align="right">
-                          {row.LastTradedPrice || 0}
+                          {row?.Touchline?.LastTradedPrice || 0}
                         </TableCell>
                         <TableCell align="right">
-                          {toFixedN(
-                            row.LastTradedPrice -
-                              row.AverageTradedPrice * Number(row.Quantity),
-                            2
-                          )}
+                          {row.calculatedMTM}
+                          {/* {Number(
+                            MTM(
+                              row.LastTradedPrice,
+                              row.AverageTradedPrice,
+                              Number(row.Quantity)
+                            )
+                          )} */}
                         </TableCell>
                         <TableCell align="right">
-                          {row.LastTradedPrice
+                          {row?.Touchline?.LastTradedPrice
                             ? toFixedN(
                                 ((Number(row.BuyAveragePrice) -
-                                  (row.LastTradedPrice || 0)) /
-                                  (row.LastTradedPrice || 0)) *
+                                  (row?.Touchline?.LastTradedPrice || 0)) /
+                                  (row?.Touchline?.LastTradedPrice || 0)) *
                                   100,
                                 2
                               )
