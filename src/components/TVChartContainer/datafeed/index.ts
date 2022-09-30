@@ -18,7 +18,7 @@ export default {
 
     var symbol_stub = {
       name: name,
-      description: "Description",
+      description: name,
       type: "stock",
       session: "0930-1600",
       timezone: "Asia/Kolkata",
