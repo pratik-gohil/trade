@@ -32,6 +32,8 @@ export const OrderTableRow = ({
   isExecuted = false,
   selectedOption,
   setSelectedOption,
+  selected,
+  setSelected,
 }: {
   row: IOrderWithMarketDepth;
   index: number;
@@ -41,9 +43,11 @@ export const OrderTableRow = ({
   isExecuted?: boolean;
   selectedOption?: any;
   setSelectedOption?: any;
+  selected?: readonly number[];
+  setSelected?: React.Dispatch<React.SetStateAction<readonly number[]>>;
 }) => {
   const dispatch = useDispatch();
-  const [selected, setSelected] = React.useState<readonly number[]>([]);
+  // const [selected, setSelected] = React.useState<readonly number[]>([]);
   // const [selectedOption, setSelectedOption] = useState({
   //   type: "",
   //   id: "",
@@ -56,6 +60,8 @@ export const OrderTableRow = ({
   const [showOrderOptions, setShowOrderOptions] = useState(false);
 
   const handleClick = (event: React.MouseEvent<unknown>, name: number) => {
+    if (!selected || !setSelected) return;
+
     const selectedIndex = selected.indexOf(name);
     let newSelected: readonly number[] = [];
 
@@ -75,7 +81,8 @@ export const OrderTableRow = ({
     setSelected(newSelected);
   };
 
-  const isSelected = (name: number) => selected.indexOf(name) !== -1;
+  const isSelected = (name: number) =>
+    !!selected && selected.indexOf(name) !== -1;
 
   return (
     <TableRow
@@ -144,7 +151,7 @@ export const OrderTableRow = ({
       <TableCell>
         <span className="text-[#a9a9a9] text-base">{row.OrderQuantity}</span>
       </TableCell>
-      <TableCell>
+      <TableCell className="relative">
         <span
           className={`
                             ${
@@ -173,7 +180,7 @@ export const OrderTableRow = ({
             (showOrderOptions &&
               selectedOption?.id === row.AppOrderID.toString())
               ? "flex"
-              : "group-hover:flex hidden"
+              : "group-hover:flex justify-center items-center absolute inset-0 hidden"
           } gap-2 text-primary`}
         >
           {isExecuted ? (
@@ -256,10 +263,12 @@ export const OrderTableRow = ({
           </MenuList>
         </Menu>
       </TableCell>
-      <TableCell>
-        <span className="text-[#a9a9a9] text-base">{row.OrderPrice}</span>
+      <TableCell align="right">
+        <span className="text-[#a9a9a9] text-base text-right">
+          {row.OrderPrice}
+        </span>
       </TableCell>
-      <TableCell>
+      <TableCell align="right">
         <span className="text-primary text-base">
           {row?.Touchline?.LastTradedPrice || 0}
         </span>
