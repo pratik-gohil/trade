@@ -1,7 +1,7 @@
 import http from "./http";
 // import socket from "./socket";
 
-const supportedResolutions = ["1", "2", "3", "5", "10", "15", "30", "60"];
+const supportedResolutions = ["1D", "1W", "1M"];
 
 const config = {
   supported_resolutions: supportedResolutions,
@@ -28,10 +28,10 @@ export default {
       data_status: "streaming",
       exchangeInstrumentID: 2885,
       minmov: 1,
-      pricescale: 100000000,
+      pricescale: 100,
       // intraday_multipliers: ["1", "60"],
       // has_intraday: true,
-      // volume_precision: 8,
+      // volume_precision: 2,
     };
 
     setTimeout(function () {
@@ -51,6 +51,7 @@ export default {
       .getBars(symbolInfo, resolution, periodParams)
       .then((bars) => {
         if (bars.length > 0) {
+          console.log(bars);
           onHistoryCallback(bars, { noData: false });
         } else {
           onHistoryCallback(bars, { noData: true });
