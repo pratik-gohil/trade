@@ -1,26 +1,6 @@
 import { ohcl } from "../../../../http/ohlc/ohlc";
 const history = {};
 
-// const getFormatedDateTime = (date) => {
-//   const event = new Date(date);
-//   var dateOptions: Intl.DateTimeFormatOptions = {
-//     year: "numeric",
-//     month: "short",
-//     day: "2-digit",
-//   };
-//   var timeOptions: Intl.DateTimeFormatOptions = {
-//     hour12: false,
-//     hour: "2-digit",
-//     minute: "2-digit",
-//     second: "2-digit",
-//   };
-//   return (
-//     event.toLocaleDateString("en", dateOptions).replace(",", "") +
-//     " " +
-//     event.toLocaleTimeString("en", timeOptions).split(":").join("")
-//   );
-// };
-
 export default {
   history: history,
 
@@ -29,24 +9,55 @@ export default {
     resolution,
     { from, to, firstDataRequest }
   ) {
+    let compression;
+    switch (resolution) {
+      case "1D":
+        compression = "D";
+        break;
+      case "1W":
+        compression = "W";
+        break;
+      case "1M":
+        compression = "M";
+        break;
+      default:
+        compression = 60;
+        break;
+    }
     const bars = await ohcl({
       exchangeSegment: symbolInfo.exchange,
       exchangeInstrumentID: symbolInfo.exchangeInstrumentID,
       startTime: from,
       endTime: to,
-      // compressionValue: resolution,
+      compressionValue: compression,
     }).then((res) => {
       if (res.type === "success") {
         const bars = res.result.dataReponse.split(",");
         return bars.map((bar) => {
           const [time, open, high, low, close, volume, OI] = bar.split("|");
+          let epochTime;
+          switch (compression) {
+            case "D":
+              epochTime = Number(time) * 1000 + 330 * 60 * 1000;
+              break;
+            case "W":
+              epochTime = Number(time) * 1000 + 330 * 60 * 1000;
+              break;
+            case "M":
+              epochTime = Number(time) * 1000 + 330 * 60 * 1000;
+              break;
+            default:
+              epochTime = Number(time) * 1000;
+              break;
+          }
           return {
-            time: time * 1000,
+            time: epochTime,
             low,
             high,
             open,
             close,
             volume,
+            openInterest: OI,
           };
         });
       } else {
