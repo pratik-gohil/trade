@@ -170,3 +170,11 @@ code {
       rgba(var(--secondary), .2) 2px,
       rgba(var(--secondary), .2) 4px)
 }
+
+.truncate-multiline {
+  width: 100%;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}

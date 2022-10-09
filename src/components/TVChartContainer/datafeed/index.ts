@@ -14,10 +14,10 @@ export default {
   },
   resolveSymbol: (symbol, onSymbolResolvedCallback, onResolveErrorCallback) => {
     console.log("======resolveSymbol running");
-    const [exchange, name] = symbol.split(":");
+    const [exchange, name, exchangeInstrumentID] = symbol.split(":");
 
     var symbol_stub = {
-      name: name,
+      name,
       description: name,
       type: "stock",
       session: "0930-1600",
@@ -26,7 +26,7 @@ export default {
       exchange,
       supported_resolution: supportedResolutions,
       data_status: "streaming",
-      exchangeInstrumentID: 2885,
+      exchangeInstrumentID,
       minmov: 1,
       pricescale: 100,
       // intraday_multipliers: ["1", "60"],
@@ -51,7 +51,6 @@ export default {
       .getBars(symbolInfo, resolution, periodParams)
       .then((bars) => {
         if (bars.length > 0) {
-          console.log(bars);
           onHistoryCallback(bars, { noData: false });
         } else {
           onHistoryCallback(bars, { noData: true });
