@@ -14,7 +14,8 @@ module.exports = {
       xl: pxToRem(16),
       "2xl": pxToRem(18),
       "3xl": pxToRem(20),
-      "4xl": pxToRem(24),
+      "4xl": pxToRem(22),
+      "5xl": pxToRem(24),
     },
     extend: {
       colors: {
