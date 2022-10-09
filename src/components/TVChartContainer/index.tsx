@@ -1,4 +1,5 @@
 import * as React from "react";
+import { store } from "../../app/store";
 import {
   widget,
   ChartingLibraryWidgetOptions,
@@ -9,14 +10,15 @@ import {
 import Datafeed from "./datafeed";
 
 export interface ChartContainerProps {
+  instrument?: any;
   debug?: ChartingLibraryWidgetOptions["debug"];
   symbol: ChartingLibraryWidgetOptions["symbol"];
   interval: ChartingLibraryWidgetOptions["interval"];
 
   // BEWARE: no trailing slash is expected in feed URL
-  datafeedUrl: string;
   libraryPath: ChartingLibraryWidgetOptions["library_path"];
-  chartsStorageUrl: ChartingLibraryWidgetOptions["charts_storage_url"];
+  // datafeedUrl: string;
+  // chartsStorageUrl: ChartingLibraryWidgetOptions["charts_storage_url"];
   chartsStorageApiVersion: ChartingLibraryWidgetOptions["charts_storage_api_version"];
   clientId: ChartingLibraryWidgetOptions["client_id"];
   userId: ChartingLibraryWidgetOptions["user_id"];
@@ -40,13 +42,18 @@ export class TVChartContainer extends React.PureComponent<
   Partial<ChartContainerProps>,
   ChartContainerState
 > {
+  // state = store.getState();
+  // instrument = this.state.tvc.instrument;
+
   public static defaultProps: Omit<ChartContainerProps, "container"> = {
     debug: false,
-    symbol: "NSECM:RELIANCE",
+    symbol: "",
+    // symbol: "NSECM:RELIANCE",
+    // symbol: `${this.instrument.DisplayName}:${this.instrument.ExchangeSegment}:${this.instrument.ExchangeInstrumentID}`;
     interval: "D" as ResolutionString,
-    datafeedUrl: "https://demo_feed.tradingview.com",
     libraryPath: "/charting_library/",
-    chartsStorageUrl: "https://saveload.tradingview.com",
+    // datafeedUrl: "https://demo_feed.tradingview.com",
+    // chartsStorageUrl: "https://saveload.tradingview.com",
     chartsStorageApiVersion: "1.1",
     clientId: "tradingview.com",
     userId: "public_user_id",
@@ -59,36 +66,41 @@ export class TVChartContainer extends React.PureComponent<
   private ref: React.RefObject<HTMLDivElement> = React.createRef();
 
   public componentDidMount(): void {
-    if (!this.ref.current) {
-      return;
+    if (this.ref.current) {
+      const widgetOptions: ChartingLibraryWidgetOptions = {
+        debug: this.props.debug as boolean,
+        // symbol: this.props.symbol as string,
+
+        symbol: `${this.props.instrument?.ExchangeSegment}:${this.props.instrument?.DisplayName}:${this.props.instrument?.ExchangeInstrumentID}`,
+        // BEWARE: no trailing slash is expected in feed URL
+        // tslint:disable-next-line:no-any
+        datafeed: Datafeed as any,
+        interval: this.props
+          .interval as ChartingLibraryWidgetOptions["interval"],
+        container: this.ref.current,
+        library_path: this.props.libraryPath as string,
+
+        locale: getLanguageFromURL() || "en",
+        disabled_features: [
+          "use_localstorage_for_settings",
+          "header_symbol_search",
+          "symbol_search_hot_key",
+        ],
+        enabled_features: ["study_templates"],
+        // charts_storage_url: this.props.chartsStorageUrl,
+        charts_storage_api_version: this.props.chartsStorageApiVersion,
+        client_id: this.props.clientId,
+        user_id: this.props.userId,
+        fullscreen: this.props.fullscreen,
+        autosize: this.props.autosize,
+        studies_overrides: this.props.studiesOverrides,
+      };
+
+      const tvWidget = new widget(widgetOptions);
+      this.tvWidget = tvWidget;
+
+      tvWidget.onChartReady(() => {});
     }
-
-    const widgetOptions: ChartingLibraryWidgetOptions = {
-      debug: this.props.debug as boolean,
-      symbol: this.props.symbol as string,
-      // BEWARE: no trailing slash is expected in feed URL
-      // tslint:disable-next-line:no-any
-      datafeed: Datafeed as any,
-      interval: this.props.interval as ChartingLibraryWidgetOptions["interval"],
-      container: this.ref.current,
-      library_path: this.props.libraryPath as string,
-
-      locale: getLanguageFromURL() || "en",
-      disabled_features: ["use_localstorage_for_settings"],
-      enabled_features: ["study_templates"],
-      charts_storage_url: this.props.chartsStorageUrl,
-      charts_storage_api_version: this.props.chartsStorageApiVersion,
-      client_id: this.props.clientId,
-      user_id: this.props.userId,
-      fullscreen: this.props.fullscreen,
-      autosize: this.props.autosize,
-      studies_overrides: this.props.studiesOverrides,
-    };
-
-    const tvWidget = new widget(widgetOptions);
-    this.tvWidget = tvWidget;
-
-    tvWidget.onChartReady(() => {});
   }
 
   public componentWillUnmount(): void {
@@ -98,7 +110,54 @@ export class TVChartContainer extends React.PureComponent<
     }
   }
 
+  public componentDidUpdate(
+    prevProps: Readonly<Partial<ChartContainerProps>>,
+    prevState: Readonly<ChartContainerState>,
+    snapshot?: any
+  ): void {
+    if (prevProps.instrument !== this.props.instrument) {
+      if (!this.ref.current) {
+        return;
+      }
+
+      const widgetOptions: ChartingLibraryWidgetOptions = {
+        debug: this.props.debug as boolean,
+        // symbol: this.props.symbol as string,
+
+        symbol: `${this.props.instrument?.ExchangeSegment}:${this.props.instrument?.DisplayName}:${this.props.instrument?.ExchangeInstrumentID}`,
+        // BEWARE: no trailing slash is expected in feed URL
+        // tslint:disable-next-line:no-any
+        datafeed: Datafeed as any,
+        interval: this.props
+          .interval as ChartingLibraryWidgetOptions["interval"],
+        container: this.ref.current,
+        library_path: this.props.libraryPath as string,
+
+        locale: getLanguageFromURL() || "en",
+        disabled_features: [
+          "use_localstorage_for_settings",
+          "header_symbol_search",
+          "symbol_search_hot_key",
+          "compare_symbol",
+        ],
+        enabled_features: ["study_templates"],
+        // charts_storage_url: this.props.chartsStorageUrl,
+        charts_storage_api_version: this.props.chartsStorageApiVersion,
+        client_id: this.props.clientId,
+        user_id: this.props.userId,
+        fullscreen: this.props.fullscreen,
+        autosize: this.props.autosize,
+        studies_overrides: this.props.studiesOverrides,
+      };
+
+      const tvWidget = new widget(widgetOptions);
+      this.tvWidget = tvWidget;
+
+      tvWidget.onChartReady(() => {});
+    }
+  }
+
   public render(): JSX.Element {
-    return <div ref={this.ref} className="h-full" />;
+    return <div ref={this.ref} className="flex-1 border rounded-md" />;
   }
 }

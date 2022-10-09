@@ -18,6 +18,7 @@ import {
   ArrowDropDown,
   Add,
   Done,
+  CandlestickChart,
 } from "@mui/icons-material";
 import useModal from "../../hooks/useModal";
 import { visiblityReducer } from "../../features/orderModal/orderModal";
@@ -41,6 +42,7 @@ import { mapMaster } from "./masters";
 import useDebounce from "../../hooks/useDebouce";
 import { toFixedN } from "../../utils/toFixedN";
 import { filterObject } from "../../utils/filterObject";
+import { tvcReducer } from "../../features/TVChart/TVChart";
 const { USER_ID } = constants;
 
 interface IMasterInstrument {
@@ -799,6 +801,12 @@ export function WatchList() {
                           className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center text-white bg-red-gradient"
                         >
                           S
+                        </div>
+                        <div
+                          onClick={() => dispatch(tvcReducer({ instrument }))}
+                          className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center bg-white text-primary border border-primary"
+                        >
+                          <CandlestickChart />
                         </div>
                         <div
                           onClick={() =>

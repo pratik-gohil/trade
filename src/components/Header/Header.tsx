@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { Link, NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -11,11 +11,13 @@ import { IInstrument } from "../../types/interfaces/instrument.interfaces.types"
 import trade from "../../assets/trade.png";
 import { unsubscribeInstruments } from "../../http/unsubscribeInstruments/unsubscribeInstruments";
 import { toFixedN } from "../../utils/toFixedN";
+import useModal from "../../hooks/useModal";
+import { Logout } from "@mui/icons-material";
 
 const links = [
   {
     name: "Home",
-    path: "/",
+    path: "/home/chart",
   },
   {
     name: "Markets",
@@ -57,6 +59,10 @@ export const Header = () => {
   const [pinnedInstruments, setPinnedInstruments] = useState<IInstrument[]>([]);
   const { socket } = useContext(SocketContext) as { socket: any };
 
+  const menuModalRef = useRef(null);
+  const menuModalToggleButtonRef = useRef(null);
+  const [showMenu] = useModal(menuModalRef, menuModalToggleButtonRef);
+
   useEffect(() => {
     (async () => {
       const response = await searchInstruments(pinnedInstrumentsIds);
@@ -92,7 +98,7 @@ export const Header = () => {
   return (
     <div className="max-h-16 h-16 flex justify-between items-center shadow-custom relative z-50">
       <div className="flex justify-between items-center gap-4 sidebar-width overflow-hidden px-5">
-        <Link to="/">
+        <Link to="/home">
           <img src={trade} className="w-[89px] h-[9px]" />
         </Link>
         <div className="flex text-right gap-4 text-xs font-medium mr-[10px]">
@@ -158,14 +164,24 @@ export const Header = () => {
             </NavLink>
           ))}
         </div>
-        <div className="text-[#444] font-medium text-sm flex items-center gap-2 border-border border-l pl-2">
+        <div
+          ref={menuModalToggleButtonRef}
+          className="text-[#444] font-medium text-sm flex items-center gap-2 border-border border-l pl-2 cursor-pointer"
+        >
           <span className="rounded-full">
             <AccountCircleIcon />
           </span>
           <span>{user.userID || user.ClientId}</span>
         </div>
-        <div>
-          <NavLink to="/logout">LOGOUT</NavLink>
+        <div
+          ref={menuModalRef}
+          className={`shadow-popup ${
+            showMenu ? "block" : "hidden"
+          } absolute top-full mt-1 mr-[6px] right-0 bg-white rounded overflow-hidden w-fit text-base p-5`}
+        >
+          <NavLink to="/logout">
+            <Logout sx={{ fontSize: "14px", marginRight: "12px" }} /> Logout
+          </NavLink>
         </div>
       </div>
     </div>

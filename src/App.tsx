@@ -104,6 +104,8 @@ export default function App() {
       <WebSocketProvider>
         <Router>
           <Routes>
+            <Route path="/" element={<Navigate to="/home/chart" />}></Route>
+            <Route path="/home" element={<Navigate to="/home/chart" />}></Route>
             <Route
               path="*"
               element={loginRequired(
