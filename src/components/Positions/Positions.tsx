@@ -135,7 +135,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
       </div>
       <div className="bg-green-50 flex items-center p-2 text-xl gap-4 rounded-[4px]">
         {filter} P&L{" "}
-        <span className="text-4xl text-success font-medium">
+        <span className="text-5xl text-success font-medium">
           {(PandL >= 0 ? "+" : "-") + toFixedN(PandL, 2)}
         </span>
       </div>

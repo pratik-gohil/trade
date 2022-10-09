@@ -10,6 +10,7 @@ import Home from "../Home/Home";
 import News from "../Home/News";
 import BulkBlock from "../Home/BulkBlock";
 import InsiderTrades from "../Home/InsiderTrades";
+import Funds from "../Funds/Funds";
 
 export function Main() {
   const instrument = useSelector((state: RootState) => state.tvc.instrument);
@@ -51,6 +52,7 @@ export function Main() {
             }
           />
           <Route path="/orders" element={<Orders />} />
+          <Route path="/funds" element={<Funds />} />
           <Route path="/positions" element={<Positions />} />
         </Routes>
       </div>
