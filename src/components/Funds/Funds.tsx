@@ -1,8 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ArrowOutward from "@mui/icons-material/ArrowOutward";
 import { ChevronRight } from "@mui/icons-material";
+import { getUserBalance } from "../../http/userBalance/userBalance";
 
 function Funds() {
+  const [balanceList, setBalanceList] = useState<any[]>([]);
+  const fetchUserBalance = async () => {
+    const response = await getUserBalance();
+    return response;
+  };
+  useEffect(() => {
+    fetchUserBalance().then((res) => setBalanceList(res.result.BalanceList));
+  }, []);
+
+  const { cashAvailable, marginUtilized, netMarginAvailable } = balanceList?.[0]
+    ?.limitObject?.RMSSubLimits || {
+    cashAvailable: 0,
+    marginUtilized: 0,
+    netMarginAvailable: 0,
+  };
   return (
     <div className="p-5 flex gap-5">
       <div>
@@ -18,16 +34,16 @@ function Funds() {
               <div className="text-primary font-light">
                 Available margin (Cash + Collateral)
               </div>
-              <div className="text-primary text-4xl">2,50,590.20</div>
+              <div className="text-primary text-4xl">{netMarginAvailable}</div>
             </div>
             <div className="flex gap-[75px]">
               <div>
                 <div className="text-xl text-secondary">Available Cash</div>
-                <div className="text-2xl text-primary">4,95,000.00</div>
+                <div className="text-2xl text-primary">{cashAvailable}</div>
               </div>
               <div>
                 <div className="text-xl text-secondary">Used Margin</div>
-                <div className="text-2xl text-primary">4,95,000.00</div>
+                <div className="text-2xl text-primary">{marginUtilized}</div>
               </div>
               <div>77%</div>
             </div>
