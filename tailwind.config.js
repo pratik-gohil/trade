@@ -1,21 +1,33 @@
 const pxToRem = (px, oneRemPx = 16) => `${px / oneRemPx}rem`;
+const pxToVW = (px, oneVWpx = 13.5) => `${px / oneVWpx}vw`;
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}", "./src/**/**/*.{js,jsx,ts,tsx}"],
   theme: {
     fontSize: {
-      xxxs: pxToRem(10),
-      xxs: pxToRem(11),
-      xs: pxToRem(12),
-      sm: pxToRem(13),
-      base: pxToRem(13.5),
-      lg: pxToRem(14),
-      xl: pxToRem(16),
-      "2xl": pxToRem(18),
-      "3xl": pxToRem(20),
-      "4xl": pxToRem(22),
-      "5xl": pxToRem(24),
+      xxxs: pxToVW(10),
+      xxs: pxToVW(11),
+      xs: pxToVW(12),
+      sm: pxToVW(13),
+      base: pxToVW(13.5),
+      lg: pxToVW(14),
+      xl: pxToVW(16),
+      "2xl": pxToVW(18),
+      "3xl": pxToVW(20),
+      "4xl": pxToVW(22),
+      "5xl": pxToVW(24),
+      // xxxs: pxToRem(10),
+      // xxs: pxToRem(11),
+      // xs: pxToRem(12),
+      // sm: pxToRem(13),
+      // base: pxToRem(13.5),
+      // lg: pxToRem(14),
+      // xl: pxToRem(16),
+      // "2xl": pxToRem(18),
+      // "3xl": pxToRem(20),
+      // "4xl": pxToRem(22),
+      // "5xl": pxToRem(24),
     },
     extend: {
       colors: {
