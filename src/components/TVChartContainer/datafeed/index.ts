@@ -1,5 +1,5 @@
 import http from "./http";
-// import socket from "./socket";
+import socket from "./socket";
 
 const supportedResolutions = ["1D", "1W", "1M"];
 
@@ -61,24 +61,24 @@ export default {
         onErrorCallback(err);
       });
   },
-  // subscribeBars: (
-  //   symbolInfo,
-  //   resolution,
-  //   onRealtimeCallback,
-  //   subscriberUID,
-  //   onResetCacheNeededCallback
-  // ) => {
-  //   console.log("=====subscribeBars runnning");
-  //   socket.subscribeBars(
-  //     symbolInfo,
-  //     resolution,
-  //     onRealtimeCallback,
-  //     subscriberUID,
-  //     onResetCacheNeededCallback
-  //   );
-  // },
-  // unsubscribeBars: (subscriberUID) => {
-  //   console.log("=====unsubscribeBars runnning");
-  //   socket.unsubscribeBars(subscriberUID);
-  // },
+  subscribeBars: (
+    symbolInfo,
+    resolution,
+    onRealtimeCallback,
+    subscriberUID,
+    onResetCacheNeededCallback
+  ) => {
+    console.log("=====subscribeBars runnning");
+    socket.subscribeBars(
+      symbolInfo,
+      resolution,
+      onRealtimeCallback,
+      subscriberUID,
+      onResetCacheNeededCallback
+    );
+  },
+  unsubscribeBars: (subscriberUID) => {
+    console.log("=====unsubscribeBars runnning");
+    socket.unsubscribeBars(subscriberUID);
+  },
 };
