@@ -4,6 +4,7 @@ import { ChevronRight } from "@mui/icons-material";
 import { getUserBalance } from "../../http/userBalance/userBalance";
 import { getUserProfile } from "../../http/getUserProfile/getUserProfile";
 import AddFundsModal from "./AddFundsModal";
+import { toFixedN } from "../../utils/toFixedN";
 
 function Funds() {
   const [balanceList, setBalanceList] = useState<any[]>([]);
@@ -31,7 +32,7 @@ function Funds() {
             Funds
           </h1>
           <div className="border rounded-md px-5">
-            <div className="flex flex-col gap-6 px-2.5 border-b py-6">
+            <div className="flex flex-col px-2.5 border-b py-6">
               <div>
                 <div className="text-primary font-light">
                   Available margin (Cash + Collateral)
@@ -40,7 +41,7 @@ function Funds() {
                   {netMarginAvailable}
                 </div>
               </div>
-              <div className="flex gap-[75px]">
+              <div className="flex items-end gap-[45px]">
                 <div>
                   <div className="text-xl text-secondary">Available Cash</div>
                   <div className="text-2xl text-primary">{cashAvailable}</div>
@@ -49,7 +50,16 @@ function Funds() {
                   <div className="text-xl text-secondary">Used Margin</div>
                   <div className="text-2xl text-primary">{marginUtilized}</div>
                 </div>
-                <div>77%</div>
+                <div
+                  className="percentage-pie"
+                  style={
+                    {
+                      "--p": (100 * marginUtilized) / cashAvailable,
+                    } as React.CSSProperties
+                  }
+                >
+                  {toFixedN((100 * marginUtilized) / cashAvailable)}%
+                </div>
               </div>
             </div>
             <div className="flex flex-col gap-5 py-6 border-b">
