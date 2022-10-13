@@ -5,10 +5,12 @@ import { getUserBalance } from "../../http/userBalance/userBalance";
 import { getUserProfile } from "../../http/getUserProfile/getUserProfile";
 import AddFundsModal from "./AddFundsModal";
 import { toFixedN } from "../../utils/toFixedN";
+import AddFundsModalUPI from "./AddFundsModalUPI";
 
 function Funds() {
   const [balanceList, setBalanceList] = useState<any[]>([]);
-  const [showModal, setShowModal] = useState(false);
+  const [showAddFundsModal, setShowAddFundsModal] = useState(false);
+  const [showFundsUPIModal, setShowFundsUPIModal] = useState(false);
 
   useEffect(() => {
     getUserBalance().then((res) => setBalanceList(res.result.BalanceList));
@@ -140,8 +142,8 @@ function Funds() {
                 </span>
               </div>
               <div
-                onClick={() => setShowModal(true)}
-                className="bg-blue text-white py-2.5 text-2xl font-medium rounded-md self-stretch text-center mt-[22px]"
+                onClick={() => setShowAddFundsModal(true)}
+                className="bg-blue text-white py-2.5 text-2xl font-medium rounded-md self-stretch text-center mt-[22px] cursor-pointer"
               >
                 Add Funds
               </div>
@@ -195,7 +197,15 @@ function Funds() {
           </div>
         </div>
       </div>
-      <AddFundsModal showModal={showModal} setShowModal={setShowModal} />
+      <AddFundsModal
+        showModal={showAddFundsModal}
+        setShowModal={setShowAddFundsModal}
+        setShowFundsUPIModal={setShowFundsUPIModal}
+      />
+      <AddFundsModalUPI
+        showModal={showFundsUPIModal}
+        setShowModal={setShowFundsUPIModal}
+      />
     </>
   );
 }
