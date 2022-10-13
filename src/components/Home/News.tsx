@@ -35,7 +35,6 @@ function News({ instrument }) {
   const [newsList, setNewsList] = useState<INews[]>([]);
   const fetchNews = async ({ symbol }) => {
     const response = await getStockNews({ symbol });
-    console.log(response);
     return response;
   };
   useEffect(() => {
@@ -46,8 +45,10 @@ function News({ instrument }) {
 
   return (
     <div className="p-5 border rounded-md">
-      <h1 className="text-primary text-2xl font-bold">News</h1>
-      <div className="flex flex-col h-fit overflow-y-auto max-h-[340px] overflow-hidden">
+      <h1 id="test" className="text-primary text-2xl font-bold">
+        News
+      </h1>
+      <div className="flex flex-col h-fit overflow-y-auto max-h-[calc(100vh-4rem-40px-45px-2.5rem-27px-3rem)] overflow-hidden">
         {newsList.map((n, i) => (
           <div key={i} className="flex py-5 border-b">
             {n.imageUrl && (
