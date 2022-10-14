@@ -1,9 +1,6 @@
 import { ohcl } from "../../../../http/ohlc/ohlc";
-const history = {};
 
 export default {
-  history: history,
-
   getBars: async function (
     symbolInfo,
     resolution,
@@ -64,11 +61,6 @@ export default {
         return [];
       }
     });
-
-    if (firstDataRequest) {
-      var lastBar = bars[bars.length - 1];
-      history[symbolInfo.name] = { lastBar: lastBar };
-    }
 
     return bars;
   },

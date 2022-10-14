@@ -7,6 +7,8 @@ const config = {
   supported_resolutions: supportedResolutions,
 };
 
+const lastBarsCache = new Map();
+
 export default {
   onReady: (cb) => {
     console.log("=====onReady running");
@@ -47,10 +49,18 @@ export default {
   ) {
     console.log("=====getBars running");
 
+    const { from, to, firstDataRequest } = periodParams;
+
     http
       .getBars(symbolInfo, resolution, periodParams)
       .then((bars) => {
         if (bars.length > 0) {
+          if (firstDataRequest) {
+            lastBarsCache.set(symbolInfo.full_name, {
+              ...bars[bars.length - 1],
+            });
+          }
+
           onHistoryCallback(bars, { noData: false });
         } else {
           onHistoryCallback(bars, { noData: true });
@@ -74,7 +84,8 @@ export default {
       resolution,
       onRealtimeCallback,
       subscriberUID,
-      onResetCacheNeededCallback
+      onResetCacheNeededCallback,
+      lastBarsCache.get(symbolInfo.full_name)
     );
   },
   unsubscribeBars: (subscriberUID) => {
