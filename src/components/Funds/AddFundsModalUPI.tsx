@@ -1,12 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import Modal from "@mui/material/Modal";
 import { IconButton } from "@mui/material";
 import { CloseOutlined } from "@mui/icons-material";
+import { verify_vpa } from "../../http/hdfc_upi/verify_vpa";
 
 export default function AddFundsModalUPI({ showModal, setShowModal }) {
+  const [VPA, setVPA] = useState("");
   const addMoney = () => {
     setShowModal(false);
   };
+
+  const verifyVPA = () => {
+    verify_vpa({ VPA }).then(console.log);
+  };
+
   return (
     <Modal open={!!showModal} onClose={() => setShowModal(null)}>
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg w-[418px] overflow-hidden">
@@ -30,8 +37,14 @@ export default function AddFundsModalUPI({ showModal, setShowModal }) {
               Select Payment Mode
             </h1>
             <div className="border rounded-md p-3 flex justify-between gap-3">
-              <input className="border-none outline-none w-full" />
-              <span className="text-blue font-semibold text-lg cursor-pointer">
+              <input
+                onChange={(e) => setVPA(e.target.value)}
+                className="border-none outline-none w-full"
+              />
+              <span
+                onClick={verifyVPA}
+                className="text-blue font-semibold text-lg cursor-pointer"
+              >
                 Verify
               </span>
             </div>
