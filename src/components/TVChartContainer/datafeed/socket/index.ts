@@ -94,7 +94,7 @@ socket.on("error", (err) => {
 
 const listener = (res) => {
   const data = JSON.parse(res);
-  console.log(data);
+  // console.log(data);
 
   //
 

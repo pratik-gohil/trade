@@ -14,7 +14,6 @@ function Funds() {
 
   useEffect(() => {
     getUserBalance().then((res) => setBalanceList(res.result.BalanceList));
-    getUserProfile().then((res) => console.log("pro", res));
   }, []);
 
   const { cashAvailable, marginUtilized, netMarginAvailable } = balanceList?.[0]
