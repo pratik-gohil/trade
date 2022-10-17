@@ -1,16 +1,88 @@
-import React from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import Modal from "@mui/material/Modal";
 import { IconButton } from "@mui/material";
 import { CloseOutlined } from "@mui/icons-material";
+import useRazorpay from "react-razorpay";
+import { useSelector } from "react-redux";
+import { RootState } from "../../app/store";
+import { constants } from "../../constants/global";
+import { IClientBankInfoList } from "../../features/Auth/Auth";
+const { CLIENT_ID, TOKEN, USER_ID } = constants;
 
 export default function AddFundsModal({
   showModal,
   setShowModal,
   setShowFundsUPIModal,
 }) {
-  const addMoney = () => {
+  const Razorpay = useRazorpay();
+  const [paymentMode, setPaymentMode] = useState("UPI");
+  const [account, setAccount] = useState<IClientBankInfoList | null>(null);
+  const [amount, setAmount] = useState("25");
+  const { EmailId, MobileNo, ClientBankInfoList } = useSelector(
+    (state: RootState) => state.auth.user
+  );
+
+  useEffect(() => {
+    setAccount(ClientBankInfoList[0]);
+  }, []);
+
+  const addMoneyUPI = () => {
     setShowModal(false);
     setShowFundsUPIModal(true);
+  };
+
+  const addMoneyNetBanking = useCallback(() => {
+    // fetch("https://api.razorpay.com/v1/orders", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     Authorization:
+    //       "Basic cnpwX3Rlc3RfTkloSWtHNHJINFhzSGglM0FBNHRaY1NSSDN5amRQYmdBSHhaTlE0alY=",
+    //   },
+    //   body: `{"amount": ${amount},"currency": "INR", "method": "netbanking" , "bank_account" : {"account_number": "${account?.AccountNumber}","name": "Nirav Mehta","ifsc": "${account?.BankIFSCCode}"},"notes" : {"userID": "${USER_ID}","clientID": "${CLIENT_ID}","address": "","paymentSource": "TradeApp","ifsc_code": "${account?.BankIFSCCode}","acc_num": "${account?.AccountNumber}"}}`,
+    // }).then((res) => {
+    //   console.log(res);
+    // });
+    // const options = {
+    //   key: "Basic cnpwX3Rlc3RfTkloSWtHNHJINFhzSGglM0FBNHRaY1NSSDN5amRQYmdBSHhaTlE0alY=",
+    //   amount: (Number(amount) * 100).toString(),
+    //   currency: "INR",
+    //   name: "LKP",
+    //   description: "Add Funds",
+    //   // image: "https://example.com/your_logo",
+    //   order_id: "41",
+    //   handler: function (response) {
+    //     alert(response.razorpay_payment_id);
+    //     alert(response.razorpay_order_id);
+    //     alert(response.razorpay_signature);
+    //   },
+    //   prefill: {
+    //     email: EmailId,
+    //     contact: MobileNo,
+    //   },
+    // };
+    // const rzp1 = new Razorpay(options);
+    // rzp1.on("payment.failed", function (response) {
+    //   alert(response.error.code);
+    //   alert(response.error.description);
+    //   alert(response.error.source);
+    //   alert(response.error.step);
+    //   alert(response.error.reason);
+    //   alert(response.error.metadata.order_id);
+    //   alert(response.error.metadata.payment_id);
+    // });
+    // rzp1.open();
+  }, [Razorpay]);
+
+  const addMoney = () => {
+    switch (paymentMode) {
+      case "UPI":
+        addMoneyUPI();
+        break;
+      case "Net Banking":
+        addMoneyNetBanking();
+        break;
+    }
   };
   return (
     <Modal open={!!showModal} onClose={() => setShowModal(null)}>
@@ -30,32 +102,74 @@ export default function AddFundsModal({
         <div className="px-10">
           <div className="flex flex-col items-center gap-2.5 border-b py-2.5">
             <div className="text-lg text-secondary">Amount</div>
-            <div className="text-3xl text-primary font-medium py-3.5 bg-blueHighlight rounded-md self-stretch text-center">
-              260.00
-            </div>
+            <input
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="text-3xl text-primary font-medium py-3.5 bg-blueHighlight rounded-md self-stretch text-center"
+            />
             <div className="text-lg text-secondary">
               Ava. Balance: <span className="text-primary">5,65,250.00</span>
             </div>
           </div>
           <div className="py-2.5 flex flex-col gap-2.5">
             <h1 className="font-light text-primary text-xl">Select Bank</h1>
-            <div className="border rounded-md px-3 py-1.5">
+            {ClientBankInfoList.map((bank) => (
+              <div
+                key={bank.AccountNumber}
+                className={`border rounded-md px-3 py-1.5 ${
+                  account?.AccountNumber === bank.AccountNumber
+                    ? "border-blue"
+                    : ""
+                }`}
+              >
+                <h1 className="font-medium text-lg text-primary">
+                  {bank.BankName}
+                </h1>
+                <span className="text-secondary text-xxs">
+                  {"x".repeat(bank.AccountNumber.length - 4) +
+                    bank.AccountNumber.slice(-4, bank.AccountNumber.length)}
+                </span>
+              </div>
+            ))}
+            {/* <div className="border rounded-md px-3 py-1.5">
               <h1 className="font-medium text-lg text-primary">HDFC Bank</h1>
               <span className="text-secondary">xxxxxxxxx2345</span>
             </div>
             <div className="border rounded-md px-3 py-1.5">
               <h1 className="font-medium text-lg text-primary">HDFC Bank</h1>
               <span className="text-secondary">xxxxxxxxx2345</span>
-            </div>
+            </div> */}
           </div>
           <div className="py-2.5 flex flex-col gap-2.5">
             <h1 className="font-light text-primary text-xl">
               Select Payment Mode
             </h1>
             <div className="flex justify-between items-center">
-              <div className="p-3 rounded-md border border-blue">UPI</div>
-              <div className="p-3 rounded-md border">Net Banking</div>
-              <div className="p-3 rounded-md border">Others</div>
+              <div
+                className={`cursor-pointer p-3 rounded-md border ${
+                  paymentMode === "UPI" ? "border-blue" : ""
+                }`}
+                onClick={() => setPaymentMode("UPI")}
+              >
+                UPI
+              </div>
+              <div
+                className={`cursor-pointer p-3 rounded-md border ${
+                  paymentMode === "Net Banking" ? "border-blue" : ""
+                }`}
+                onClick={() => setPaymentMode("Net Banking")}
+              >
+                Net Banking
+              </div>
+              <div
+                className={`cursor-pointer p-3 rounded-md border ${
+                  paymentMode === "Others" ? "border-blue" : ""
+                }`}
+                onClick={() => setPaymentMode("Others")}
+              >
+                Others
+              </div>
             </div>
             <div
               onClick={addMoney}

@@ -1,6 +1,38 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
+export interface IAuth {
+  user: {
+    userID: string;
+    firstName: string;
+    lastName: string;
+    ClientId: string;
+    ClientName: string;
+    EmailId: string;
+    IncludeInAutoSquareoff: boolean;
+    IncludeInAutoSquareoffBlocked: boolean;
+    IsInvestorClient: boolean;
+    IsProClient: boolean;
+    MobileNo: string;
+    OfficeAddress: string;
+    PAN: string;
+    ResidentialAddress: string;
+    ClientBankInfoList: IClientBankInfoList[];
+  };
+}
+
+export interface IClientBankInfoList {
+  ClientId: string;
+  AccountNumber: string;
+  AccountType: string;
+  BankName: string;
+  BankBranchName: string;
+  BankCity: string;
+  CustomerId: string;
+  BankCityPincode: string;
+  BankIFSCCode: string;
+}
+
+const initialState: IAuth = {
   user: {
     userID: "",
     firstName: "",
@@ -16,6 +48,7 @@ const initialState = {
     OfficeAddress: "",
     PAN: "",
     ResidentialAddress: "",
+    ClientBankInfoList: [],
   },
 };
 
