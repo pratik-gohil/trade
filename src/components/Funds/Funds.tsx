@@ -11,6 +11,7 @@ function Funds() {
   const [balanceList, setBalanceList] = useState<any[]>([]);
   const [showAddFundsModal, setShowAddFundsModal] = useState(false);
   const [showFundsUPIModal, setShowFundsUPIModal] = useState(false);
+  const [amount, setAmount] = useState("260.00");
 
   useEffect(() => {
     getUserBalance().then((res) => setBalanceList(res.result.BalanceList));
@@ -127,20 +128,43 @@ function Funds() {
             </h1>
             <div className="border rounded-md p-5 flex flex-col items-center gap-2.5">
               <div className="text-lg text-secondary">Enter Amount</div>
-              <div className="text-3xl text-primary font-medium py-3.5 bg-blueHighlight rounded-md self-stretch text-center">
-                260.00
-              </div>
+              <input
+                className="text-3xl text-primary font-medium py-3.5 bg-blueHighlight rounded-md self-stretch text-center"
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+              />
               <div className="flex gap-2.5">
-                <span className="text-xs text-secondary bg-secondaryHighlight px-3.5">
+                <span
+                  onClick={() =>
+                    setAmount((amount) => `${Number(amount) + 5000}`)
+                  }
+                  className="text-xs text-secondary bg-secondaryHighlight px-3.5 cursor-pointer"
+                >
                   +5000
                 </span>
-                <span className="text-xs text-secondary bg-secondaryHighlight px-3.5">
+                <span
+                  onClick={() =>
+                    setAmount((amount) => `${Number(amount) + 5000}`)
+                  }
+                  className="text-xs text-secondary bg-secondaryHighlight px-3.5 cursor-pointer"
+                >
                   +5000
                 </span>
-                <span className="text-xs text-secondary bg-secondaryHighlight px-3.5">
+                <span
+                  onClick={() =>
+                    setAmount((amount) => `${Number(amount) + 5000}`)
+                  }
+                  className="text-xs text-secondary bg-secondaryHighlight px-3.5 cursor-pointer"
+                >
                   +5000
                 </span>
-                <span className="text-xs text-secondary bg-secondaryHighlight px-3.5">
+                <span
+                  onClick={() =>
+                    setAmount((amount) => `${Number(amount) + 5000}`)
+                  }
+                  className="text-xs text-secondary bg-secondaryHighlight px-3.5 cursor-pointer"
+                >
                   +5000
                 </span>
               </div>

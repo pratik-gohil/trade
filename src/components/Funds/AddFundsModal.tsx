@@ -33,48 +33,49 @@ export default function AddFundsModal({
   console.log(amount, account, userID, ClientId);
 
   const addMoneyNetBanking = useCallback(() => {
-    // fetch("https://api.razorpay.com/v1/orders", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     Authorization:
-    //       "Basic cnpwX3Rlc3RfTkloSWtHNHJINFhzSGglM0FBNHRaY1NSSDN5amRQYmdBSHhaTlE0alY=",
-    //   },
-    //   body: `{"amount": ${amount},"currency": "INR", "method": "netbanking" , "bank_account" : {"account_number": "${account?.AccountNumber}","name": "Nirav Mehta","ifsc": "${account?.BankIFSCCode}"},"notes" : {"userID": "${USER_ID}","clientID": "${CLIENT_ID}","address": "","paymentSource": "TradeApp","ifsc_code": "${account?.BankIFSCCode}","acc_num": "${account?.AccountNumber}"}}`,
-    // })
-    //   .then((res) => res.json())
-    //   .then((data) => {
-    const options = {
-      key: "rzp_test_NIhIkG4rH4XsHh",
-      amount: (Number(amount) * 100).toString(),
-      currency: "INR",
-      name: "LKP",
-      description: "Add Funds",
-      // image: "https://example.com/your_logo",
-      order_id: "order_KV97gky3EDASDX",
-      handler: function (response) {
-        alert(response.razorpay_payment_id);
-        alert(response.razorpay_order_id);
-        alert(response.razorpay_signature);
+    fetch("https://api.razorpay.com/v1/orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Basic  + ${btoa(
+          "rzp_test_NIhIkG4rH4XsHh:A4tZcSRH3yjdPbgAHxZNQ4jV"
+        )}`,
       },
-      prefill: {
-        email: EmailId,
-        contact: MobileNo,
-      },
-    };
-    const rzp1 = new Razorpay(options);
-    rzp1.on("payment.failed", function (response) {
-      alert(response.error.code);
-      alert(response.error.description);
-      alert(response.error.source);
-      alert(response.error.step);
-      alert(response.error.reason);
-      alert(response.error.metadata.order_id);
-      alert(response.error.metadata.payment_id);
-    });
-    setShowModal(false);
-    rzp1.open();
-    // });
+      body: `{"amount": ${amount},"currency": "INR", "method": "netbanking" , "bank_account" : {"account_number": "${account?.AccountNumber}","name": "Nirav Mehta","ifsc": "${account?.BankIFSCCode}"},"notes" : {"userID": "${USER_ID}","clientID": "${CLIENT_ID}","address": "","paymentSource": "TradeApp","ifsc_code": "${account?.BankIFSCCode}","acc_num": "${account?.AccountNumber}"}}`,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const options = {
+          key: "rzp_test_NIhIkG4rH4XsHh",
+          amount: (Number(amount) * 100).toString(),
+          currency: "INR",
+          name: "LKP",
+          description: "Add Funds",
+          // image: "https://example.com/your_logo",
+          order_id: "order_KV97gky3EDASDX",
+          handler: function (response) {
+            alert(response.razorpay_payment_id);
+            alert(response.razorpay_order_id);
+            alert(response.razorpay_signature);
+          },
+          prefill: {
+            email: EmailId,
+            contact: MobileNo,
+          },
+        };
+        const rzp1 = new Razorpay(options);
+        rzp1.on("payment.failed", function (response) {
+          alert(response.error.code);
+          alert(response.error.description);
+          alert(response.error.source);
+          alert(response.error.step);
+          alert(response.error.reason);
+          alert(response.error.metadata.order_id);
+          alert(response.error.metadata.payment_id);
+        });
+        setShowModal(false);
+        rzp1.open();
+      });
   }, [Razorpay]);
 
   const addMoney = () => {
