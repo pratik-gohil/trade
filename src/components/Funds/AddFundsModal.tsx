@@ -10,6 +10,7 @@ import { IClientBankInfoList } from "../../features/Auth/Auth";
 const { CLIENT_ID, TOKEN, USER_ID } = constants;
 
 export default function AddFundsModal({
+  amount: amount_prop,
   showModal,
   setShowModal,
   setShowFundsUPIModal,
@@ -17,12 +18,13 @@ export default function AddFundsModal({
   const Razorpay = useRazorpay();
   const [paymentMode, setPaymentMode] = useState("UPI");
   const [account, setAccount] = useState<IClientBankInfoList | null>(null);
-  const [amount, setAmount] = useState("25");
+  const [amount, setAmount] = useState("");
   const { EmailId, MobileNo, ClientBankInfoList, userID, ClientId } =
     useSelector((state: RootState) => state.auth.user);
 
   useEffect(() => {
     setAccount(ClientBankInfoList[0]);
+    setAmount(amount_prop);
   }, []);
 
   const addMoneyUPI = () => {
