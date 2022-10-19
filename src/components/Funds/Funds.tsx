@@ -39,17 +39,21 @@ function Funds() {
                   Available margin (Cash + Collateral)
                 </div>
                 <div className="text-primary text-4xl">
-                  {netMarginAvailable}
+                  {toFixedN(netMarginAvailable)}
                 </div>
               </div>
               <div className="flex items-end gap-[45px]">
                 <div>
                   <div className="text-xl text-secondary">Available Cash</div>
-                  <div className="text-2xl text-primary">{cashAvailable}</div>
+                  <div className="text-2xl text-primary">
+                    {toFixedN(cashAvailable)}
+                  </div>
                 </div>
                 <div>
                   <div className="text-xl text-secondary">Used Margin</div>
-                  <div className="text-2xl text-primary">{marginUtilized}</div>
+                  <div className="text-2xl text-primary">
+                    {toFixedN(marginUtilized)}
+                  </div>
                 </div>
                 <div
                   className="percentage-pie"
