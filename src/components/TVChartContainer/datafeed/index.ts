@@ -1,7 +1,19 @@
 import http from "./http";
 import socket from "./socket";
 
-const supportedResolutions = ["1D", "1W", "1M"];
+const supportedResolutions = [
+  "1",
+  "2",
+  "3",
+  "5",
+  "10",
+  "15",
+  "30",
+  "60",
+  "1D",
+  "1W",
+  "1M",
+];
 
 const config = {
   supported_resolutions: supportedResolutions,
@@ -24,16 +36,17 @@ export default {
       type: "stock",
       session: "0930-1600",
       timezone: "Asia/Kolkata",
-      ticker: name,
+      ticker: `${exchange}:${name}`,
       exchange,
+      has_empty_bars: true,
       supported_resolution: supportedResolutions,
       data_status: "streaming",
       exchangeInstrumentID,
       minmov: 1,
       pricescale: 100,
-      // intraday_multipliers: ["1", "60"],
-      // has_intraday: true,
-      // volume_precision: 2,
+      intraday_multipliers: ["1", "60"],
+      has_intraday: true,
+      volume_precision: 2,
     };
 
     setTimeout(function () {

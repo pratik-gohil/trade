@@ -22,9 +22,7 @@ export const verify_vpa = async ({
     },
   });
 
-  console.log(data);
+  const decryped_data = encrypt_decrypt({ data, type: "D" });
 
-  // const decryped_data = encrypt_decrypt({ data, type: "D" });
-
-  // return decryped_data;
+  return decryped_data;
 };
