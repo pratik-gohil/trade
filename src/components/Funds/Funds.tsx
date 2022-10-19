@@ -225,6 +225,7 @@ function Funds() {
         </div>
       </div>
       <AddFundsModal
+        amount={amount}
         showModal={showAddFundsModal}
         setShowModal={setShowAddFundsModal}
         setShowFundsUPIModal={setShowFundsUPIModal}
