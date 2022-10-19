@@ -8,6 +8,30 @@ export default {
   ) {
     let compression;
     switch (resolution) {
+      case "1":
+        compression = 60;
+        break;
+      case "2":
+        compression = 120;
+        break;
+      case "3":
+        compression = 180;
+        break;
+      case "5":
+        compression = 300;
+        break;
+      case "10":
+        compression = 600;
+        break;
+      case "15":
+        compression = 900;
+        break;
+      case "30":
+        compression = 1800;
+        break;
+      case "60":
+        compression = 3600;
+        break;
       case "1D":
         compression = "D";
         break;
@@ -18,7 +42,7 @@ export default {
         compression = "M";
         break;
       default:
-        compression = 60;
+        compression = resolution;
         break;
     }
     const bars = await ohcl({

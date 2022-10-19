@@ -6,12 +6,22 @@ import { verify_vpa } from "../../http/hdfc_upi/verify_vpa";
 
 export default function AddFundsModalUPI({ showModal, setShowModal }) {
   const [VPA, setVPA] = useState("");
+  const [isVPAValid, setIsVPAValid] = useState(false);
   const addMoney = () => {
-    setShowModal(false);
+    // setShowModal(false);
   };
 
   const verifyVPA = () => {
-    verify_vpa({ VPA }).then(console.log);
+    verify_vpa({ VPA }).then((res) => {
+      const res_params = res.split("|");
+      const status = res_params[3];
+      // (VE=Available,
+      // VN=Not Available,
+      // F=Failed)
+      if (status === "VE") {
+        setIsVPAValid(true);
+      }
+    });
   };
 
   return (
@@ -36,17 +46,24 @@ export default function AddFundsModalUPI({ showModal, setShowModal }) {
             <h1 className="font-light text-primary text-xl">
               Select Payment Mode
             </h1>
-            <div className="border rounded-md p-3 flex justify-between gap-3">
+            <div
+              className={`border rounded-md p-3 flex justify-between gap-3 ${
+                isVPAValid ? "pointer-events-none" : ""
+              }`}
+            >
               <input
+                disabled={isVPAValid}
                 onChange={(e) => setVPA(e.target.value)}
-                className="border-none outline-none w-full"
+                className="border-none outline-none w-full bg-transparent"
               />
-              <span
+              <button
+                type="button"
+                disabled={isVPAValid}
                 onClick={verifyVPA}
                 className="text-blue font-semibold text-lg cursor-pointer"
               >
                 Verify
-              </span>
+              </button>
             </div>
             <span className="text-secondary text-xs font-light">
               UPI linked to ICICI Bank A/c XXXXXXXXXX2334
@@ -55,12 +72,16 @@ export default function AddFundsModalUPI({ showModal, setShowModal }) {
               <div className="w-full border py-2.5 my-2.5 text-2xl font-medium rounded-md self-stretch text-center cursor-pointer">
                 Cancel
               </div>
-              <div
+              <button
+                type="button"
                 onClick={addMoney}
-                className="w-full bg-blue text-white py-2.5 my-2.5 text-2xl font-medium rounded-md self-stretch text-center cursor-pointer"
+                disabled={!isVPAValid}
+                className={`w-full bg-blue text-white py-2.5 my-2.5 text-2xl font-medium rounded-md self-stretch text-center cursor-pointer ${
+                  isVPAValid ? "" : "pointer-events-none"
+                }`}
               >
                 Procceed
-              </div>
+              </button>
             </div>
           </div>
         </div>
