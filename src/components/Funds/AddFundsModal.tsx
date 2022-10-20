@@ -39,7 +39,7 @@ export default function AddFundsModal({
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Basic  + ${btoa(
+        Authorization: `Basic  ${btoa(
           "rzp_test_NIhIkG4rH4XsHh:A4tZcSRH3yjdPbgAHxZNQ4jV"
         )}`,
       },
