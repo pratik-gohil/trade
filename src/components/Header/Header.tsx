@@ -12,7 +12,17 @@ import trade from "../../assets/trade.png";
 import { unsubscribeInstruments } from "../../http/unsubscribeInstruments/unsubscribeInstruments";
 import { toFixedN } from "../../utils/toFixedN";
 import useModal from "../../hooks/useModal";
-import { Logout } from "@mui/icons-material";
+import {
+  AdminPanelSettings,
+  Calculate,
+  CardMembership,
+  ContentPaste,
+  DisplaySettings,
+  Logout,
+  People,
+  Settings,
+  SettingsPhone,
+} from "@mui/icons-material";
 
 const links = [
   {
@@ -177,8 +187,41 @@ export const Header = () => {
           ref={menuModalRef}
           className={`shadow-popup ${
             showMenu ? "block" : "hidden"
-          } absolute top-full mt-1 mr-[6px] right-0 bg-white rounded overflow-hidden w-fit text-base p-5`}
+          } absolute top-full mt-1 mr-[6px] right-0 bg-white rounded overflow-hidden w-fit text-base p-5 flex flex-col gap-[10px]`}
         >
+          <NavLink to="/settings">
+            <Settings sx={{ fontSize: "14px", marginRight: "12px" }} /> Settings
+          </NavLink>
+          <NavLink to="/sessions">
+            <AdminPanelSettings
+              sx={{ fontSize: "14px", marginRight: "12px" }}
+            />{" "}
+            Active Sessions
+          </NavLink>
+          <NavLink to="/backoffice">
+            <DisplaySettings sx={{ fontSize: "14px", marginRight: "12px" }} />{" "}
+            Backoffice
+          </NavLink>
+          <NavLink to="/pledge-unpledge">
+            <ContentPaste sx={{ fontSize: "14px", marginRight: "12px" }} />{" "}
+            Pledge Unpledgs
+          </NavLink>
+          <NavLink to="/subscription-pricing">
+            <CardMembership sx={{ fontSize: "14px", marginRight: "12px" }} />{" "}
+            Subscription & Pricing
+          </NavLink>
+          <NavLink to="/support-contact">
+            <SettingsPhone sx={{ fontSize: "14px", marginRight: "12px" }} />{" "}
+            Support & Contact
+          </NavLink>
+          <NavLink to="/calculator">
+            <Calculate sx={{ fontSize: "14px", marginRight: "12px" }} />{" "}
+            Calculator
+          </NavLink>
+          <NavLink to="/calculator">
+            <People sx={{ fontSize: "14px", marginRight: "12px" }} /> Invite
+            Friends
+          </NavLink>
           <NavLink to="/logout">
             <Logout sx={{ fontSize: "14px", marginRight: "12px" }} /> Logout
           </NavLink>
