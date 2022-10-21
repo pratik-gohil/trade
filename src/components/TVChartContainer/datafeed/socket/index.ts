@@ -49,7 +49,7 @@ export default {
   },
   unsubscribeBars: async function (subscriberUID) {
     for (const channelString of channelToSubscription.keys()) {
-      const [exchange, id] = channelString;
+      const [exchange, id] = channelString.split("-");
       const subscriptionItem = channelToSubscription.get(channelString);
       const handlerIndex = subscriptionItem.handlers.findIndex(
         (handler) => handler.id === subscriberUID
@@ -94,7 +94,7 @@ socket.on("error", (err) => {
 
 const listener = (res) => {
   const data = JSON.parse(res);
-  // console.log(data);
+  console.log(data);
 
   //
 
