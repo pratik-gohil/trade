@@ -5,27 +5,35 @@ import { CloseOutlined } from "@mui/icons-material";
 import useRazorpay from "react-razorpay";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
-import { constants } from "../../constants/global";
 import { IClientBankInfoList } from "../../features/Auth/Auth";
-const { CLIENT_ID, TOKEN, USER_ID } = constants;
+import { razorpayOrder } from "../../http/razorpayOrder/razorpayOrder";
 
 export default function AddFundsModal({
   amount: amount_prop,
   showModal,
   setShowModal,
   setShowFundsUPIModal,
+  addFundsResponse,
+  setAddFundsResponse,
 }) {
   const Razorpay = useRazorpay();
   const [paymentMode, setPaymentMode] = useState("UPI");
   const [account, setAccount] = useState<IClientBankInfoList | null>(null);
   const [amount, setAmount] = useState("");
-  const { EmailId, MobileNo, ClientBankInfoList, userID, ClientId } =
-    useSelector((state: RootState) => state.auth.user);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const {
+    EmailId,
+    MobileNo,
+    ClientBankInfoList,
+    userID,
+    ClientId,
+    ClientName,
+  } = user;
 
   useEffect(() => {
     setAccount(ClientBankInfoList[0]);
     setAmount(amount_prop);
-  }, []);
+  }, [user]);
 
   const addMoneyUPI = () => {
     setShowModal(false);
@@ -35,50 +43,48 @@ export default function AddFundsModal({
   console.log(amount, account, userID, ClientId);
 
   const addMoneyNetBanking = useCallback(() => {
-    fetch("https://api.razorpay.com/v1/orders", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Basic  ${btoa(
-          "rzp_test_NIhIkG4rH4XsHh:A4tZcSRH3yjdPbgAHxZNQ4jV"
-        )}`,
-      },
-      body: `{"amount": ${amount},"currency": "INR", "method": "netbanking" , "bank_account" : {"account_number": "${account?.AccountNumber}","name": "Nirav Mehta","ifsc": "${account?.BankIFSCCode}"},"notes" : {"userID": "${USER_ID}","clientID": "${CLIENT_ID}","address": "","paymentSource": "TradeApp","ifsc_code": "${account?.BankIFSCCode}","acc_num": "${account?.AccountNumber}"}}`,
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        const options = {
-          key: "rzp_test_NIhIkG4rH4XsHh",
-          amount: (Number(amount) * 100).toString(),
-          currency: "INR",
-          name: "LKP",
-          description: "Add Funds",
-          // image: "https://example.com/your_logo",
-          order_id: "order_KV97gky3EDASDX",
-          handler: function (response) {
-            alert(response.razorpay_payment_id);
-            alert(response.razorpay_order_id);
-            alert(response.razorpay_signature);
-          },
-          prefill: {
-            email: EmailId,
-            contact: MobileNo,
-          },
-        };
-        const rzp1 = new Razorpay(options);
-        rzp1.on("payment.failed", function (response) {
-          alert(response.error.code);
-          alert(response.error.description);
-          alert(response.error.source);
-          alert(response.error.step);
-          alert(response.error.reason);
-          alert(response.error.metadata.order_id);
-          alert(response.error.metadata.payment_id);
-        });
-        setShowModal(false);
-        rzp1.open();
+    razorpayOrder({
+      amount,
+      account_number: account?.AccountNumber,
+      ifsc: account?.BankIFSCCode,
+      name: ClientName,
+      receipt: ClientId + "_" + Date.now(),
+    }).then((res) => {
+      const options = {
+        key: "rzp_test_NIhIkG4rH4XsHh",
+        amount: (Number(amount) * 100).toString(),
+        currency: "INR",
+        name: "LKP",
+        description: "Add Funds",
+        // image: "https://example.com/your_logo",
+        order_id: res.data,
+        handler: function (response) {
+          setAddFundsResponse("success");
+          // alert(response.razorpay_payment_id);
+          // alert(response.razorpay_order_id);
+          // alert(response.razorpay_signature);
+        },
+        prefill: {
+          name: ClientName,
+          email: EmailId,
+          contact: MobileNo,
+        },
+      };
+      const rzp1 = new Razorpay(options);
+      rzp1.on("payment.failed", function (response) {
+        // setAddFundsResponse("failed");
+        // alert(response.error.code);
+        // alert(response.error.description);
+        // alert(response.error.source);
+        // alert(response.error.step);
+        // alert(response.error.reason);
+        // alert(response.error.metadata.order_id);
+        // alert(response.error.metadata.payment_id);
       });
-  }, [Razorpay]);
+      setShowModal(false);
+      rzp1.open();
+    });
+  }, [Razorpay, account]);
 
   const addMoney = () => {
     switch (paymentMode) {

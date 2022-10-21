@@ -1,20 +1,36 @@
 import React, { useEffect, useState } from "react";
 import ArrowOutward from "@mui/icons-material/ArrowOutward";
-import { ChevronRight } from "@mui/icons-material";
+import { ChevronRight, Refresh } from "@mui/icons-material";
 import { getUserBalance } from "../../http/userBalance/userBalance";
 import { getUserProfile } from "../../http/getUserProfile/getUserProfile";
 import AddFundsModal from "./AddFundsModal";
 import { toFixedN } from "../../utils/toFixedN";
 import AddFundsModalUPI from "./AddFundsModalUPI";
+import AddFundsResponseModal from "./AddFundsResponseModal";
 
 function Funds() {
   const [balanceList, setBalanceList] = useState<any[]>([]);
   const [showAddFundsModal, setShowAddFundsModal] = useState(false);
   const [showFundsUPIModal, setShowFundsUPIModal] = useState(false);
   const [amount, setAmount] = useState("260.00");
+  const [addFundsResponse, setAddFundsResponse] = useState<
+    "success" | "failed" | null
+  >(null);
 
   useEffect(() => {
+    if (addFundsResponse) {
+      setTimeout(() => {
+        setAddFundsResponse(null);
+      }, 5000);
+    }
+  }, [addFundsResponse]);
+
+  const fetchUserBalance = () => {
     getUserBalance().then((res) => setBalanceList(res.result.BalanceList));
+  };
+
+  useEffect(() => {
+    fetchUserBalance();
   }, []);
 
   const { cashAvailable, marginUtilized, netMarginAvailable } = balanceList?.[0]
@@ -37,7 +53,10 @@ function Funds() {
             <div className="flex flex-col px-2.5 border-b py-6">
               <div>
                 <div className="text-primary font-light">
-                  Available margin (Cash + Collateral)
+                  Available margin (Cash + Collateral){" "}
+                  <span onClick={fetchUserBalance} className="cursor-pointer">
+                    <Refresh className="text-blue" sx={{ fontSize: 16 }} />
+                  </span>
                 </div>
                 <div className="text-primary text-4xl">
                   {toFixedN(netMarginAvailable)}
@@ -229,10 +248,17 @@ function Funds() {
         showModal={showAddFundsModal}
         setShowModal={setShowAddFundsModal}
         setShowFundsUPIModal={setShowFundsUPIModal}
+        addFundsResponse={addFundsResponse}
+        setAddFundsResponse={setAddFundsResponse}
       />
       <AddFundsModalUPI
         showModal={showFundsUPIModal}
         setShowModal={setShowFundsUPIModal}
+      />
+      <AddFundsResponseModal
+        addFundsResponse={addFundsResponse}
+        setAddFundsResponse={setAddFundsResponse}
+        amount={amount}
       />
     </>
   );
