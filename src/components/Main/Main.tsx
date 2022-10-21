@@ -20,6 +20,7 @@ import Ratios from "../Home/Fundamentals/Ratios";
 import ShareHolding from "../Home/Fundamentals/ShareHolding";
 import Peers from "../Home/Fundamentals/Peers";
 import CashFlow from "../Home/Fundamentals/CashFlow";
+import Holdings from "../Holdings/Holdings";
 
 export function Main() {
   const instrument = useSelector((state: RootState) => state.tvc.instrument);
@@ -73,6 +74,7 @@ export function Main() {
           <Route path="/orders" element={<Orders />} />
           <Route path="/funds" element={<Funds />} />
           <Route path="/positions" element={<Positions />} />
+          <Route path="/holdings" element={<Holdings />} />
         </Routes>
       </div>
     </div>
