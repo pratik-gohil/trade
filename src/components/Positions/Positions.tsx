@@ -24,10 +24,8 @@ import { Segments } from "../../types/enums/segment.enums.types";
 import { SocketContext } from "../../socket";
 import { Touchline } from "../../types/interfaces/marketDepth.interfaces.types";
 import { toFixedN } from "../../utils/toFixedN";
-import { positions } from "@mui/system";
 import { MTM } from "../../utils/MTM";
-
-type Order = "asc" | "desc";
+import { Order } from "../Orders";
 
 const headCells: readonly HeadCell[] = [
   {
