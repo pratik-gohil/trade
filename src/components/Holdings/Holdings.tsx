@@ -84,6 +84,30 @@ function Holdings() {
   return (
     <>
       <div className="p-5">
+        <h1
+          className="mb-6 text-2xl font-semibold
+        "
+        >
+          Holdings
+        </h1>
+        <div className="bg-successHighlight flex justify-between px-6 py-3 rounded">
+          <div className="text-center">
+            <h3 className="text-lg font-light">Investment</h3>
+            <h1 className="text-4xl">23,98,712.30</h1>
+          </div>
+          <div className="text-center">
+            <h3 className="text-lg font-light">Investment</h3>
+            <h1 className="text-4xl">23,98,712.30</h1>
+          </div>
+          <div className="text-center">
+            <h3 className="text-lg font-light">Investment</h3>
+            <h1 className="text-4xl">23,98,712.30</h1>
+          </div>
+          <div className="text-center">
+            <h3 className="text-lg font-light">Investment</h3>
+            <h1 className="text-4xl">23,98,712.30</h1>
+          </div>
+        </div>
         <Box sx={{ width: "100%" }}>
           <TableContainer>
             <Table>
