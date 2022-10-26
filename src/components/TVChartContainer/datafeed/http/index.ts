@@ -1,4 +1,24 @@
+import { Segments } from "./../../../../types/enums/segment.enums.types";
 import { ohcl } from "../../../../http/ohlc/ohlc";
+
+const ohlcDateTimeFormat = (Epochtime) => {
+  const fromRealDate = new Date(Epochtime * 1000);
+  return (
+    fromRealDate
+      .toLocaleDateString("en", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      })
+      .split(",")
+      .join("") +
+    " " +
+    fromRealDate
+      .toLocaleTimeString("en-IN", { hour12: false, timeZone: "Asia/Kolkata" })
+      .split(":")
+      .join("")
+  );
+};
 
 export default {
   getBars: async function (
@@ -45,46 +65,56 @@ export default {
         compression = resolution;
         break;
     }
+    const startTime = ohlcDateTimeFormat(from);
+    const endTime = ohlcDateTimeFormat(to);
+
+    console.log(startTime, endTime);
+
     const bars = await ohcl({
-      exchangeSegment: symbolInfo.exchange,
+      exchangeSegment: Segments[symbolInfo.exchange],
       exchangeInstrumentID: symbolInfo.exchangeInstrumentID,
-      startTime: from,
-      endTime: to,
+      startTime,
+      endTime,
       compressionValue: compression,
     }).then((res) => {
       if (res.type === "success") {
-        const bars = res.result.dataReponse.split(",");
-        return bars.map((bar) => {
-          const [time, open, high, low, close, volume, OI] = bar.split("|");
-          let epochTime;
-          switch (compression) {
-            case "D":
-              epochTime = Number(time) * 1000 + 330 * 60 * 1000;
-              break;
-            case "W":
-              epochTime = Number(time) * 1000 + 330 * 60 * 1000;
-              break;
-            case "M":
-              epochTime = Number(time) * 1000 + 330 * 60 * 1000;
-              break;
-            default:
-              epochTime = Number(time) * 1000;
-              break;
-          }
-          return {
-            time: epochTime,
-            low,
-            high,
-            open,
-            close,
-            volume,
-            openInterest: OI,
-          };
-        });
+        if (res.result.dataReponse !== "") {
+          const bars = res.result.dataReponse.split(",");
+          return bars.map((bar) => {
+            const [time, open, high, low, close, volume, OI] = bar.split("|");
+            // switch (compression) {
+            //   case "D":
+            //     epochTime = Number(time) * 1000 + 330 * 60 * 1000;
+            //     break;
+            //   case "W":
+            //     epochTime = Number(time) * 1000 + 330 * 60 * 1000;
+            //     break;
+            //   case "M":
+            //     epochTime = Number(time) * 1000 + 330 * 60 * 1000;
+            //     break;
+            //   default:
+            //     epochTime = Number(time) * 1000;
+            //     break;
+            // }
+            return {
+              time: time * 1000,
+              low: parseFloat(low),
+              high: parseFloat(high),
+              open: parseFloat(open),
+              close: parseFloat(close),
+              volume: parseFloat(volume),
+              openInterest: parseFloat(OI),
+            };
+          });
+        } else {
+          return [];
+        }
       } else {
         return [];
       }
     });
+
+    console.log("test", bars);
 
     return bars;
   },
