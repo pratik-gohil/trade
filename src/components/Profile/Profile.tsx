@@ -30,12 +30,12 @@ function Profile() {
                 9,79,817.70
               </span>
             </p>
-            <Divider margin="10px" />
+            {/* <Divider margin="10px" />
             <div className="w-full text-center">
               <span className="text-blue text-base font-medium cursor-pointer">
                 View Account Value Curve
               </span>
-            </div>
+            </div> */}
           </div>
         </div>
         <Divider />
