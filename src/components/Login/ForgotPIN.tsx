@@ -25,7 +25,7 @@ export function ForgotPIN({ setLoginFlowCurrentState }) {
         onChange={(e) => setUserID(e.target.value.toUpperCase())}
       />
       <button className="bg-blue-gradient text-white rounded-lg p-[10px] font-semibold m-[76px] mt-auto">
-        Get OTP
+        Next
       </button>
     </>
   );
