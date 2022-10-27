@@ -31,7 +31,7 @@ export function OrderModal() {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [exchangeSegment, setExchangeSegment] = useState("NSECM");
   const [timeInForce, setTimeInForce] = useState("DAY");
-  const [order, setOrder] = useState("REGULAR");
+  const [order, setOrder] = useState("NORMAL");
   const [orderType, setOrderType] = useState("MARKET");
   const { orderSide, instrument, isModify } = useSelector(
     (state: RootState) => state.orderModal.order
@@ -303,14 +303,14 @@ export function OrderModal() {
             </div>
             <div className="flex items-center gap-14 border-b-2 border-border text-sm font-medium px-5 pt-2.5 pb-1 bg-[#f9f9f9]">
               <div
-                onClick={() => setOrder("REGULAR")}
+                onClick={() => setOrder("NORMAL")}
                 className={`${
-                  order === "REGULAR"
+                  order === "NORMAL"
                     ? "text-blue underline underline-offset-[8px] decoration-2"
                     : ""
                 } cursor-pointer`}
               >
-                Regular
+                Normal
               </div>
               <div
                 onClick={() => setOrder("COVER")}
