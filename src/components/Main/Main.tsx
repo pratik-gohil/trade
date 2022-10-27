@@ -22,6 +22,8 @@ import Peers from "../Home/Fundamentals/Peers";
 import CashFlow from "../Home/Fundamentals/CashFlow";
 import Holdings from "../Holdings/Holdings";
 import Profile from "../Profile/Profile";
+import CorporateAction from "../Home/CorporateAction";
+import CorporateActionTable from "../Home/CorporateAction/CorporateActionTable";
 
 export function Main() {
   const instrument = useSelector((state: RootState) => state.tvc.instrument);
@@ -55,6 +57,38 @@ export function Main() {
               path="insider%20trades"
               element={<InsiderTrades instrument={instrument} />}
             />
+            <Route path="corporate%20action" element={<CorporateAction />}>
+              <Route
+                path="dividend"
+                element={
+                  <CorporateActionTable
+                    type="Dividend"
+                    instrument={instrument}
+                  />
+                }
+              />
+              <Route
+                path="Bonus"
+                element={
+                  <CorporateActionTable type="Bonus" instrument={instrument} />
+                }
+              />
+              <Route
+                path="Split"
+                element={
+                  <CorporateActionTable type="Split" instrument={instrument} />
+                }
+              />
+              <Route
+                path="board%20meet"
+                element={
+                  <CorporateActionTable
+                    type="BoardMeeting"
+                    instrument={instrument}
+                  />
+                }
+              />
+            </Route>
           </Route>
           <Route
             path="/markets"

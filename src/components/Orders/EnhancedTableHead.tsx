@@ -11,10 +11,10 @@ import { visuallyHidden } from "@mui/utils";
 type Order = "asc" | "desc";
 
 export interface HeadCell {
-  disablePadding: boolean;
   id: string;
   label: string;
-  numeric: boolean;
+  disablePadding?: boolean;
+  numeric?: boolean;
 }
 
 interface EnhancedTableHeadProps {
@@ -64,8 +64,8 @@ export function EnhancedTableHead(props: EnhancedTableHeadProps) {
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
-            padding={headCell.disablePadding ? "none" : "normal"}
+            // align={headCell.numeric ? "right" : "left"}
+            // padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
           >
             <TableSortLabel

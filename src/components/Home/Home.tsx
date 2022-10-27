@@ -9,6 +9,7 @@ function TVCFooter() {
     "OI Stats",
     "Option Chain",
     "Bulk & Block Deals",
+    "Corporate Action",
   ];
 
   return (
