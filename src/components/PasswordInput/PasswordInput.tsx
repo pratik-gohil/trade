@@ -1,7 +1,12 @@
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import React, { useState } from "react";
 
-export function PasswordInput({ placeholder, value, onChange }) {
+export function PasswordInput({
+  placeholder,
+  value,
+  onChange,
+  required = true,
+}) {
   const [passwordIsMasked, setPasswordIsMasked] = useState(true);
 
   const togglePasswordMask = () => {
@@ -11,6 +16,7 @@ export function PasswordInput({ placeholder, value, onChange }) {
   return (
     <div className="border border-border rounded-lg p-3 text-xl flex justify-between">
       <input
+        required={required}
         placeholder={placeholder || "Password"}
         className="outline-none w-full"
         type={passwordIsMasked ? "password" : "text"}

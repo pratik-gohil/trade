@@ -1,6 +1,4 @@
-import { FormControlLabel } from "@mui/material";
 import { useState } from "react";
-import CustomCheckbox from "../Checkbox/Checkbox";
 import { validateUser } from "../../http/validateUser/validateUser";
 import { PasswordInput } from "../PasswordInput";
 
