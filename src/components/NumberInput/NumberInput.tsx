@@ -30,14 +30,14 @@ export function NumberInput({
           type="button"
           disabled={disabled}
           onClick={() => {
-            Number(value) + step <= max &&
-              onChange((Number(value) + step).toFixed(2));
+            Number(value) - step >= min &&
+              onChange((Number(value) - step).toFixed(step % 1 != 0 ? 2 : 0));
           }}
           className={`${
             disabled ? "cursor-not-allowed invisible" : "cursor-pointer"
           } text-primary`}
         >
-          <Add fontSize="inherit" className="text-[#333]" />
+          <Remove fontSize="inherit" className="text-[#333]" />
         </button>
 
         <input
@@ -58,17 +58,19 @@ export function NumberInput({
           disabled={disabled}
           step={step}
         />
+
         <button
           type="button"
           disabled={disabled}
           onClick={() => {
-            Number(value) - step >= min && onChange(Number(value) - step);
+            Number(value) + step <= max &&
+              onChange((Number(value) + step).toFixed(step % 1 != 0 ? 2 : 0));
           }}
           className={`${
             disabled ? "cursor-not-allowed invisible" : "cursor-pointer"
           } text-primary`}
         >
-          <Remove fontSize="inherit" className="text-[#333]" />
+          <Add fontSize="inherit" className="text-[#333]" />
         </button>
       </div>
     </label>
