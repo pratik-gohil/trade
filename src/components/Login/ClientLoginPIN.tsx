@@ -26,8 +26,10 @@ export const ClientLoginPIN = ({ setLoginFlowCurrentState, userID }) => {
       asyncLocalStorage.setItem(CLIENT_CODES, data.result.clientCodes);
       asyncLocalStorage.setItem(USER_ID, data.result.userID);
       asyncLocalStorage.setItem(CLIENT_ID, data.result.userID);
+
+      return true;
     } else {
-      return;
+      return false;
     }
   };
 
@@ -75,9 +77,10 @@ export const ClientLoginPIN = ({ setLoginFlowCurrentState, userID }) => {
       >
         <button
           onClick={async () =>
-            await handleValidatePIN().then(() => {
-              navigate("/");
-              navigate(0);
+            await handleValidatePIN().then((res) => {
+              if (res) {
+                navigate(0);
+              }
             })
           }
           className="bg-blue-gradient rounded-lg p-[10px] text-white font-semibold w-[360px]"
