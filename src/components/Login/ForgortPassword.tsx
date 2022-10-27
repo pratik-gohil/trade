@@ -79,7 +79,7 @@ export function ForgotPassword({ setLoginFlowCurrentState }) {
             onClick={generateOTP}
             className="bg-blue-gradient text-white rounded-lg p-[10px] font-semibold m-[76px] mt-auto"
           >
-            Get OTP
+            Next
           </button>
         </>
       )}
