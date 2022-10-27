@@ -23,6 +23,7 @@ import {
   Settings,
   SettingsPhone,
 } from "@mui/icons-material";
+import Divider from "../Divider/Divider";
 
 const links = [
   {
@@ -189,6 +190,10 @@ export const Header = () => {
             showMenu ? "block" : "hidden"
           } absolute top-full mt-1 mr-[6px] right-0 bg-white rounded overflow-hidden w-fit text-base p-5 flex flex-col gap-[10px]`}
         >
+          <NavLink to="/profile" className="text-xl text-primary font-medium">
+            {user.ClientName}'s Profile
+          </NavLink>
+          <Divider margin="0px" />
           <NavLink to="/settings">
             <Settings sx={{ fontSize: "14px", marginRight: "12px" }} /> Settings
           </NavLink>
@@ -222,6 +227,7 @@ export const Header = () => {
             <People sx={{ fontSize: "14px", marginRight: "12px" }} /> Invite
             Friends
           </NavLink>
+          <Divider margin="0px" />
           <NavLink to="/logout">
             <Logout sx={{ fontSize: "14px", marginRight: "12px" }} /> Logout
           </NavLink>
