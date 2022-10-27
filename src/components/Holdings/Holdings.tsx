@@ -116,13 +116,13 @@ function Holdings() {
                 order={order}
                 orderBy={orderBy}
                 onRequestSort={handleRequestSort}
-                rowCount={holdings.length}
+                rowCount={holdings?.length}
               />
               <TableBody
                 sx={{ minWidth: 750 }}
                 className="max-h-28 overflow-auto"
               >
-                {holdings.map((holding, index) => (
+                {holdings?.map((holding, index) => (
                   <TableRow tabIndex={-1} key={index.toString()}>
                     <TableCell>Adani</TableCell>
                     <TableCell>Adani</TableCell>
