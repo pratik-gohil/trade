@@ -73,7 +73,7 @@ export function ForgotPassword({ setLoginFlowCurrentState }) {
             placeholder="User ID"
             className="outline-none border border-border rounded-lg p-3 text-xl"
             value={userID}
-            onChange={(e) => setUserID(e.target.value)}
+            onChange={(e) => setUserID(e.target.value.toUpperCase())}
           />
           <button
             onClick={generateOTP}
