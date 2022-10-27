@@ -11,7 +11,7 @@ const { CLIENT_CODES, CLIENT_ID, TOKEN, USER_ID } = constants;
 
 export const ClientLoginPIN = ({ setLoginFlowCurrentState, userID }) => {
   const user = useSelector((state: RootState) => state.auth.user);
-  const [PIN, setPIN] = useState("123456");
+  const [PIN, setPIN] = useState("");
   const navigate = useNavigate();
 
   const handleValidatePIN = async () => {
