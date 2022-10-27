@@ -13,6 +13,7 @@ const { TOKEN } = constants;
 
 export function Login() {
   const navigate = useNavigate();
+  const [userID, setUserID] = useState("");
 
   useEffect(() => {
     localStorage.getItem(TOKEN) && navigate("/");
@@ -26,10 +27,14 @@ export function Login() {
     clientLoginPassword: (
       <ClientLoginPassword
         setLoginFlowCurrentState={setLoginFlowCurrentState}
+        setUserID={setUserID}
       />
     ),
     clientLoginPIN: (
-      <ClientLoginPIN setLoginFlowCurrentState={setLoginFlowCurrentState} />
+      <ClientLoginPIN
+        setLoginFlowCurrentState={setLoginFlowCurrentState}
+        userID={userID}
+      />
     ),
     forgotPassword: (
       <ForgotPassword setLoginFlowCurrentState={setLoginFlowCurrentState} />

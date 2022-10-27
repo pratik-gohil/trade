@@ -21,14 +21,7 @@ export default function AddFundsModal({
   const [account, setAccount] = useState<IClientBankInfoList | null>(null);
   const [amount, setAmount] = useState("");
   const user = useSelector((state: RootState) => state.auth.user);
-  const {
-    EmailId,
-    MobileNo,
-    ClientBankInfoList,
-    userID,
-    ClientId,
-    ClientName,
-  } = user;
+  const { EmailId, MobileNo, ClientBankInfoList, ClientId, ClientName } = user;
 
   useEffect(() => {
     setAccount(ClientBankInfoList[0]);
@@ -39,8 +32,6 @@ export default function AddFundsModal({
     setShowModal(false);
     setShowFundsUPIModal(true);
   };
-
-  console.log(amount, account, userID, ClientId);
 
   const addMoneyNetBanking = useCallback(() => {
     razorpayOrder({

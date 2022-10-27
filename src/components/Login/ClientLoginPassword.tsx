@@ -6,7 +6,10 @@ import { setUserReducer } from "../../features/Auth/Auth";
 import { validateUser } from "../../http/validateUser/validateUser";
 import { PasswordInput } from "../PasswordInput/PasswordInput";
 
-export function ClientLoginPassword({ setLoginFlowCurrentState }) {
+export function ClientLoginPassword({
+  setLoginFlowCurrentState,
+  setUserID: setUserIDGlobal,
+}) {
   const dispatch = useDispatch();
   const [userID, setUserID] = useState("");
   const [password, setPassword] = useState("");
@@ -18,7 +21,7 @@ export function ClientLoginPassword({ setLoginFlowCurrentState }) {
     });
 
     if (data.type === "success") {
-      dispatch(setUserReducer(data.result));
+      setUserIDGlobal(data.result.userID);
       setLoginFlowCurrentState("clientLoginPIN");
     }
   };

@@ -2,12 +2,37 @@ import { SettingsOutlined } from "@mui/icons-material";
 import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
+import { ClientExchangeDetailsList } from "../../features/Auth/Auth";
 import Divider from "../Divider/Divider";
 
+const getEnabledSegments = (segments: ClientExchangeDetailsList | {}) => {
+  return Object.keys(segments)
+    .map((segment) => (segments[segment].Enabled ? segment : null))
+    .join(", ");
+};
+
 function Profile() {
-  const { ClientName, ClientId } = useSelector(
-    (state: RootState) => state.auth.user
-  );
+  const user = useSelector((state: RootState) => state.auth.user);
+  console.log(user);
+  const {
+    ClientName,
+    ClientId,
+    MobileNo,
+    EmailId,
+    PAN,
+    ClientExchangeDetailsList,
+    ClientBankInfoList,
+  } = user;
+
+  const {
+    AccountNumber,
+    BankIFSCCode,
+    BankName,
+    BankBranchName,
+    BankCity,
+    BankCityPincode,
+  } = ClientBankInfoList[0];
+
   return (
     <div className="p-5">
       <div className="border p-5 rounded-md">
@@ -51,23 +76,23 @@ function Profile() {
           <div className="flex gap-5 py-5">
             <div className="flex justify-between w-full">
               <span className="text-sm text-secondary">Mobile</span>
-              <span className="text-lg text-primary">99xxxxx697</span>
+              <span className="text-lg text-primary">{MobileNo}</span>
             </div>
             <div className="flex justify-between w-full">
               <span className="text-sm text-secondary">Email</span>
-              <span className="text-lg text-primary">
-                dhaxxxxxxxxx@gmail.com
-              </span>
+              <span className="text-lg text-primary">{EmailId}</span>
             </div>
           </div>
           <div className="flex gap-5">
             <div className="flex justify-between w-full">
               <span className="text-sm text-secondary">PAN</span>
-              <span className="text-lg text-primary">BTxxxxx44M</span>
+              <span className="text-lg text-primary">{PAN}</span>
             </div>
             <div className="flex justify-between w-full">
               <span className="text-sm text-secondary">Segments</span>
-              <span className="text-lg text-blue">MF, NSE, BSE</span>
+              <span className="text-lg text-blue">
+                {getEnabledSegments(ClientExchangeDetailsList)}
+              </span>
             </div>
           </div>
         </div>
@@ -82,21 +107,23 @@ function Profile() {
           <div className="flex gap-5 py-5">
             <div className="flex justify-between w-full">
               <span className="text-sm text-secondary">Bank</span>
-              <span className="text-lg text-primary">ICICI BANK LTD</span>
+              <span className="text-lg text-primary">{BankName}</span>
             </div>
             <div className="flex justify-between w-full">
               <span className="text-sm text-secondary">Account</span>
-              <span className="text-lg text-primary">*4055</span>
+              <span className="text-lg text-primary">{AccountNumber}</span>
             </div>
           </div>
           <div className="flex gap-5">
             <div className="flex justify-between w-full">
               <span className="text-sm text-secondary">Branch</span>
-              <span className="text-lg text-primary">LOWER PAREL, MUMBAI</span>
+              <span className="text-lg text-primary">
+                {BankBranchName}, {BankCity}, {BankCityPincode}
+              </span>
             </div>
             <div className="flex justify-between w-full">
               <span className="text-sm text-secondary">UPI ID Linked</span>
-              <span className="text-lg text-blue">dummy@icicibank</span>
+              <span className="text-lg text-blue">NA</span>
             </div>
           </div>
         </div>
