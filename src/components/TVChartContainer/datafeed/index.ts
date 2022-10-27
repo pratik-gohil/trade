@@ -67,15 +67,12 @@ export default {
     http
       .getBars(symbolInfo, resolution, periodParams)
       .then((bars) => {
-        console.log("before plot", bars.length);
         if (bars.length > 0) {
           if (firstDataRequest) {
             lastBarsCache.set(symbolInfo.full_name, {
               ...bars[bars.length - 1],
             });
           }
-
-          console.log(bars);
 
           onHistoryCallback(bars, { noData: false });
         } else {

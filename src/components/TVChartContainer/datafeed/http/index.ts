@@ -68,8 +68,6 @@ export default {
     const startTime = ohlcDateTimeFormat(from);
     const endTime = ohlcDateTimeFormat(to);
 
-    console.log(startTime, endTime);
-
     const bars = await ohcl({
       exchangeSegment: Segments[symbolInfo.exchange],
       exchangeInstrumentID: symbolInfo.exchangeInstrumentID,
@@ -113,8 +111,6 @@ export default {
         return [];
       }
     });
-
-    console.log("test", bars);
 
     return bars;
   },
