@@ -182,7 +182,7 @@ export const Header = () => {
           <span className="rounded-full">
             <AccountCircleIcon />
           </span>
-          <span>{user.userID || user.ClientId}</span>
+          <span>{user.ClientId}</span>
         </div>
         <div
           ref={menuModalRef}

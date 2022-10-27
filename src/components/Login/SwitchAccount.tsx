@@ -25,9 +25,9 @@ export default function SwitchAccount({ setLoginFlowCurrentState }) {
             </div>
             <div>
               <div className="text-lg text-[#41414e] font-semibold">
-                {user?.firstName} {user?.lastName}
+                {user?.ClientName}
               </div>
-              <div>{user?.userID}</div>
+              <div>{user?.ClientId}</div>
             </div>
           </div>
           <div className="cursor-pointer text-[#41414e]">
@@ -41,9 +41,9 @@ export default function SwitchAccount({ setLoginFlowCurrentState }) {
             </div>
             <div>
               <div className="text-lg text-[#41414e] font-semibold">
-                {user?.firstName} {user?.lastName}
+                {user?.ClientName}
               </div>
-              <div>{user?.userID}</div>
+              <div>{user?.ClientId}</div>
             </div>
           </div>
           <div className="cursor-pointer text-[#41414e]">
@@ -57,9 +57,9 @@ export default function SwitchAccount({ setLoginFlowCurrentState }) {
             </div>
             <div>
               <div className="text-lg text-[#41414e] font-semibold">
-                {user?.firstName} {user?.lastName}
+                {user?.ClientName}
               </div>
-              <div>{user?.userID}</div>
+              <div>{user?.ClientId}</div>
             </div>
           </div>
           <div className="cursor-pointer text-[#41414e]">
@@ -73,9 +73,9 @@ export default function SwitchAccount({ setLoginFlowCurrentState }) {
             </div>
             <div>
               <div className="text-lg text-[#41414e] font-semibold">
-                {user?.firstName} {user?.lastName}
+                {user?.ClientName}
               </div>
-              <div>{user?.userID}</div>
+              <div>{user?.ClientId}</div>
             </div>
           </div>
           <div className="cursor-pointer text-[#41414e]">
@@ -89,9 +89,9 @@ export default function SwitchAccount({ setLoginFlowCurrentState }) {
             </div>
             <div>
               <div className="text-lg text-[#41414e] font-semibold">
-                {user?.firstName} {user?.lastName}
+                {user?.ClientName}
               </div>
-              <div>{user?.userID}</div>
+              <div>{user?.ClientId}</div>
             </div>
           </div>
           <div className="cursor-pointer text-[#41414e]">
@@ -105,9 +105,9 @@ export default function SwitchAccount({ setLoginFlowCurrentState }) {
             </div>
             <div>
               <div className="text-lg text-[#41414e] font-semibold">
-                {user?.firstName} {user?.lastName}
+                {user?.ClientName}
               </div>
-              <div>{user?.userID}</div>
+              <div>{user?.ClientId}</div>
             </div>
           </div>
           <div className="cursor-pointer text-[#41414e]">

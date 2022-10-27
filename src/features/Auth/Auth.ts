@@ -1,23 +1,52 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+export interface IUser {
+  // userID?: string;
+  ClientId: string;
+  ClientName: string;
+  EmailId: string;
+  MobileNo: string;
+  PAN: string;
+  DematAccountNumber: string;
+  IncludeInAutoSquareoff: boolean;
+  IncludeInAutoSquareoffBlocked: boolean;
+  IsProClient: boolean;
+  IsInvestorClient: boolean;
+  ResidentialAddress: string;
+  OfficeAddress: string;
+  ClientBankInfoList: IClientBankInfoList[];
+  ClientExchangeDetailsList: ClientExchangeDetailsList | {};
+}
+
+export interface IClientBankInfoList {
+  ClientId: string;
+  AccountNumber: string;
+  AccountType: string;
+  BankName: string;
+  BankBranchName: string;
+  BankCity: string;
+  CustomerId: string;
+  BankCityPincode: string;
+  BankIFSCCode: string;
+}
+
+export interface ClientExchangeDetailsList {
+  NSECM: NSECM;
+  NSEFO: NSECM;
+  NSECD: NSECM;
+  BSECM: NSECM;
+  MCXFO: NSECM;
+}
+
+export interface NSECM {
+  ClientId: string;
+  ExchangeSegNumber: number;
+  Enabled: boolean;
+  ParticipantCode: string;
+}
+
 export interface IAuth {
-  user: {
-    userID: string;
-    firstName: string;
-    lastName: string;
-    ClientId: string;
-    ClientName: string;
-    EmailId: string;
-    IncludeInAutoSquareoff: boolean;
-    IncludeInAutoSquareoffBlocked: boolean;
-    IsInvestorClient: boolean;
-    IsProClient: boolean;
-    MobileNo: string;
-    OfficeAddress: string;
-    PAN: string;
-    ResidentialAddress: string;
-    ClientBankInfoList: IClientBankInfoList[];
-  };
+  user: IUser;
 }
 
 export interface IClientBankInfoList {
@@ -34,9 +63,6 @@ export interface IClientBankInfoList {
 
 const initialState: IAuth = {
   user: {
-    userID: "",
-    firstName: "",
-    lastName: "",
     ClientId: "",
     ClientName: "",
     EmailId: "",
@@ -49,6 +75,8 @@ const initialState: IAuth = {
     PAN: "",
     ResidentialAddress: "",
     ClientBankInfoList: [],
+    ClientExchangeDetailsList: {},
+    DematAccountNumber: "",
   },
 };
 

@@ -9,14 +9,14 @@ import { asyncLocalStorage } from "../../utils/asyncLocalStorage";
 import { PasswordInput } from "../PasswordInput/PasswordInput";
 const { CLIENT_CODES, CLIENT_ID, TOKEN, USER_ID } = constants;
 
-export const ClientLoginPIN = ({ setLoginFlowCurrentState }) => {
+export const ClientLoginPIN = ({ setLoginFlowCurrentState, userID }) => {
   const user = useSelector((state: RootState) => state.auth.user);
   const [PIN, setPIN] = useState("123456");
   const navigate = useNavigate();
 
   const handleValidatePIN = async () => {
     const data = await validatePIN({
-      userID: user?.userID,
+      userID,
       pin: PIN,
       source: "EnterpriseWeb",
     });
@@ -50,9 +50,9 @@ export const ClientLoginPIN = ({ setLoginFlowCurrentState }) => {
           </div>
           <div>
             <div className="text-lg text-[#41414e] font-semibold">
-              {user?.firstName} {user?.lastName}
+              {user?.ClientName}
             </div>
-            <div>{user?.userID}</div>
+            <div>{user?.ClientId}</div>
           </div>
         </div>
         <div
