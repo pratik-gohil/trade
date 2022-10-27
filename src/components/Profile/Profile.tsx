@@ -13,7 +13,6 @@ const getEnabledSegments = (segments: ClientExchangeDetailsList | {}) => {
 
 function Profile() {
   const user = useSelector((state: RootState) => state.auth.user);
-  console.log(user);
   const {
     ClientName,
     ClientId,
@@ -31,7 +30,7 @@ function Profile() {
     BankBranchName,
     BankCity,
     BankCityPincode,
-  } = ClientBankInfoList[0];
+  } = ClientBankInfoList[0] || [];
 
   return (
     <div className="p-5">
@@ -74,21 +73,21 @@ function Profile() {
             </div>
           </div>
           <div className="flex gap-5 py-5">
-            <div className="flex justify-between w-full">
+            <div className="flex justify-between w-full gap-5">
               <span className="text-sm text-secondary">Mobile</span>
               <span className="text-lg text-primary">{MobileNo}</span>
             </div>
-            <div className="flex justify-between w-full">
+            <div className="flex justify-between w-full gap-5">
               <span className="text-sm text-secondary">Email</span>
               <span className="text-lg text-primary">{EmailId}</span>
             </div>
           </div>
           <div className="flex gap-5">
-            <div className="flex justify-between w-full">
+            <div className="flex justify-between w-full gap-5">
               <span className="text-sm text-secondary">PAN</span>
               <span className="text-lg text-primary">{PAN}</span>
             </div>
-            <div className="flex justify-between w-full">
+            <div className="flex justify-between w-full gap-5">
               <span className="text-sm text-secondary">Segments</span>
               <span className="text-lg text-blue">
                 {getEnabledSegments(ClientExchangeDetailsList)}
@@ -105,23 +104,23 @@ function Profile() {
             </div>
           </div>
           <div className="flex gap-5 py-5">
-            <div className="flex justify-between w-full">
+            <div className="flex justify-between w-full gap-5">
               <span className="text-sm text-secondary">Bank</span>
               <span className="text-lg text-primary">{BankName}</span>
             </div>
-            <div className="flex justify-between w-full">
+            <div className="flex justify-between w-full gap-5">
               <span className="text-sm text-secondary">Account</span>
               <span className="text-lg text-primary">{AccountNumber}</span>
             </div>
           </div>
           <div className="flex gap-5">
-            <div className="flex justify-between w-full">
+            <div className="flex justify-between w-full gap-5">
               <span className="text-sm text-secondary">Branch</span>
               <span className="text-lg text-primary">
                 {BankBranchName}, {BankCity}, {BankCityPincode}
               </span>
             </div>
-            <div className="flex justify-between w-full">
+            <div className="flex justify-between w-full gap-5">
               <span className="text-sm text-secondary">UPI ID Linked</span>
               <span className="text-lg text-blue">NA</span>
             </div>

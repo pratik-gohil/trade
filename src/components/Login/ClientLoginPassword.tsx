@@ -1,8 +1,6 @@
 import { FormControlLabel } from "@mui/material";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
 import CustomCheckbox from "../Checkbox/Checkbox";
-import { setUserReducer } from "../../features/Auth/Auth";
 import { validateUser } from "../../http/validateUser/validateUser";
 import { PasswordInput } from "../PasswordInput/PasswordInput";
 
@@ -10,7 +8,6 @@ export function ClientLoginPassword({
   setLoginFlowCurrentState,
   setUserID: setUserIDGlobal,
 }) {
-  const dispatch = useDispatch();
   const [userID, setUserID] = useState("");
   const [password, setPassword] = useState("");
 
@@ -36,7 +33,7 @@ export function ClientLoginPassword({
         placeholder="User ID"
         className="outline-none border border-border rounded-lg p-3 text-xl"
         value={userID}
-        onChange={(e) => setUserID(e.target.value)}
+        onChange={(e) => setUserID(e.target.value.toUpperCase())}
       />
       <PasswordInput
         placeholder="Password"
