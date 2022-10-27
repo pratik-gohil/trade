@@ -40,22 +40,6 @@ export function ClientLoginPassword({
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <div className="flex gap-3">
-        <FormControlLabel
-          sx={{
-            fontSize: "12px",
-            margin: 0,
-            display: "flex",
-            gap: 0.5,
-          }}
-          control={<CustomCheckbox />}
-          label={
-            <span className="text-xs text-[#41414e] cursor-pointer">
-              Save Account
-            </span>
-          }
-        />
-      </div>
       <div className="flex flex-col gap-[30px] justify-center items-center mt-auto">
         <button
           onClick={handlevalidateUser}
