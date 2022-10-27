@@ -25,7 +25,6 @@ function CorporateActionTable({ type, instrument }) {
   useEffect(() => {
     // if (type && instrument) {
     getCorporateAction({ type, name: instrument.DisplayName }).then((res) => {
-      console.log(type, res[type]);
       if (res.tableHeaders && res[type]) {
         const _cols = res.tableHeaders.map(({ unique_name }) => unique_name);
         setCols(_cols);
@@ -45,7 +44,6 @@ function CorporateActionTable({ type, instrument }) {
       }
     });
 
-    console.log(cols, actions);
     // }
   }, [type, instrument]);
 
