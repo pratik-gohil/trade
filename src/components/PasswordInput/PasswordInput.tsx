@@ -18,12 +18,12 @@ export function PasswordInput({ placeholder, value, onChange }) {
         value={value}
       />
       {passwordIsMasked ? (
-        <Visibility className="cursor-pointer" onClick={togglePasswordMask} />
-      ) : (
         <VisibilityOff
           className="cursor-pointer"
           onClick={togglePasswordMask}
         />
+      ) : (
+        <Visibility className="cursor-pointer" onClick={togglePasswordMask} />
       )}
     </div>
   );

@@ -6,7 +6,7 @@ import { RootState } from "../../app/store";
 import { constants } from "../../constants/global";
 import { validatePIN } from "../../http/validatePIN/validatePIN";
 import { asyncLocalStorage } from "../../utils/asyncLocalStorage";
-import { PasswordInput } from "../PasswordInput/PasswordInput";
+import { PasswordInput } from "../PasswordInput";
 const { CLIENT_CODES, CLIENT_ID, TOKEN, USER_ID } = constants;
 
 export const ClientLoginPIN = ({ setLoginFlowCurrentState, userID }) => {

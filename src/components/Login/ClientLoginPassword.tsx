@@ -2,7 +2,7 @@ import { FormControlLabel } from "@mui/material";
 import { useState } from "react";
 import CustomCheckbox from "../Checkbox/Checkbox";
 import { validateUser } from "../../http/validateUser/validateUser";
-import { PasswordInput } from "../PasswordInput/PasswordInput";
+import { PasswordInput } from "../PasswordInput";
 
 export function ClientLoginPassword({
   setLoginFlowCurrentState,
