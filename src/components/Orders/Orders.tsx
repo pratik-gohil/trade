@@ -72,10 +72,20 @@ export interface IOrderWithMarketDepth extends IOrder, IMarketDepth {
   ExchangeSegment: any;
 }
 
+const filters = [
+  { name: "Orders", filter: "Orders" },
+  { name: "GTT", filter: "GTT" },
+  { name: "Basket", filter: "Basket" },
+  { name: "SIP", filter: "SIP" },
+  { name: "Alerts", filter: "Alerts" },
+  { name: "IPO", filter: "IPO" },
+];
+
 export function Orders() {
   const [orders, setOrders] = useState<IOrderWithMarketDepth[]>([]);
   const { socket } = useContext(SocketContext) as { socket: any };
   const isOpen = useSelector((state: RootState) => state.orderModal.visible);
+  const [filterType, setFilterType] = useState("All");
 
   const fetchOrders = async () => {
     let orderIds;
@@ -128,10 +138,25 @@ export function Orders() {
   }, []);
 
   return (
-    <>
-      <OpenOrders orders={orders} fetchOrders={fetchOrders} />
-      <ExecutedOrders orders={orders} fetchOrders={fetchOrders} />
-      <GTTOrders fetchOrders={fetchOrders} />
-    </>
+    <div className="h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] overflow-hidden flex flex-col">
+      <div className="p-5 flex-1 overflow-y-scroll">
+        <OpenOrders orders={orders} fetchOrders={fetchOrders} />
+        <ExecutedOrders orders={orders} fetchOrders={fetchOrders} />
+        <GTTOrders fetchOrders={fetchOrders} />
+      </div>
+      <div className="sticky flex gap-4 bottom-0 w-full border-t px-5 py-2 bg-white">
+        {filters.map((filter) => (
+          <div
+            key={filter.name}
+            className={`${
+              filter.filter === filterType ? "selected-tab" : "text-secondary"
+            } py-1 px-2 rounded cursor-pointer text-lg`}
+            onClick={() => setFilterType(filter.filter)}
+          >
+            {filter.name}
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

@@ -379,7 +379,7 @@ export function Positions() {
 
   return (
     <>
-      <div className="p-5">
+      <div className="p-5 h-full">
         <Box sx={{ width: "100%" }}>
           <EnhancedTableToolbar
             search={search}

@@ -164,7 +164,7 @@ export default function OpenOrders({ orders, fetchOrders }) {
   if (!(openOrders.length > 0)) return null;
 
   return (
-    <div className="p-5">
+    <>
       <Box sx={{ width: "100%" }}>
         <EnhancedTableToolbar
           heading="Open Orders"
@@ -260,6 +260,6 @@ export default function OpenOrders({ orders, fetchOrders }) {
         setShowDetails={setShowDetails}
         showDetails={showDetails}
       />
-    </div>
+    </>
   );
 }
