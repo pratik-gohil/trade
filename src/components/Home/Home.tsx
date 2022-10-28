@@ -34,8 +34,9 @@ function Home({ instrument }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    instrument.ExchangeInstrumentID === 26000 && navigate("/home/chart");
-  }, []);
+    console.log(instrument);
+    instrument.PreferredExchangeSegment === 0 && navigate("/home/chart");
+  }, [instrument]);
 
   return (
     <div className="h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] overflow-hidden flex flex-col gap-3">
@@ -43,7 +44,7 @@ function Home({ instrument }) {
         <div className="border p-2 rounded-md">header</div>
         <Outlet />
       </div>
-      {instrument.ExchangeInstrumentID !== 26000 ? (
+      {instrument.PreferredExchangeSegment !== 0 ? (
         <TVCFooter />
       ) : (
         <div className="mb-3" />
