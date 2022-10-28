@@ -117,9 +117,44 @@ export function OrderModal() {
 
   const handleFormReset = () => {};
 
+  console.log(instrument);
+
   const handleOrder = async (e) => {
     e.preventDefault();
     let response;
+    if (price > (instrument as IInstrument)?.PriceBand.High) {
+      alert(
+        `order price should be less than or equal to upper circuit (${
+          (instrument as IInstrument)?.PriceBand.High
+        })`
+      );
+      return;
+    }
+    if (price < (instrument as IInstrument)?.PriceBand.Low) {
+      alert(
+        `order price should be greater than or equal to lower circuit (${
+          (instrument as IInstrument)?.PriceBand.Low
+        })`
+      );
+      return;
+    }
+    if (orderQuantity > (instrument as IInstrument)?.FreezeQty) {
+      alert(
+        `Order quantity should be less than Freeze Quantity (${
+          (instrument as IInstrument)?.FreezeQty
+        })`
+      );
+      return;
+    }
+    if (price % (instrument as IInstrument)?.TickSize !== 0) {
+      alert(`Order Price not according to tick size`);
+      return;
+    }
+    if (orderQuantity % (instrument as IInstrument)?.LotSize !== 0) {
+      alert(`Order Quantity should be less than lot size`);
+      return;
+    }
+
     if (isModify) {
       response = await modifyOrder({
         appOrderID: (instrument as IOrderWithMarketDepth).AppOrderID,
