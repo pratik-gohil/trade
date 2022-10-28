@@ -80,6 +80,8 @@ interface IGroupSymbol {
   exchangeInstrumentID: string;
 }
 
+export const maxWatchlistSize = 50;
+
 export function WatchList() {
   const [search, setSearch] = useState<any>(null);
   const [selectedIndiceType, setSelectedIndiceType] = useState("Indian");
@@ -483,8 +485,9 @@ export function WatchList() {
                   className="cursor-pointer"
                 />
               ) : (
-                <></>
-                // <span>5/10</span>
+                <span>
+                  {instruments.length}/{maxWatchlistSize}
+                </span>
               )}
             </div>
           </div>
