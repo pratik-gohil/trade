@@ -26,18 +26,18 @@ import {
 import Divider from "../Divider/Divider";
 
 const links = [
-  {
-    name: "Home",
-    path: "/home/chart",
-  },
-  {
-    name: "Markets",
-    path: "/markets",
-  },
-  {
-    name: "Baskets",
-    path: "/baskets",
-  },
+  // {
+  //   name: "Home",
+  //   path: "/home/chart",
+  // },
+  // {
+  //   name: "Markets",
+  //   path: "/markets",
+  // },
+  // {
+  //   name: "Baskets",
+  //   path: "/baskets",
+  // },
   {
     name: "Orders",
     path: "/orders",
@@ -53,6 +53,10 @@ const links = [
   {
     name: "Funds",
     path: "/funds",
+  },
+  {
+    name: "TradeBox",
+    path: "/tradebox",
   },
   {
     name: "Analyse",
@@ -160,7 +164,7 @@ export const Header = () => {
         </div>
       </div>
       <div className="flex justify-between items-center gap-4 w-full px-5">
-        <div className="text-sm flex gap-4 justify-between w-full ml-4">
+        <div className="text-sm flex gap-8 justify-end w-full ml-4">
           {links.map((link) => (
             <NavLink
               key={link.path}
