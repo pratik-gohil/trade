@@ -117,7 +117,7 @@ function Profile() {
             <div className="flex justify-between w-full gap-5">
               <span className="text-sm text-secondary">Branch</span>
               <span className="text-lg text-primary">
-                {BankBranchName}, {BankCity}, {BankCityPincode}
+                {[BankBranchName, BankCity, BankCityPincode].join(", ")}
               </span>
             </div>
             <div className="flex justify-between w-full gap-5">
