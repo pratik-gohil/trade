@@ -46,16 +46,11 @@ export const ClientLoginPIN = ({ setLoginFlowCurrentState, userID }) => {
       </h1>
 
       <div className="flex justify-between items-center">
-        <div className="flex gap-4">
+        <div className="flex justify-between gap-4">
           <div className="rounded-full bg-blue-gradient text-white w-10 h-10 text-center text-lg font-medium flex justify-center items-center">
-            {/* {user?.firstName[0] + user?.lastName[0]} */}
+            {userID[0]}
           </div>
-          <div>
-            <div className="text-lg text-[#41414e] font-semibold">
-              {user?.ClientName}
-            </div>
-            <div>{user?.ClientId}</div>
-          </div>
+          <div className="text-lg text-[#41414e] font-semibold">{userID}</div>
         </div>
         <div
           onClick={() => setLoginFlowCurrentState("switchAccount")}
