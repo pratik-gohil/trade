@@ -11,6 +11,7 @@ import { Data, IOrderWithMarketDepth, Order } from "./Orders";
 import { deleteOrder } from "../../http/deleteOrder/deleteOrder";
 import { OrderTableRow } from "./OrderTableRow";
 import OrderDetailsModal from "./OrderDetailsModal";
+import { Modal, TableHead, TableRow } from "@mui/material";
 
 const headCells: readonly HeadCell[] = [
   {
@@ -71,6 +72,7 @@ export default function OpenOrders({ orders, fetchOrders }) {
   const [showDetails, setShowDetails] = useState<IOrderWithMarketDepth | null>(
     null
   );
+  const [showCancelModal, setShowCancelModal] = useState(false);
 
   const openOrders = useMemo(() => {
     return orders.filter(
@@ -164,7 +166,7 @@ export default function OpenOrders({ orders, fetchOrders }) {
   if (!(openOrders.length > 0)) return null;
 
   return (
-    <>
+    <div>
       <Box sx={{ width: "100%" }}>
         <EnhancedTableToolbar
           heading="Open Orders"
@@ -245,7 +247,7 @@ export default function OpenOrders({ orders, fetchOrders }) {
       </Box>
       <div className="flex gap-[10px] mt-[10px]">
         <button
-          onClick={handleCancelAll}
+          onClick={() => setShowCancelModal(true)}
           type="button"
           className="text-white bg-red-gradient px-2 py-1 rounded-md text-lg font-medium"
         >
@@ -260,6 +262,74 @@ export default function OpenOrders({ orders, fetchOrders }) {
         setShowDetails={setShowDetails}
         showDetails={showDetails}
       />
-    </>
+
+      <Modal open={showCancelModal} onClose={() => setShowCancelModal(false)}>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg w-fit min-w-[418px] overflow-hidden">
+          <div
+            className="bg-neutral-gradient px-5 py-2.5 flex items-center
+            w-full justify-between
+          "
+          >
+            <span className="text-primary text-2xl font-semibold">
+              Cancel Orders?
+            </span>
+          </div>
+          <Box sx={{ width: "100%" }}>
+            <TableContainer>
+              <Table>
+                <EnhancedTableHead
+                  headCells={[
+                    {
+                      label: "Scrip",
+                      id: "scrip",
+                    },
+                    {
+                      label: "Quantity",
+                      id: "quantity",
+                    },
+                    {
+                      label: "Price",
+                      id: "price",
+                    },
+                    {
+                      label: "Time",
+                      id: "time",
+                    },
+                    {
+                      label: "Product",
+                      id: "product",
+                    },
+                    // {
+                    //   label: "",
+                    //   id: "",
+                    // },
+                  ]}
+                  order={order}
+                  orderBy={orderBy}
+                  onRequestSort={() => {}}
+                  rowCount={orders.length}
+                />
+                <TableBody>
+                  {[].map((row, index) => {
+                    return <TableRow></TableRow>;
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+          <div className="flex gap-6 justify-center py-6">
+            <button
+              onClick={() => setShowCancelModal(false)}
+              className="w-[180px] py-2 border rounded-md text-secondary h-10"
+            >
+              Close
+            </button>
+            <button className="w-[180px] py-2 border rounded-md text-white bg-failure h-10">
+              Cancel Orders
+            </button>
+          </div>
+        </div>
+      </Modal>
+    </div>
   );
 }
