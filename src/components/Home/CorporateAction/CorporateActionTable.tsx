@@ -8,7 +8,7 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import { EnhancedTableHead, HeadCell } from "../../Orders/EnhancedTableHead";
 import { Order } from "../../Orders";
-import { getCorporateAction } from "../../../http/fundamental/CorporateAction/Dividend";
+import { getCorporateAction } from "../../../http/fundamental/CorporateAction";
 
 function CorporateActionTable({ type, instrument }) {
   const [order, setOrder] = useState<Order>("asc");
@@ -26,7 +26,10 @@ function CorporateActionTable({ type, instrument }) {
     // if (type && instrument) {
     getCorporateAction({ type, name: instrument.DisplayName }).then((res) => {
       if (res.tableHeaders && res[type]) {
-        const _cols = res.tableHeaders.map(({ unique_name }) => unique_name);
+        const _cols = res.tableHeaders.map(({ unique_name, type }) => ({
+          unique_name,
+          type,
+        }));
         setCols(_cols);
 
         setHeadCells(
@@ -38,7 +41,13 @@ function CorporateActionTable({ type, instrument }) {
 
         setActions(
           res[type].map((action) => {
-            return _cols.reduce((a, b, i) => ({ ...a, [b]: action[i] }), {});
+            return _cols.reduce(
+              (a, b, i) => ({
+                ...a,
+                [b.unique_name]: action[i],
+              }),
+              {}
+            );
           })
         );
       }
@@ -62,7 +71,14 @@ function CorporateActionTable({ type, instrument }) {
             {actions.map((action, index) => (
               <TableRow tabIndex={-1} key={index.toString()}>
                 {cols.map((col, i) => (
-                  <TableCell key={i}>{action[col]}</TableCell>
+                  <TableCell
+                    key={i}
+                    className={`${
+                      col.type === "date" ? "whitespace-nowrap" : ""
+                    }`}
+                  >
+                    {action[col.unique_name]}
+                  </TableCell>
                 ))}
               </TableRow>
             ))}
