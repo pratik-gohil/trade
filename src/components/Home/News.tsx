@@ -45,9 +45,7 @@ function News({ instrument }) {
 
   return (
     <div className="p-5 border rounded-md">
-      <h1 id="test" className="text-primary text-2xl font-bold">
-        News
-      </h1>
+      <h1 className="text-primary text-2xl font-bold">News</h1>
       <div className="flex flex-col h-fit overflow-y-auto max-h-[calc(100vh-4rem-40px-45px-2.5rem-27px-3rem)] overflow-hidden">
         {newsList.map((n, i) => (
           <div key={i} className="flex py-5 border-b">

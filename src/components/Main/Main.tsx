@@ -9,7 +9,7 @@ import { WatchList } from "../WatchList";
 import Home from "../Home/Home";
 import News from "../Home/News";
 import BulkBlock from "../Home/BulkBlock";
-import InsiderTrades from "../Home/InsiderTrades";
+// import InsiderTrades from "../Home/InsiderTrades";
 import Funds from "../Funds/Funds";
 import Fundamentals from "../Home/Fundamentals";
 import Overview from "../Home/Fundamentals/Overview";
@@ -53,10 +53,10 @@ export function Main() {
               path="bulk-block-deals"
               element={<BulkBlock instrument={instrument} />}
             />
-            <Route
+            {/* <Route
               path="insider-trades"
               element={<InsiderTrades instrument={instrument} />}
-            />
+            /> */}
             <Route path="corporate-action" element={<CorporateAction />}>
               <Route
                 path="dividend"
