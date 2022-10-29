@@ -43,6 +43,7 @@ import useDebounce from "../../hooks/useDebouce";
 import { toFixedN } from "../../utils/toFixedN";
 import { filterObject } from "../../utils/filterObject";
 import { tvcReducer } from "../../features/TVChart/TVChart";
+import { useNavigate } from "react-router-dom";
 const { USER_ID } = constants;
 
 interface IMasterInstrument {
@@ -83,6 +84,7 @@ interface IGroupSymbol {
 export const maxWatchlistSize = 50;
 
 export function WatchList() {
+  const navigate = useNavigate();
   const [search, setSearch] = useState<any>(null);
   const [selectedIndiceType, setSelectedIndiceType] = useState("Indian");
   const [selectedGroup, setSelectedGroup] = useState("Indices");
@@ -806,7 +808,10 @@ export function WatchList() {
                           S
                         </div>
                         <div
-                          onClick={() => dispatch(tvcReducer({ instrument }))}
+                          onClick={() => {
+                            dispatch(tvcReducer({ instrument }));
+                            navigate("/home/chart");
+                          }}
                           className="w-10 h-7 overflow-hidden cursor-pointer rounded-sm flex justify-center items-center bg-white text-primary border border-primary"
                         >
                           <CandlestickChart />

@@ -139,7 +139,7 @@ export function Orders() {
 
   return (
     <div className="h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] overflow-hidden flex flex-col">
-      <div className="p-5 flex-1 overflow-y-scroll">
+      <div className="p-5 flex-1 overflow-y-scroll flex flex-col gap-5">
         <OpenOrders orders={orders} fetchOrders={fetchOrders} />
         <ExecutedOrders orders={orders} fetchOrders={fetchOrders} />
         <GTTOrders fetchOrders={fetchOrders} />

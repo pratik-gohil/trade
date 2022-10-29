@@ -161,7 +161,7 @@ export default function GTTOrders({ fetchOrders }) {
   };
 
   return orders.length > 0 ? (
-    <>
+    <div>
       <Box sx={{ width: "100%" }}>
         <EnhancedTableToolbar
           heading="GTT Orders"
@@ -287,6 +287,6 @@ export default function GTTOrders({ fetchOrders }) {
           </TableContainer>
         </TableContainer>
       </Box>
-    </>
+    </div>
   ) : null;
 }
