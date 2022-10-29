@@ -50,14 +50,14 @@ export function Main() {
             </Route>
             <Route path="news" element={<News instrument={instrument} />} />
             <Route
-              path="bulk%20&%20block%20deals"
+              path="bulk-block-deals"
               element={<BulkBlock instrument={instrument} />}
             />
             <Route
-              path="insider%20trades"
+              path="insider-trades"
               element={<InsiderTrades instrument={instrument} />}
             />
-            <Route path="corporate%20action" element={<CorporateAction />}>
+            <Route path="corporate-action" element={<CorporateAction />}>
               <Route
                 path="dividend"
                 element={
@@ -80,7 +80,7 @@ export function Main() {
                 }
               />
               <Route
-                path="board%20meet"
+                path="board-meet"
                 element={
                   <CorporateActionTable
                     type="BoardMeeting"

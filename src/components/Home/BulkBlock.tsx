@@ -57,7 +57,7 @@ function BulkBlock({ instrument }) {
     <div className="border rounded-md">
       <h1 className="pt-5 px-5 flex gap-4">
         <NavLink
-          to="/home/bulk%20&%20block%20deals"
+          to="/home/bulk-block-deals"
           className={({ isActive }) =>
             (isActive ? "text-blue font-medium" : "") + " text-lg"
           }
@@ -65,7 +65,7 @@ function BulkBlock({ instrument }) {
           Bulk & Block Deals
         </NavLink>
         <NavLink
-          to="/home/insider%20trades"
+          to="/home/insider-trades"
           className={({ isActive }) =>
             (isActive ? "text-blue font-medium" : "") + " text-lg"
           }
