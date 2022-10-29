@@ -3,13 +3,16 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 
 function TVCFooter() {
   const footerLinks = [
-    "Chart",
-    "Fundamentals",
-    "News",
-    "OI Stats",
-    "Option Chain",
-    "Bulk & Block Deals",
-    "Corporate Action",
+    {
+      label: "Chart",
+      path: "chart",
+    },
+    { label: "Fundamentals", path: "fundamentals" },
+    { label: "News", path: "news" },
+    { label: "OI Stats", path: "oi-stats" },
+    { label: "Option Chain", path: "option-chain" },
+    { label: "Bulk & Block Deals", path: "bulk-block-deals" },
+    { label: "Corporate Action", path: "corporate-action/dividend" },
   ];
 
   return (
@@ -20,10 +23,10 @@ function TVCFooter() {
             (isActive ? "selected-tab" : "text-secondary") +
             " py-1 px-2 rounded cursor-pointer text-lg"
           }
-          to={`/home/${link.toLowerCase().split(" ").join("%20")}`}
-          key={link}
+          to={`/home/${link.path}`}
+          key={link.path}
         >
-          {link}
+          {link.label}
         </NavLink>
       ))}
     </div>

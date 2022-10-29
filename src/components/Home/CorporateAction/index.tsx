@@ -44,7 +44,7 @@ function CorporateAction() {
           Split
         </NavLink>
         <NavLink
-          to="board%20meet"
+          to="board-meet"
           className={({ isActive }) =>
             `text-lg ${
               isActive
