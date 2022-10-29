@@ -55,7 +55,10 @@ function BulkBlock({ instrument }) {
   }, []);
   return (
     <div className="border rounded-md">
-      <h1 className="pt-5 px-5 flex gap-4">
+      <h1 className="pt-5 px-5 text-primary text-2xl font-bold">
+        Bulk & Block Deals
+      </h1>
+      {/* <h1 className="pt-5 px-5 flex gap-4">
         <NavLink
           to="/home/bulk-block-deals"
           className={({ isActive }) =>
@@ -72,7 +75,7 @@ function BulkBlock({ instrument }) {
         >
           Insider Trades
         </NavLink>
-      </h1>
+      </h1> */}
       <div className="max-h-[calc(100vh-4rem-40px-45px-2.5rem-3rem)] overflow-y-scroll">
         <TableContainer>
           <Table>
