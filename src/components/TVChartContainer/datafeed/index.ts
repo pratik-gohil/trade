@@ -35,7 +35,7 @@ export default {
       description: name,
       type: "stock",
       session: "2;0915-1530:23456",
-      timezone: "Asia/Kolkata",
+      timezone: "Etc/UTC",
       ticker: `${exchange}:${name}`,
       exchange,
       has_empty_bars: true,

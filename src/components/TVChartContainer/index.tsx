@@ -79,7 +79,7 @@ export class TVChartContainer extends React.PureComponent<
           .interval as ChartingLibraryWidgetOptions["interval"],
         container: this.ref.current,
         library_path: this.props.libraryPath as string,
-        timezone: "Asia/Kolkata",
+        timezone: "Etc/UTC",
         locale: getLanguageFromURL() || "en",
         disabled_features: [
           // "use_localstorage_for_settings",
@@ -133,7 +133,7 @@ export class TVChartContainer extends React.PureComponent<
           .interval as ChartingLibraryWidgetOptions["interval"],
         container: this.ref.current,
         library_path: this.props.libraryPath as string,
-        timezone: "Asia/Kolkata",
+        timezone: "Etc/UTC",
         locale: getLanguageFromURL() || "en",
         disabled_features: [
           "use_localstorage_for_settings",

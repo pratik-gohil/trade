@@ -14,7 +14,7 @@ const ohlcDateTimeFormat = (Epochtime) => {
       .join("") +
     " " +
     fromRealDate
-      .toLocaleTimeString("en-IN", { hour12: false, timeZone: "Asia/Kolkata" })
+      .toLocaleTimeString("en-IN", { hour12: false, timeZone: "Etc/UTC" })
       .split(":")
       .join("")
   );
