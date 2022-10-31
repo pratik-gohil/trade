@@ -60,7 +60,7 @@ const headCells: readonly HeadCell[] = [
 
 export default function OpenOrders({ orders, fetchOrders }) {
   const [allowSelection, setAllowSelection] = useState(false);
-  const [order, setOrder] = React.useState<Order>("asc");
+  const [order, setOrder] = React.useState<Order>("desc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("time");
   const [selected, setSelected] = React.useState<readonly number[]>([]);
 

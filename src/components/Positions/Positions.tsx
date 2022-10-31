@@ -214,7 +214,7 @@ export function Positions() {
   const [netPositions, setNetPositions] = useState<IPositionWithTouchline[]>(
     []
   );
-  const [order, setOrder] = React.useState<Order>("asc");
+  const [order, setOrder] = React.useState<Order>("desc");
   const [orderBy, setOrderBy] = React.useState<any>("scrips");
   const [selected, setSelected] = React.useState<readonly string[]>([]);
 
@@ -456,10 +456,10 @@ export function Positions() {
                           </span>
                         </TableCell>
                         <TableCell align="right">
-                          {row.BuyAveragePrice}
+                          {toFixedN(Number(row.BuyAveragePrice))}
                         </TableCell>
                         <TableCell align="right">
-                          {row?.Touchline?.LastTradedPrice || 0}
+                          {toFixedN(row?.Touchline?.LastTradedPrice || 0)}
                         </TableCell>
                         <TableCell align="right">
                           {row.calculatedMTM}
@@ -472,15 +472,13 @@ export function Positions() {
                           )} */}
                         </TableCell>
                         <TableCell align="right">
-                          {row?.Touchline?.LastTradedPrice
-                            ? toFixedN(
-                                ((Number(row.BuyAveragePrice) -
-                                  (row?.Touchline?.LastTradedPrice || 0)) /
-                                  (row?.Touchline?.LastTradedPrice || 0)) *
-                                  100,
-                                2
-                              )
-                            : 0}
+                          {toFixedN(
+                            (((Number(row.BuyAveragePrice) -
+                              (row?.Touchline?.LastTradedPrice || 0)) /
+                              (row?.Touchline?.LastTradedPrice || 0)) *
+                              100,
+                            2) || 0
+                          )}
                         </TableCell>
                       </TableRow>
                     );

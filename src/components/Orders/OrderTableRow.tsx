@@ -22,6 +22,7 @@ import { visiblityReducer } from "../../features/orderModal/orderModal";
 import { useDispatch } from "react-redux";
 import { IOrderWithMarketDepth } from "./Orders";
 import { Dispatch, SetStateAction } from "react";
+import { toFixedN } from "../../utils/toFixedN";
 
 export const OrderTableRow = ({
   row,
@@ -268,12 +269,12 @@ export const OrderTableRow = ({
       </TableCell>
       <TableCell align="right">
         <span className="text-[#a9a9a9] text-base text-right">
-          {row.OrderPrice}
+          {toFixedN(row.OrderPrice)}
         </span>
       </TableCell>
       <TableCell align="right">
         <span className="text-primary text-base">
-          {row?.Touchline?.LastTradedPrice || 0}
+          {toFixedN(row?.Touchline?.LastTradedPrice || 0)}
         </span>
       </TableCell>
     </TableRow>

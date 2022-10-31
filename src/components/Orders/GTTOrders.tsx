@@ -11,6 +11,7 @@ import { EnhancedTableToolbar } from "./EnhancedTableToolbar";
 import { EnhancedTableHead, HeadCell } from "./EnhancedTableHead";
 import { Data, Order } from "./Orders";
 import { getGTTOrders } from "../../http/getGTTOrders/getGTTOrders";
+import { toFixedN } from "../../utils/toFixedN";
 
 const headCells: readonly HeadCell[] = [
   {
@@ -60,7 +61,7 @@ const headCells: readonly HeadCell[] = [
 export default function GTTOrders({ fetchOrders }) {
   const [orders, setOrders] = useState<any>([]);
   const [allowSelection, setAllowSelection] = useState(false);
-  const [order, setOrder] = React.useState<Order>("asc");
+  const [order, setOrder] = React.useState<Order>("desc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("time");
   const [selected, setSelected] = React.useState<readonly number[]>([]);
 
@@ -277,7 +278,7 @@ export default function GTTOrders({ fetchOrders }) {
                       </TableCell>
                       <TableCell>
                         <span className="text-primary text-base">
-                          {row?.Touchline?.LastTradedPrice || 0}
+                          {toFixedN(row?.Touchline?.LastTradedPrice || 0)}
                         </span>
                       </TableCell>
                     </TableRow>

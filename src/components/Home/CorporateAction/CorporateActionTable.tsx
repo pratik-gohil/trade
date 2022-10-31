@@ -11,7 +11,7 @@ import { Order } from "../../Orders";
 import { getCorporateAction } from "../../../http/fundamental/CorporateAction";
 
 function CorporateActionTable({ type, instrument }) {
-  const [order, setOrder] = useState<Order>("asc");
+  const [order, setOrder] = useState<Order>("desc");
   const [orderBy, setOrderBy] = useState<any>("scrips");
   const [actions, setActions] = useState<any>([]);
   const [headCells, setHeadCells] = useState<any>([]);
