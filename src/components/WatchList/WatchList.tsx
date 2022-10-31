@@ -894,10 +894,12 @@ export function WatchList() {
                               {bid?.TotalOrders || 0}
                             </td>
                             <td className="p-1.5 text-success">
-                              {bid?.Price || 0}
+                              {toFixedN(bid?.Price || 0)}
                             </td>
                             <td className="p-1.5 text-failure">
-                              {instrumentMarketDepth?.Asks[i]?.Price || 0}
+                              {toFixedN(
+                                instrumentMarketDepth?.Asks[i]?.Price || 0
+                              )}
                             </td>
                             <td className="p-1.5 text-failure">
                               {instrumentMarketDepth?.Asks[i]?.Size || 0}
