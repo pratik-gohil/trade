@@ -1,4 +1,4 @@
-import { ArrowBack } from "@mui/icons-material";
+import { ArrowBack, Close } from "@mui/icons-material";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -10,9 +10,10 @@ import { PasswordInput } from "../PasswordInput";
 const { CLIENT_CODES, CLIENT_ID, TOKEN, USER_ID } = constants;
 
 export const ClientLoginPIN = ({ setLoginFlowCurrentState, userID }) => {
+  const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.auth.user);
   const [PIN, setPIN] = useState("");
-  const navigate = useNavigate();
+  const [error, setError] = useState("");
 
   const handleValidatePIN = async () => {
     const data = await validatePIN({
@@ -28,6 +29,9 @@ export const ClientLoginPIN = ({ setLoginFlowCurrentState, userID }) => {
       asyncLocalStorage.setItem(CLIENT_ID, data.result.userID);
 
       return true;
+    } else if (data.type === "error") {
+      setError(data.description);
+      return false;
     } else {
       return false;
     }
@@ -70,6 +74,14 @@ export const ClientLoginPIN = ({ setLoginFlowCurrentState, userID }) => {
         className="flex flex-col gap-[30px] justify-center
             items-center mt-auto"
       >
+        {error && (
+          <div className="flex justify-between text-xs font-medium text-primary py-2.5 px-3 bg-failureHighlight w-[360px] rounded">
+            <span>{error}</span>
+            <span className="bg-white rounded-full w-5 h-5">
+              <Close className="text-failure" sx={{ fontSize: "20px" }} />
+            </span>
+          </div>
+        )}
         <button
           onClick={async () =>
             await handleValidatePIN().then((res) => {
