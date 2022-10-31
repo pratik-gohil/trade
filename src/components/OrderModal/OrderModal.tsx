@@ -376,16 +376,18 @@ export function OrderModal() {
               >
                 Normal
               </div>
-              <div
-                onClick={() => setOrder("COVER")}
-                className={`${
-                  order === "COVER"
-                    ? "text-blue underline underline-offset-[8px] decoration-2"
-                    : ""
-                } cursor-pointer`}
-              >
-                Cover
-              </div>
+              {exchangeSegment === "NSECM" && (
+                <div
+                  onClick={() => setOrder("COVER")}
+                  className={`${
+                    order === "COVER"
+                      ? "text-blue underline underline-offset-[8px] decoration-2"
+                      : ""
+                  } cursor-pointer`}
+                >
+                  Cover
+                </div>
+              )}
               <div
                 onClick={() => setOrder("AMO")}
                 className={`${
