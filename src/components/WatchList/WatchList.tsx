@@ -29,7 +29,7 @@ import { SocketContext } from "../../socket";
 import { subscribeInstruments } from "../../http/subscribeInstruments/subscribeInstruments";
 import { unsubscribeInstruments } from "../../http/unsubscribeInstruments/unsubscribeInstruments";
 import { searchInstruments } from "../../http/searchInstruments/searchInstruments";
-import { Segments } from "../../types/enums/segment.enums.types";
+import { Segments, Series } from "../../types/enums/segment.enums.types";
 import { IInstrument } from "../../types/interfaces/instrument.interfaces.types";
 import { delSymbol } from "../../http/delSymbol/delSymbol";
 import { addSymbol } from "../../http/addSymbol/addSymbol";
@@ -756,7 +756,9 @@ export function WatchList() {
                         {instrument.DisplayName}
                       </div>
                       <div className="text-secondary text-xs">
-                        {Segments[instrument.ExchangeSegment]}
+                        {instrument.Series === "EQ"
+                          ? Series[Segments[instrument.ExchangeSegment]]
+                          : Series[instrument.Series]}
                       </div>
                     </div>
                     <div className="text-right">
