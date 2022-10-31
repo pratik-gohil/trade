@@ -37,7 +37,6 @@ function Home({ instrument }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(instrument);
     instrument.PreferredExchangeSegment === 0 && navigate("/home/chart");
   }, [instrument]);
 

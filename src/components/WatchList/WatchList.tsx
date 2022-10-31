@@ -522,8 +522,15 @@ export function WatchList() {
                           dispatch(
                             visiblityReducer({
                               visible: true,
-                              order: { orderSide: "BUY" },
-                              instrument,
+                              order: {
+                                orderSide: "BUY",
+                                instrument: {
+                                  exchangeInstrumentID:
+                                    instrument.exchangeInstrumentID,
+                                  exchangeSegment:
+                                    Segments[instrument.exchangeSegment],
+                                },
+                              },
                             })
                           )
                         }
@@ -536,8 +543,15 @@ export function WatchList() {
                           dispatch(
                             visiblityReducer({
                               visible: true,
-                              order: { orderSide: "SELL" },
-                              instrument,
+                              order: {
+                                orderSide: "SELL",
+                                instrument: {
+                                  exchangeInstrumentID:
+                                    instrument.exchangeInstrumentID,
+                                  exchangeSegment:
+                                    Segments[instrument.exchangeSegment],
+                                },
+                              },
                             })
                           )
                         }
@@ -782,7 +796,11 @@ export function WatchList() {
                                 visible: true,
                                 order: {
                                   orderSide: "BUY",
-                                  instrument,
+                                  instrument: {
+                                    exchangeInstrumentID:
+                                      instrument.ExchangeInstrumentID,
+                                    exchangeSegment: instrument.ExchangeSegment,
+                                  },
                                 },
                               })
                             )
@@ -798,7 +816,11 @@ export function WatchList() {
                                 visible: true,
                                 order: {
                                   orderSide: "SELL",
-                                  instrument,
+                                  instrument: {
+                                    exchangeInstrumentID:
+                                      instrument.ExchangeInstrumentID,
+                                    exchangeSegment: instrument.ExchangeSegment,
+                                  },
                                 },
                               })
                             )
