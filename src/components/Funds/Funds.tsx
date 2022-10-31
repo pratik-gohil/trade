@@ -12,7 +12,7 @@ function Funds() {
   const [balanceList, setBalanceList] = useState<any[]>([]);
   const [showAddFundsModal, setShowAddFundsModal] = useState(false);
   const [showFundsUPIModal, setShowFundsUPIModal] = useState(false);
-  const [amount, setAmount] = useState("260.00");
+  const [amount, setAmount] = useState("0.00");
   const [addFundsResponse, setAddFundsResponse] = useState<
     "success" | "failed" | null
   >(null);
@@ -164,27 +164,27 @@ function Funds() {
                 </span>
                 <span
                   onClick={() =>
-                    setAmount((amount) => `${Number(amount) + 5000}`)
+                    setAmount((amount) => `${Number(amount) + 10000}`)
                   }
                   className="text-xs text-secondary bg-secondaryHighlight px-3.5 cursor-pointer"
                 >
-                  +5000
+                  +10000
                 </span>
                 <span
                   onClick={() =>
-                    setAmount((amount) => `${Number(amount) + 5000}`)
+                    setAmount((amount) => `${Number(amount) + 50000}`)
                   }
                   className="text-xs text-secondary bg-secondaryHighlight px-3.5 cursor-pointer"
                 >
-                  +5000
+                  +50000
                 </span>
                 <span
                   onClick={() =>
-                    setAmount((amount) => `${Number(amount) + 5000}`)
+                    setAmount((amount) => `${Number(amount) + 100000}`)
                   }
                   className="text-xs text-secondary bg-secondaryHighlight px-3.5 cursor-pointer"
                 >
-                  +5000
+                  +100000
                 </span>
               </div>
               <div
