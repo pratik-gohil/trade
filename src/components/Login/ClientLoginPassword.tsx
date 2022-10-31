@@ -1,3 +1,4 @@
+import { Close } from "@mui/icons-material";
 import { useState } from "react";
 import { validateUser } from "../../http/validateUser/validateUser";
 import { PasswordInput } from "../PasswordInput";
@@ -8,6 +9,7 @@ export function ClientLoginPassword({
 }) {
   const [userID, setUserID] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handlevalidateUser = async () => {
     const data = await validateUser({
@@ -18,6 +20,10 @@ export function ClientLoginPassword({
     if (data.type === "success") {
       setUserIDGlobal(data.result.userID);
       setLoginFlowCurrentState("clientLoginPIN");
+    }
+
+    if (data.type === "error") {
+      setError(data.description);
     }
   };
 
@@ -39,6 +45,14 @@ export function ClientLoginPassword({
         onChange={(e) => setPassword(e.target.value)}
       />
       <div className="flex flex-col gap-[30px] justify-center items-center mt-auto">
+        {error && (
+          <div className="flex justify-between text-xs font-medium text-primary py-2.5 px-3 bg-failureHighlight w-[360px] rounded">
+            <span>{error}</span>
+            <span className="bg-white rounded-full w-5 h-5">
+              <Close className="text-failure" sx={{ fontSize: "20px" }} />
+            </span>
+          </div>
+        )}
         <button
           onClick={handlevalidateUser}
           className="bg-blue-gradient rounded-lg p-[10px] text-white font-semibold w-[360px]"
