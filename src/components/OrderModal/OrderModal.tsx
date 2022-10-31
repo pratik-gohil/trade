@@ -146,10 +146,10 @@ export function OrderModal() {
       );
       return;
     }
-    if (price % (instrument as IInstrument)?.TickSize !== 0) {
-      alert(`Order Price not according to tick size`);
-      return;
-    }
+    // if (price % (instrument as IInstrument)?.TickSize !== 0) {
+    //   alert(`Order Price not according to tick size`);
+    //   return;
+    // }
     if (orderQuantity % (instrument as IInstrument)?.LotSize !== 0) {
       alert(`Order Quantity should be less than lot size`);
       return;
@@ -174,30 +174,58 @@ export function OrderModal() {
         userID: localStorage.getItem(USER_ID),
       });
     } else {
+      const isCover = order === "COVER";
+      const data = isCover
+        ? {
+            exchangeSegment: isCM
+              ? exchangeSegment
+              : Segments[(instrument as IInstrument)?.ExchangeSegment],
+            exchangeInstrumentID: isCM
+              ? exchangeInstrumentID
+              : (instrument as IInstrument)?.ExchangeInstrumentID,
+            orderSide,
+            orderType,
+            orderQuantity,
+            disclosedQuantity,
+            limitPrice: price,
+            stopPrice:
+              orderType === "MARKET" || orderType === "StopMarket"
+                ? 0.0
+                : triggerPrice,
+            // "orderUniqueIdentifier":"XYZ1",
+            clientID: localStorage.getItem(CLIENT_ID),
+            userID: localStorage.getItem(USER_ID),
+          }
+        : {
+            clientID: localStorage.getItem(CLIENT_ID),
+            userID: localStorage.getItem(USER_ID),
+            exchangeSegment: isCM
+              ? exchangeSegment
+              : Segments[(instrument as IInstrument)?.ExchangeSegment],
+            exchangeInstrumentID: isCM
+              ? exchangeInstrumentID
+              : (instrument as IInstrument)?.ExchangeInstrumentID,
+            productType:
+              tradeType === "INTRADAY"
+                ? "MIS"
+                : exchangeSegment === "NSECM" || exchangeSegment === "BSECM"
+                ? "CNC"
+                : "NRML",
+            orderType,
+            orderSide,
+            timeInForce,
+            disclosedQuantity,
+            orderQuantity,
+            limitPrice: price,
+            stopPrice:
+              orderType === "MARKET" || orderType === "StopMarket"
+                ? 0.0
+                : triggerPrice,
+            isAMO: order === "AMO",
+          };
       response = await orderEntry({
-        clientID: localStorage.getItem(CLIENT_ID),
-        userID: localStorage.getItem(USER_ID),
-        exchangeSegment: isCM
-          ? exchangeSegment
-          : Segments[(instrument as IInstrument)?.ExchangeSegment],
-        exchangeInstrumentID: isCM
-          ? exchangeInstrumentID
-          : (instrument as IInstrument)?.ExchangeInstrumentID,
-        productType:
-          tradeType === "INTRADAY"
-            ? "MIS"
-            : exchangeSegment === "NSECM" || exchangeSegment === "BSECM"
-            ? "CNC"
-            : "NRML",
-        orderType,
-        orderSide,
-        timeInForce,
-        disclosedQuantity,
-        orderQuantity,
-        limitPrice: price,
-        stopPrice:
-          orderType === "MARKET" || orderType === "SL-M" ? 0.0 : triggerPrice,
-        isAMO: order === "AMO",
+        data,
+        isCover,
       });
     }
 
@@ -315,6 +343,7 @@ export function OrderModal() {
               </div>
               <div>
                 <button
+                  type="button"
                   className={`${
                     orderSide === "BUY" ? "bg-success" : "bg-failure"
                   } w-11 h-7 text-xs rounded-md font-medium text-white`}
@@ -442,14 +471,16 @@ export function OrderModal() {
                   value={price}
                   onChange={(value) => setPrice(value)}
                   step={0.05}
-                  disabled={orderType === "MARKET" || orderType === "SL-M"}
+                  disabled={
+                    orderType === "MARKET" || orderType === "StopMarket"
+                  }
 
                   // min={0.01}
                 />
                 <NumberInput
                   label="Trigger price"
                   // value={
-                  //   orderType === "MARKET" || orderType === "SL-M"
+                  //   orderType === "MARKET" || orderType === "StopMarket"
                   //     ? 0
                   //     : triggerPrice
                   // }
@@ -512,11 +543,11 @@ export function OrderModal() {
                     }}
                     control={
                       <CustomRadio
-                        checked={orderType === "SL"}
-                        onChange={() => setOrderType("SL")}
+                        checked={orderType === "StopLimit"}
+                        onChange={() => setOrderType("StopLimit")}
                       />
                     }
-                    value="sl"
+                    value="StopLimit"
                     label={
                       <span className="text-xs font-medium block">SL</span>
                     }
@@ -530,11 +561,11 @@ export function OrderModal() {
                     }}
                     control={
                       <CustomRadio
-                        checked={orderType === "SL-M"}
-                        onChange={() => setOrderType("SL-M")}
+                        checked={orderType === "StopMarket"}
+                        onChange={() => setOrderType("StopMarket")}
                       />
                     }
-                    value="sl-m"
+                    value="StopMarket"
                     label={
                       <span className="text-xs font-medium block">SL-M</span>
                     }
