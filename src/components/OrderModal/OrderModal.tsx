@@ -29,6 +29,7 @@ import { searchInstruments } from "../../http/searchInstruments/searchInstrument
 import { SocketContext } from "../../socket";
 import { subscribeInstruments } from "../../http/subscribeInstruments/subscribeInstruments";
 import { unsubscribeInstruments } from "../../http/unsubscribeInstruments/unsubscribeInstruments";
+import { getDecimal } from "../../utils/getDecimal";
 const { USER_ID, CLIENT_ID } = constants;
 
 let margin = 50;
@@ -227,10 +228,14 @@ export function OrderModal() {
       );
       return;
     }
-    // if (price % (instrument as IInstrument)?.TickSize !== 0) {
-    //   alert(`Order Price not according to tick size`);
-    //   return;
-    // }
+    if (
+      getDecimal(price) %
+        getDecimal((instrumentData as IInstrument)?.TickSize) !==
+      0
+    ) {
+      alert(`Order Price not according to tick size`);
+      return;
+    }
     if (orderQuantity % (instrumentData as IInstrument)?.LotSize !== 0) {
       alert(`Order Quantity should be less than lot size`);
       return;
@@ -746,9 +751,11 @@ export function OrderModal() {
                 <div className="flex justify-between">
                   <div>Available</div>
                   <div>
-                    {userBalanceList?.BalanceList?.[0] &&
-                      userBalanceList?.BalanceList?.[0]?.limitObject
-                        ?.RMSSubLimits?.netMarginAvailable}
+                    {toFixedN(
+                      userBalanceList?.BalanceList?.[0] &&
+                        userBalanceList?.BalanceList?.[0]?.limitObject
+                          ?.RMSSubLimits?.netMarginAvailable
+                    )}
                   </div>
                 </div>
               </div>
