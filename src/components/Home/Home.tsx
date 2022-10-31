@@ -12,7 +12,7 @@ function TVCFooter() {
     { label: "OI Stats", path: "oi-stats" },
     { label: "Option Chain", path: "option-chain" },
     { label: "Bulk & Block Deals", path: "bulk-block-deals" },
-    { label: "Corporate Action", path: "corporate-action/dividend" },
+    { label: "Corporate Action", path: "corporate-action" },
   ];
 
   return (
@@ -26,7 +26,7 @@ function TVCFooter() {
           to={`/home/${link.path}`}
           key={link.path}
         >
-          {link.label}
+          <a href={`/home/${link.path}`}>{link.label}</a>
         </NavLink>
       ))}
     </div>
