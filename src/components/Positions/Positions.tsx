@@ -462,7 +462,15 @@ export function Positions() {
                           {toFixedN(row?.Touchline?.LastTradedPrice || 0)}
                         </TableCell>
                         <TableCell align="right">
-                          {row.calculatedMTM}
+                          <span
+                            className={`${
+                              row.calculatedMTM > 0
+                                ? "text-success"
+                                : "text-failure"
+                            }`}
+                          >
+                            {row.calculatedMTM}
+                          </span>
                           {/* {Number(
                             MTM(
                               row.LastTradedPrice,
@@ -472,13 +480,26 @@ export function Positions() {
                           )} */}
                         </TableCell>
                         <TableCell align="right">
-                          {toFixedN(
-                            (((Number(row.BuyAveragePrice) -
-                              (row?.Touchline?.LastTradedPrice || 0)) /
-                              (row?.Touchline?.LastTradedPrice || 0)) *
-                              100,
-                            2) || 0
-                          )}
+                          <span
+                            className={`${
+                              ((((Number(row.BuyAveragePrice) -
+                                (row?.Touchline?.LastTradedPrice || 0)) /
+                                (row?.Touchline?.LastTradedPrice || 0)) *
+                                100,
+                              2) || 0) > 0
+                                ? "text-success"
+                                : "text-failure"
+                            }`}
+                          >
+                            {toFixedN(
+                              (((Number(row.BuyAveragePrice) -
+                                (row?.Touchline?.LastTradedPrice || 0)) /
+                                (row?.Touchline?.LastTradedPrice || 0)) *
+                                100,
+                              2) || 0
+                            )}
+                            %
+                          </span>
                         </TableCell>
                       </TableRow>
                     );
