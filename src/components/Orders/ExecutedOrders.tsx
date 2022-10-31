@@ -62,7 +62,7 @@ interface IExecutedOrders {
 }
 
 export default function ExecutedOrders({ orders }: IExecutedOrders) {
-  const [order, setOrder] = React.useState<Order>("asc");
+  const [order, setOrder] = React.useState<Order>("desc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("time");
 
   const [search, setSearch] = useState("");

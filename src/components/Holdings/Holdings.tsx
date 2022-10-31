@@ -74,7 +74,7 @@ const headCells: readonly HeadCell[] = [
 
 function Holdings() {
   const [holdings, setHoldings] = useState<any>([]);
-  const [order, setOrder] = React.useState<Order>("asc");
+  const [order, setOrder] = React.useState<Order>("desc");
   const [orderBy, setOrderBy] = React.useState<any>("scrips");
   const [investment, setInvestment] = useState(0);
   const [current, setCurrent] = useState(0);
@@ -209,8 +209,8 @@ function Holdings() {
                             (1000 * 60 * 60 * 24)
                         )}
                       </TableCell>
-                      <TableCell>{holding.BuyAvgPrice}</TableCell>
-                      <TableCell>{holding.LastTradedPrice}</TableCell>
+                      <TableCell>{toFixedN(holding.BuyAvgPrice)}</TableCell>
+                      <TableCell>{toFixedN(holding.LastTradedPrice)}</TableCell>
                       <TableCell>{toFixedN(invested)}</TableCell>
                       <TableCell>{toFixedN(current)}</TableCell>
                       <TableCell>
