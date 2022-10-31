@@ -200,7 +200,10 @@ export const OrderTableRow = ({
                       visible: true,
                       order: {
                         orderSide: row.OrderSide,
-                        instrument: row,
+                        instrument: {
+                          exchangeInstrumentID: row.ExchangeInstrumentID,
+                          exchangeSegment: row.ExchangeSegment,
+                        },
                         isModify: true,
                       },
                     })

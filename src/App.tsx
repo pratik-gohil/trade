@@ -13,7 +13,7 @@ import {
   SimplePaletteColorOptions,
   ThemeProvider,
 } from "@mui/material";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Login } from "./components/Login";
 import { Header } from "./components/Header";
 import { getUserProfile } from "./http/getUserProfile/getUserProfile";
@@ -21,6 +21,7 @@ import { setUserReducer } from "./features/Auth/Auth";
 import { constants } from "./constants/global";
 import Logout from "./components/Logout/Logout";
 import { asyncLocalStorage } from "./utils/asyncLocalStorage";
+import { RootState } from "./app/store";
 const { TOKEN } = constants;
 
 declare module "@mui/material/styles" {
@@ -99,6 +100,8 @@ export default function App() {
     })
   );
 
+  const isOpen = useSelector((state: RootState) => state.orderModal.visible);
+
   return (
     <ThemeProvider theme={theme}>
       <WebSocketProvider>
@@ -112,7 +115,7 @@ export default function App() {
                 <>
                   <Header />
                   <Main />
-                  <OrderModal />
+                  {isOpen && <OrderModal />}
                 </>
               )}
             />

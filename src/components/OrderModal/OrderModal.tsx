@@ -1,5 +1,11 @@
 import { ExpandLess, ExpandMore, Replay } from "@mui/icons-material";
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useContext,
+} from "react";
 import Draggable from "react-draggable";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -19,6 +25,10 @@ import { IInstrument } from "../../types/interfaces/instrument.interfaces.types"
 import { Segments } from "../../types/enums/segment.enums.types";
 import { modifyOrder } from "../../http/modifyOrder/modifyOrder";
 import { toFixedN } from "../../utils/toFixedN";
+import { searchInstruments } from "../../http/searchInstruments/searchInstruments";
+import { SocketContext } from "../../socket";
+import { subscribeInstruments } from "../../http/subscribeInstruments/subscribeInstruments";
+import { unsubscribeInstruments } from "../../http/unsubscribeInstruments/unsubscribeInstruments";
 const { USER_ID, CLIENT_ID } = constants;
 
 let margin = 50;
@@ -29,7 +39,7 @@ export function OrderModal() {
   const [vh, setVh] = useState(0);
   const [vw, setVw] = useState(0);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [exchangeSegment, setExchangeSegment] = useState("NSECM");
+  const [exchangeSegment, setExchangeSegment] = useState<string | null>(null);
   const [timeInForce, setTimeInForce] = useState("DAY");
   const [order, setOrder] = useState("NORMAL");
   const [orderType, setOrderType] = useState("MARKET");
@@ -43,57 +53,128 @@ export function OrderModal() {
   const [disclosedQuantity, setDisclosedQuantity] = useState(0);
   const [showMore, setShowMore] = useState(false);
   const [userBalanceList, setUserBalanceList] = useState<any>([]);
-  const isOpen = useSelector((state: RootState) => state.orderModal.visible);
+  // const isOpen = useSelector((state: RootState) => state.orderModal.visible);
   const dispatch = useDispatch();
+  const [instrumentData, setInstrumentData] = useState<any>({});
+  const [LTP_NSE, setLTP_NSE] = useState(0);
+  const [LTP_BSE, setLTP_BSE] = useState(0);
+  const { socket } = useContext(SocketContext) as { socket: any };
+
+  useEffect(() => {
+    let _instrument;
+    if (instrument) {
+      if (exchangeSegment === null) {
+        setExchangeSegment(Segments[instrument.exchangeSegment]);
+      } else {
+        subscribeInstruments({
+          instruments: [instrument],
+          xtsMessageCode: 1512,
+        });
+        searchInstruments([instrument]).then((res) => {
+          _instrument = res.result[0];
+
+          setInstrumentData(_instrument);
+
+          subscribeInstruments({
+            instruments: [
+              {
+                exchangeInstrumentID: _instrument.OppositeExchangeInstrumentID,
+                exchangeSegment: _instrument.OppositeExchangeSegment,
+              },
+            ],
+            xtsMessageCode: 1512,
+          });
+        });
+      }
+    }
+
+    return () => {
+      unsubscribeInstruments({
+        instruments: [instrument],
+        xtsMessageCode: 1512,
+      });
+
+      if (_instrument) {
+        unsubscribeInstruments({
+          instruments: [
+            {
+              exchangeInstrumentID: _instrument.OppositeExchangeInstrumentID,
+              exchangeSegment: _instrument.OppositeExchangeSegment,
+            },
+          ],
+          xtsMessageCode: 1512,
+        });
+      }
+    };
+  }, [instrument, exchangeSegment]);
+
+  useEffect(() => {
+    if (exchangeSegment === "BSECM" && order === "COVER") {
+      setOrder("NORMAL");
+    }
+  }, [exchangeSegment]);
+
+  useEffect(() => {
+    const listener = (res) => {
+      const data = JSON.parse(res);
+      if (data.ExchangeInstrumentID === instrumentData.ExchangeInstrumentID) {
+        if (data.ExchangeSegment === 1) {
+          setLTP_NSE(data.LastTradedPrice);
+        } else if (data.ExchangeSegment === 11) {
+          setLTP_BSE(data.LastTradedPrice);
+        }
+      }
+    };
+    socket.on("1512-json-full", listener);
+  }, []);
 
   const isCM =
-    Segments[(instrument as IInstrument)?.ExchangeSegment] === "NSECM" ||
-    Segments[(instrument as IInstrument)?.ExchangeSegment] === "BSECM";
+    Segments[(instrumentData as IInstrument)?.ExchangeSegment] === "NSECM" ||
+    Segments[(instrumentData as IInstrument)?.ExchangeSegment] === "BSECM";
   const exchangeInstrumentID =
-    (Segments[(instrument as IInstrument)?.ExchangeSegment] === "NSECM" &&
+    (Segments[(instrumentData as IInstrument)?.ExchangeSegment] === "NSECM" &&
       exchangeSegment === "NSECM") ||
-    (Segments[(instrument as IInstrument)?.ExchangeSegment] === "BSECM" &&
+    (Segments[(instrumentData as IInstrument)?.ExchangeSegment] === "BSECM" &&
       exchangeSegment === "BSECM")
-      ? (instrument as IInstrument)?.ExchangeInstrumentID
-      : (instrument as IInstrument)?.OppositeExchangeInstrumentID;
-
+      ? (instrumentData as IInstrument)?.ExchangeInstrumentID
+      : (instrumentData as IInstrument)?.OppositeExchangeInstrumentID;
   const intitialPrice =
     (isModify
-      ? (instrument as IOrderWithMarketDepth)?.OrderPrice
-      : (instrument as IInstrument)?.Touchline?.LastTradedPrice) || 0;
+      ? (instrumentData as IOrderWithMarketDepth)?.OrderPrice
+      : (instrumentData as IInstrument)?.Touchline?.LastTradedPrice) || 0;
 
   useEffect(() => {
     if (isModify) {
-      setOrderQuantity((instrument as IOrderWithMarketDepth).OrderQuantity);
-      setTriggerPrice((instrument as IOrderWithMarketDepth).OrderStopPrice);
+      setOrderQuantity((instrumentData as IOrderWithMarketDepth).OrderQuantity);
+      setTriggerPrice((instrumentData as IOrderWithMarketDepth).OrderStopPrice);
       setDisclosedQuantity(
-        (instrument as IOrderWithMarketDepth).OrderDisclosedQuantity
+        (instrumentData as IOrderWithMarketDepth).OrderDisclosedQuantity
       );
       setOrderType(
-        (instrument as IOrderWithMarketDepth).OrderType.toUpperCase()
+        (instrumentData as IOrderWithMarketDepth).OrderType.toUpperCase()
       );
-      setTimeInForce((instrument as IOrderWithMarketDepth).TimeInForce);
-      setPrice((instrument as IOrderWithMarketDepth).OrderPrice);
-      setExchangeSegment(
-        Segments[(instrument as IOrderWithMarketDepth).ExchangeSegment]
-      );
+      setTimeInForce((instrumentData as IOrderWithMarketDepth).TimeInForce);
+      setPrice((instrumentData as IOrderWithMarketDepth).OrderPrice);
+      // setExchangeSegment(
+      //   Segments[(instrumentData as IOrderWithMarketDepth).ExchangeSegment]
+      // );
       setTradeType(
-        (instrument as IOrderWithMarketDepth).ProductType === "MIS"
+        (instrumentData as IOrderWithMarketDepth).ProductType === "MIS"
           ? "INTRADAY"
           : "LONGTERM"
       );
     } else {
-      setExchangeSegment(
-        Segments[(instrument as IInstrument)?.ExchangeSegment]
-      );
-      setOrderQuantity((instrument as IInstrument)?.LotSize);
+      // setExchangeSegment(
+      //   Segments[(instrumentData as IInstrument)?.ExchangeSegment]
+      // );
+      setOrderQuantity((instrumentData as IInstrument)?.LotSize);
       setPrice(intitialPrice || 0);
     }
 
     getUserBalance().then((res) => {
       res.type === "success" && setUserBalanceList(res.result);
     });
-  }, [instrument]);
+  }, [instrumentData]);
 
   useLayoutEffect(() => {
     let document_height = Math.max(
@@ -109,39 +190,39 @@ export function OrderModal() {
       setVh(document_height - modalRef.current.clientHeight);
       setVw(document_width - modalRef.current.clientWidth);
     }
-  }, [isOpen, modalRef?.current?.clientHeight, modalRef?.current?.clientWidth]);
+  }, [modalRef?.current?.clientHeight, modalRef?.current?.clientWidth]);
 
   useLayoutEffect(() => {
     setPosition({ y: vh, x: vw / 2 });
   }, [vh, vw]);
 
-  const handleFormReset = () => {};
-
-  console.log(instrument);
+  const handleFormReset = () => {
+    setExchangeSegment(null);
+  };
 
   const handleOrder = async (e) => {
     e.preventDefault();
     let response;
-    if (price > (instrument as IInstrument)?.PriceBand.High) {
+    if (price > (instrumentData as IInstrument)?.PriceBand.High) {
       alert(
         `order price should be less than or equal to upper circuit (${
-          (instrument as IInstrument)?.PriceBand.High
+          (instrumentData as IInstrument)?.PriceBand.High
         })`
       );
       return;
     }
-    if (price < (instrument as IInstrument)?.PriceBand.Low) {
+    if (price < (instrumentData as IInstrument)?.PriceBand.Low) {
       alert(
         `order price should be greater than or equal to lower circuit (${
-          (instrument as IInstrument)?.PriceBand.Low
+          (instrumentData as IInstrument)?.PriceBand.Low
         })`
       );
       return;
     }
-    if (orderQuantity > (instrument as IInstrument)?.FreezeQty) {
+    if (orderQuantity > (instrumentData as IInstrument)?.FreezeQty) {
       alert(
         `Order quantity should be less than Freeze Quantity (${
-          (instrument as IInstrument)?.FreezeQty
+          (instrumentData as IInstrument)?.FreezeQty
         })`
       );
       return;
@@ -150,14 +231,14 @@ export function OrderModal() {
     //   alert(`Order Price not according to tick size`);
     //   return;
     // }
-    if (orderQuantity % (instrument as IInstrument)?.LotSize !== 0) {
+    if (orderQuantity % (instrumentData as IInstrument)?.LotSize !== 0) {
       alert(`Order Quantity should be less than lot size`);
       return;
     }
 
     if (isModify) {
       response = await modifyOrder({
-        appOrderID: (instrument as IOrderWithMarketDepth).AppOrderID,
+        appOrderID: (instrumentData as IOrderWithMarketDepth).AppOrderID,
         modifiedProductType:
           tradeType === "INTRADAY"
             ? "MIS"
@@ -179,10 +260,10 @@ export function OrderModal() {
         ? {
             exchangeSegment: isCM
               ? exchangeSegment
-              : Segments[(instrument as IInstrument)?.ExchangeSegment],
+              : Segments[(instrumentData as IInstrument)?.ExchangeSegment],
             exchangeInstrumentID: isCM
               ? exchangeInstrumentID
-              : (instrument as IInstrument)?.ExchangeInstrumentID,
+              : (instrumentData as IInstrument)?.ExchangeInstrumentID,
             orderSide,
             orderType,
             orderQuantity,
@@ -201,10 +282,10 @@ export function OrderModal() {
             userID: localStorage.getItem(USER_ID),
             exchangeSegment: isCM
               ? exchangeSegment
-              : Segments[(instrument as IInstrument)?.ExchangeSegment],
+              : Segments[(instrumentData as IInstrument)?.ExchangeSegment],
             exchangeInstrumentID: isCM
               ? exchangeInstrumentID
-              : (instrument as IInstrument)?.ExchangeInstrumentID,
+              : (instrumentData as IInstrument)?.ExchangeInstrumentID,
             productType:
               tradeType === "INTRADAY"
                 ? "MIS"
@@ -240,10 +321,10 @@ export function OrderModal() {
     alert(response.description);
   };
 
-  if (!isOpen) return null;
+  // if (!isOpen) return null;
 
   return (
-    instrument && (
+    instrumentData && (
       <>
         <Draggable
           handle=".handle"
@@ -288,15 +369,14 @@ export function OrderModal() {
               <div className="flex flex-col gap-1">
                 <div className="text-md font-medium text-[#333]">
                   {isModify
-                    ? (instrument as IOrderWithMarketDepth).TradingSymbol
-                    : (instrument as IInstrument).DisplayName}
+                    ? (instrumentData as IOrderWithMarketDepth).TradingSymbol
+                    : (instrumentData as IInstrument).DisplayName}
                 </div>
                 {isCM && (
                   <RadioGroup
                     sx={{ display: "flex", flexDirection: "row", gap: 2 }}
                     aria-labelledby="radio-order-modal-exchange"
                     name="radio-order-modal-exchange"
-                    defaultValue="NSE"
                   >
                     <FormControlLabel
                       sx={{
@@ -314,7 +394,7 @@ export function OrderModal() {
                       value="NSE"
                       label={
                         <span className="text-xs font-medium block">
-                          NSE - {intitialPrice}
+                          NSE - {toFixedN(LTP_NSE)}
                         </span>
                       }
                     />
@@ -334,7 +414,7 @@ export function OrderModal() {
                       value="BSE"
                       label={
                         <span className="text-xs font-medium block">
-                          BSE - {intitialPrice}
+                          BSE - {toFixedN(LTP_BSE)}
                         </span>
                       }
                     />
@@ -460,8 +540,8 @@ export function OrderModal() {
                   label="Qty"
                   required
                   step={
-                    (instrument as IInstrument)?.LotSize ||
-                    (instrument as IOrderWithMarketDepth)?.OrderQuantity
+                    (instrumentData as IInstrument)?.LotSize ||
+                    (instrumentData as IOrderWithMarketDepth)?.OrderQuantity
                   }
                   value={orderQuantity}
                   onChange={(value) => setOrderQuantity(value)}
@@ -666,9 +746,9 @@ export function OrderModal() {
                 <div className="flex justify-between">
                   <div>Available</div>
                   <div>
-                    {userBalanceList?.BalanceList[0] &&
-                      userBalanceList?.BalanceList[0]?.limitObject?.RMSSubLimits
-                        ?.netMarginAvailable}
+                    {userBalanceList?.BalanceList?.[0] &&
+                      userBalanceList?.BalanceList?.[0]?.limitObject
+                        ?.RMSSubLimits?.netMarginAvailable}
                   </div>
                 </div>
               </div>

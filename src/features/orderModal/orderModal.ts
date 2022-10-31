@@ -6,7 +6,10 @@ interface IOrderModal {
   visible: boolean;
   order: {
     orderSide: string | null;
-    instrument: IInstrument | IOrderWithMarketDepth | null;
+    instrument: {
+      exchangeSegment: number;
+      exchangeInstrumentID: number;
+    } | null;
     isModify?: boolean | null;
   };
 }
