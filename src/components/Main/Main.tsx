@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { RootState } from "../../app/store";
 import { Orders } from "../Orders";
 import { Positions } from "../Positions";
@@ -58,6 +58,7 @@ export function Main() {
               element={<InsiderTrades instrument={instrument} />}
             /> */}
             <Route path="corporate-action" element={<CorporateAction />}>
+              <Route index element={<Navigate to="dividend" />} />
               <Route
                 path="dividend"
                 element={
