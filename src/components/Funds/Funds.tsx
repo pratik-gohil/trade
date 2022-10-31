@@ -39,6 +39,7 @@ function Funds() {
     marginUtilized: 0,
     netMarginAvailable: 0,
   };
+
   return (
     <>
       <div className="p-5 flex gap-5">
@@ -93,24 +94,36 @@ function Funds() {
                 <div className="text-xl text-primary">90.20</div>
               </div>
               <div className="flex justify-between">
-                <div className="text-lg text-secondary">Opening Balance</div>
-                <div className="text-xl text-primary">90.20</div>
+                <div className="text-lg text-secondary">Payin</div>
+                <div className="text-xl text-primary">
+                  {balanceList[0]?.limitObject?.marginAvailable?.PayInAmount}
+                </div>
               </div>
               <div className="flex justify-between">
-                <div className="text-lg text-secondary">Opening Balance</div>
-                <div className="text-xl text-primary">90.20</div>
+                <div className="text-lg text-secondary">SPAN</div>
+                <div className="text-xl text-primary">
+                  {
+                    balanceList[0]?.limitObject?.marginAvailable
+                      ?.CashMarginAvailable
+                  }
+                </div>
               </div>
               <div className="flex justify-between">
-                <div className="text-lg text-secondary">Opening Balance</div>
-                <div className="text-xl text-primary">90.20</div>
+                <div className="text-lg text-secondary">Delivery Margin</div>
+                <div className="text-xl text-primary">NA</div>
               </div>
               <div className="flex justify-between">
-                <div className="text-lg text-secondary">Opening Balance</div>
-                <div className="text-xl text-primary">90.20</div>
+                <div className="text-lg text-secondary">Exposure</div>
+                <div className="text-xl text-primary">NA</div>
               </div>
               <div className="flex justify-between">
-                <div className="text-lg text-secondary">Opening Balance</div>
-                <div className="text-xl text-primary">90.20</div>
+                <div className="text-lg text-secondary">Option premium</div>
+                <div className="text-xl text-primary">
+                  {
+                    balanceList[0]?.limitObject?.marginAvailable
+                      ?.NetOptionPremium
+                  }
+                </div>
               </div>
             </div>
             <div className="flex flex-col gap-5 py-6">
@@ -123,16 +136,22 @@ function Funds() {
                 </div>
               </div>
               <div className="flex justify-between">
-                <div className="text-lg text-secondary">Opening Balance</div>
-                <div className="text-xl text-primary">90.20</div>
+                <div className="text-lg text-secondary">
+                  Collateral (Liquid funds)
+                </div>
+                <div className="text-xl text-primary">NA</div>
               </div>
               <div className="flex justify-between">
-                <div className="text-lg text-secondary">Opening Balance</div>
-                <div className="text-xl text-primary">90.20</div>
+                <div className="text-lg text-secondary">
+                  Collateral (Equity)
+                </div>
+                <div className="text-xl text-primary">NA</div>
               </div>
               <div className="flex justify-between">
-                <div className="text-lg text-secondary">Opening Balance</div>
-                <div className="text-xl text-primary">90.20</div>
+                <div className="text-lg text-secondary">Total collateral</div>
+                <div className="text-xl text-primary">
+                  {balanceList[0]?.limitObject?.RMSSubLimits?.collateral}
+                </div>
               </div>
             </div>
           </div>
@@ -210,7 +229,13 @@ function Funds() {
                 </div>
               </div>
               <div className="flex justify-between items-center border-b">
-                <div className="text-primary py-4">Withdraw Money</div>
+                <div className="text-primary py-4">View Ledger</div>
+                <div className="text-blue">
+                  <ChevronRight color="inherit" />
+                </div>
+              </div>
+              <div className="flex justify-between items-center border-b">
+                <div className="text-primary py-4">Recent Deposits</div>
                 <div className="text-blue">
                   <ChevronRight color="inherit" />
                 </div>
@@ -222,19 +247,19 @@ function Funds() {
                 </div>
               </div>
               <div className="flex justify-between items-center border-b">
-                <div className="text-primary py-4">Withdraw Money</div>
+                <div className="text-primary py-4">Recent Withdrawals</div>
                 <div className="text-blue">
                   <ChevronRight color="inherit" />
                 </div>
               </div>
               <div className="flex justify-between items-center border-b">
-                <div className="text-primary py-4">Withdraw Money</div>
+                <div className="text-primary py-4">Bank Mandates</div>
                 <div className="text-blue">
                   <ChevronRight color="inherit" />
                 </div>
               </div>
               <div className="flex justify-between items-center border-b">
-                <div className="text-primary py-4">Withdraw Money</div>
+                <div className="text-primary py-4">Pledge/Unpledge</div>
                 <div className="text-blue">
                   <ChevronRight color="inherit" />
                 </div>
