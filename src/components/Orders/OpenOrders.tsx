@@ -12,6 +12,7 @@ import { deleteOrder } from "../../http/deleteOrder/deleteOrder";
 import { OrderTableRow } from "./OrderTableRow";
 import OrderDetailsModal from "./OrderDetailsModal";
 import { Modal, TableHead, TableRow } from "@mui/material";
+import { useSnackbar } from "notistack";
 
 const headCells: readonly HeadCell[] = [
   {
@@ -92,18 +93,45 @@ export default function OpenOrders({ orders, fetchOrders }) {
     setOrderBy(property);
   };
 
-  const handleCancelAll = () => {
-    selected.map((id) =>
-      deleteOrder({ appOrderID: id }).then(() => {
-        fetchOrders();
-      })
+  const { enqueueSnackbar } = useSnackbar();
+
+  const showCancelOrderSnackbar = ({ id }) => {
+    const order = orders.find((n) => n.AppOrderID);
+    enqueueSnackbar(
+      <div>
+        <h1 className="text-failure text-2xl font-semibold">Cancelled</h1>
+        <p className="font-medium text-xl text-primary py-3">
+          {order.OrderSide} {order.TradingSymbol} is Cancelled
+        </p>
+        <span className="text-sm font-light text-primary">#{id}</span>
+      </div>,
+      {
+        sx: {
+          "& .SnackbarContent-root": {
+            backgroundColor: "white",
+            border: "1px solid red",
+          },
+        },
+      } as any
     );
   };
 
+  const cancelOrder = (id) => {
+    deleteOrder({ appOrderID: id })
+      .then((res) => {
+        showCancelOrderSnackbar({ id });
+      })
+      .then(() => {
+        fetchOrders();
+      });
+  };
+
+  const handleCancelAll = () => {
+    selected.map((id) => cancelOrder(id));
+  };
+
   const handleCancel = (id) => {
-    deleteOrder({ appOrderID: id }).then(() => {
-      fetchOrders();
-    });
+    cancelOrder(id);
   };
 
   const handleSelectAllClick = (
