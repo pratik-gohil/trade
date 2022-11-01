@@ -168,7 +168,8 @@ code {
       transparent,
       transparent 2px,
       rgba(var(--secondary), .2) 2px,
-      rgba(var(--secondary), .2) 4px)
+      rgba(var(--secondary), .2) 4px);
+  @apply cursor-not-allowed;
 }
 
 .truncate-multiline {
