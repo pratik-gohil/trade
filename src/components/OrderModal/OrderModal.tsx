@@ -194,10 +194,20 @@ export function OrderModal() {
       setVh(document_height - modalRef.current.clientHeight);
       setVw(document_width - modalRef.current.clientWidth);
     }
-  }, [modalRef?.current?.clientHeight, modalRef?.current?.clientWidth]);
+  }, [
+    modalRef?.current?.clientHeight,
+    modalRef?.current?.clientWidth,
+    showMore,
+  ]);
 
-  useLayoutEffect(() => {
-    setPosition({ y: vh, x: vw / 2 });
+  const [initalModalRepositionFlag, setInitalModalRepositionFlag] =
+    useState(true);
+
+  useEffect(() => {
+    if (initalModalRepositionFlag) {
+      setPosition({ y: vh / 2, x: vw / 2 });
+      setInitalModalRepositionFlag(false);
+    }
   }, [vh, vw]);
 
   const handleFormReset = () => {
@@ -328,6 +338,29 @@ export function OrderModal() {
     }
     alert(response.description);
   };
+
+  useEffect(() => {
+    let document_height = Math.max(
+      document.documentElement.clientHeight,
+      window.innerHeight || 0
+    );
+
+    if (modalRef.current) {
+      const matrix = window.getComputedStyle(modalRef.current).transform;
+      if (matrix) {
+        const matrixType = matrix.includes("3d") ? "3d" : "2d";
+        const matrixValues = matrix.match(/matrix.*\((.+)\)/)?.[1].split(", ");
+        if (matrixValues && matrixType === "2d") {
+          const x = Number(matrixValues[4]);
+          const y = Number(matrixValues[5]);
+          const at_bottom = y > document_height - modalRef.current.clientHeight;
+          if (at_bottom) {
+            modalRef.current.style.transform = `translate(${x}px, ${y - 40}px)`;
+          }
+        }
+      }
+    }
+  }, [showMore, modalRef.current?.clientHeight]);
 
   // if (!isOpen) return null;
 
