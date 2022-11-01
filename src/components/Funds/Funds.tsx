@@ -164,9 +164,16 @@ function Funds() {
             >
               Top up
             </h1>
-            <div className="border rounded-md p-5 flex flex-col items-center gap-2.5">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                setShowAddFundsModal(true);
+              }}
+              className="border rounded-md p-5 flex flex-col items-center gap-2.5"
+            >
               <div className="text-lg text-secondary">Enter Amount</div>
               <input
+                required
                 className="text-3xl text-primary font-medium py-3.5 bg-blueHighlight rounded-md self-stretch text-center"
                 type="number"
                 value={amount}
@@ -206,13 +213,13 @@ function Funds() {
                   +100000
                 </span>
               </div>
-              <div
-                onClick={() => setShowAddFundsModal(true)}
+              <button
+                type="submit"
                 className="bg-blue text-white py-2.5 text-2xl font-medium rounded-md self-stretch text-center mt-[22px] cursor-pointer"
               >
                 Add Funds
-              </div>
-            </div>
+              </button>
+            </form>
           </div>
           <div>
             <h1

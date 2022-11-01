@@ -26,7 +26,7 @@ export default function AddFundsModal({
   useEffect(() => {
     setAccount(ClientBankInfoList[0]);
     setAmount(amount_prop);
-  }, [user]);
+  }, [user, amount_prop]);
 
   const addMoneyUPI = () => {
     setShowModal(false);
