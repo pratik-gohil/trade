@@ -22,6 +22,7 @@ import { constants } from "./constants/global";
 import Logout from "./components/Logout/Logout";
 import { asyncLocalStorage } from "./utils/asyncLocalStorage";
 import { RootState } from "./app/store";
+import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 const { TOKEN } = constants;
 
 declare module "@mui/material/styles" {
@@ -103,27 +104,38 @@ export default function App() {
   const isOpen = useSelector((state: RootState) => state.orderModal.visible);
 
   return (
-    <ThemeProvider theme={theme}>
-      <WebSocketProvider>
-        <Router>
-          <Routes>
-            <Route path="/" element={<Navigate to="/profile" />}></Route>
-            <Route path="/home" element={<Navigate to="/home/chart" />}></Route>
-            <Route
-              path="*"
-              element={loginRequired(
-                <>
-                  <Header />
-                  <Main />
-                  {isOpen && <OrderModal />}
-                </>
-              )}
-            />
-            <Route path="/login" element={<Login />} />
-            <Route path="/logout" element={<Logout />} />
-          </Routes>
-        </Router>
-      </WebSocketProvider>
-    </ThemeProvider>
+    <SnackbarProvider
+      maxSnack={3}
+      anchorOrigin={{
+        vertical: "top",
+        horizontal: "right",
+      }}
+    >
+      <ThemeProvider theme={theme}>
+        <WebSocketProvider>
+          <Router>
+            <Routes>
+              <Route path="/" element={<Navigate to="/profile" />}></Route>
+              <Route
+                path="/home"
+                element={<Navigate to="/home/chart" />}
+              ></Route>
+              <Route
+                path="*"
+                element={loginRequired(
+                  <>
+                    <Header />
+                    <Main />
+                    {isOpen && <OrderModal />}
+                  </>
+                )}
+              />
+              <Route path="/login" element={<Login />} />
+              <Route path="/logout" element={<Logout />} />
+            </Routes>
+          </Router>
+        </WebSocketProvider>
+      </ThemeProvider>
+    </SnackbarProvider>
   );
 }
