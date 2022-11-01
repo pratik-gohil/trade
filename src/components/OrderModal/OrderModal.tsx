@@ -30,6 +30,7 @@ import { SocketContext } from "../../socket";
 import { subscribeInstruments } from "../../http/subscribeInstruments/subscribeInstruments";
 import { unsubscribeInstruments } from "../../http/unsubscribeInstruments/unsubscribeInstruments";
 import { getDecimal } from "../../utils/getDecimal";
+import CustomCheckbox from "../Checkbox/Checkbox";
 const { USER_ID, CLIENT_ID } = constants;
 
 let margin = 50;
@@ -59,6 +60,8 @@ export function OrderModal() {
   const [instrumentData, setInstrumentData] = useState<any>({});
   const [LTP_NSE, setLTP_NSE] = useState(0);
   const [LTP_BSE, setLTP_BSE] = useState(0);
+  const [showStoploss, setShowStoploss] = useState(false);
+  const [showTarget, setShowTarget] = useState(false);
   const { socket } = useContext(SocketContext) as { socket: any };
 
   useEffect(() => {
@@ -676,6 +679,72 @@ export function OrderModal() {
             </div>
             {showMore && (
               <div className="flex gap-8 px-5 py-[10px] border-b-2 border-border">
+                <div className="flex flex-col justify-between gap-2">
+                  <div className="flex justify-between items-center gap-2">
+                    <span className="flex gap-1">
+                      <FormControlLabel
+                        sx={{
+                          fontSize: "12px",
+                          margin: 0,
+                          display: "flex",
+                          gap: 0.5,
+                        }}
+                        control={
+                          <CustomCheckbox
+                            onChange={() => setShowStoploss(!showStoploss)}
+                            checked={showStoploss}
+                            disableRipple
+                          />
+                        }
+                        label={
+                          <span className="text-sm font-medium text-secondary">
+                            Stoploss
+                          </span>
+                        }
+                      />
+                    </span>
+                    <span className="flex gap-1">
+                      <input
+                        className={`${
+                          showStoploss ? "" : "input-disabled"
+                        } w-[4rem] border broder-border rounded`}
+                      />
+                      %
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center gap-2">
+                    <span className="flex gap-1">
+                      <FormControlLabel
+                        sx={{
+                          fontSize: "12px",
+                          margin: 0,
+                          display: "flex",
+                          gap: 0.5,
+                        }}
+                        control={
+                          <CustomCheckbox
+                            onChange={() => setShowTarget(!showTarget)}
+                            checked={showTarget}
+                            disableRipple
+                          />
+                        }
+                        label={
+                          <span className="text-sm font-medium text-secondary">
+                            Target
+                          </span>
+                        }
+                      />
+                    </span>
+                    <span className="flex gap-1">
+                      <input
+                        className={`${
+                          showTarget ? "" : "input-disabled"
+                        } w-[4rem] border broder-border rounded`}
+                      />
+                      %
+                    </span>
+                  </div>
+                </div>
                 <div className="flex flex-col justify-between">
                   <div className="text-sm">Validity</div>
                   <RadioGroup

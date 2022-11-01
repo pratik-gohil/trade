@@ -19,7 +19,7 @@ export function NumberInput({
     <label
       htmlFor={id}
       className={`h-[45px] text-[#8c8c8c] flex items-center relative border border-solid border-gray-300 px-3 rounded-lg ${
-        disabled ? "input-disabled cursor-not-allowed" : ""
+        disabled ? "input-disabled" : ""
       }`}
     >
       <span className="text-xs bg-white text-[#8c8c8c] absolute -top-2 left-2.5 px-1">
