@@ -8,7 +8,7 @@ export const razorpayOrder = async ({
   ifsc,
 }) => {
   return await fetch(
-    "http://api.lkp.net.in/CommonAPI_Test/Razorpay/RazorpayOrder",
+    `${process.env.REACT_APP_FUNDAMENTAL_BASE_URL}/Razorpay/RazorpayOrder`,
     {
       method: "POST",
       body: JSON.stringify({

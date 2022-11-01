@@ -2,7 +2,7 @@ import HTTP from "../../http";
 
 export const getCorporateAction = async ({ type, name }) => {
   return await HTTP.post(
-    `http://api.lkp.net.in/CommonAPI_Test/Fundamental/${type}/${name}`,
+    `${process.env.REACT_APP_FUNDAMENTAL_BASE_URL}/Fundamental/${type}/${name}`,
     {
       method: "POST",
       headers: {

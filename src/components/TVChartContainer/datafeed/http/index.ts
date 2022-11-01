@@ -8,13 +8,13 @@ const ohlcDateTimeFormat = (Epochtime) => {
       .toLocaleDateString("en", {
         year: "numeric",
         month: "short",
-        day: "numeric",
+        day: "2-digit",
       })
       .split(",")
       .join("") +
     " " +
     fromRealDate
-      .toLocaleTimeString("en-IN", { hour12: false, timeZone: "Etc/UTC" })
+      .toLocaleTimeString("en-IN", { hour12: false, timeZone: "Asia/Kolkata" })
       .split(":")
       .join("")
   );
@@ -95,7 +95,7 @@ export default {
             //     break;
             // }
             return {
-              time: time * 1000,
+              time: (time - 19800) * 1000,
               low: parseFloat(low),
               high: parseFloat(high),
               open: parseFloat(open),

@@ -26,6 +26,7 @@ export interface ChartContainerProps {
   autosize: ChartingLibraryWidgetOptions["autosize"];
   studiesOverrides: ChartingLibraryWidgetOptions["studies_overrides"];
   container: ChartingLibraryWidgetOptions["container"];
+  height: ChartingLibraryWidgetOptions["height"];
 }
 
 export interface ChartContainerState {}
@@ -60,6 +61,7 @@ export class TVChartContainer extends React.PureComponent<
     fullscreen: false,
     autosize: true,
     studiesOverrides: {},
+    height: 0.8,
   };
 
   private tvWidget: IChartingLibraryWidget | null = null;
@@ -79,7 +81,7 @@ export class TVChartContainer extends React.PureComponent<
           .interval as ChartingLibraryWidgetOptions["interval"],
         container: this.ref.current,
         library_path: this.props.libraryPath as string,
-        timezone: "Etc/UTC",
+        timezone: "Asia/Kolkata",
         locale: getLanguageFromURL() || "en",
         disabled_features: [
           // "use_localstorage_for_settings",
@@ -87,6 +89,7 @@ export class TVChartContainer extends React.PureComponent<
           "symbol_search_hot_key",
           "header_compare",
           "header_settings",
+          "create_volume_indicator_by_default",
         ],
         enabled_features: ["hide_left_toolbar_by_default", "study_templates"],
         charts_storage_api_version: this.props.chartsStorageApiVersion,
@@ -95,6 +98,7 @@ export class TVChartContainer extends React.PureComponent<
         fullscreen: this.props.fullscreen,
         autosize: this.props.autosize,
         studies_overrides: this.props.studiesOverrides,
+        height: this.props.height,
       };
 
       const tvWidget = new widget(widgetOptions);
@@ -133,7 +137,7 @@ export class TVChartContainer extends React.PureComponent<
           .interval as ChartingLibraryWidgetOptions["interval"],
         container: this.ref.current,
         library_path: this.props.libraryPath as string,
-        timezone: "Etc/UTC",
+        timezone: "Asia/Kolkata",
         locale: getLanguageFromURL() || "en",
         disabled_features: [
           "use_localstorage_for_settings",
@@ -141,6 +145,7 @@ export class TVChartContainer extends React.PureComponent<
           "symbol_search_hot_key",
           "header_compare",
           "header_settings",
+          "create_volume_indicator_by_default",
         ],
         enabled_features: ["hide_left_toolbar_by_default", "study_templates"],
         charts_storage_api_version: this.props.chartsStorageApiVersion,

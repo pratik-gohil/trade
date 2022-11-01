@@ -3,7 +3,7 @@ import HTTP from "../http";
 
 export const encrypt_decrypt = async ({ data, type }) => {
   return await HTTP.post(
-    "http://api.lkp.net.in/commonAPI_test/HDFCCrypto/EncryptDecrypt",
+    `${process.env.REACT_APP_FUNDAMENTAL_BASE_URL}/HDFCCrypto/EncryptDecrypt`,
     {
       method: "POST",
       body: JSON.stringify({
