@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import ArrowOutward from "@mui/icons-material/ArrowOutward";
 import { ChevronRight, Refresh } from "@mui/icons-material";
 import { getUserBalance } from "../../http/userBalance/userBalance";
-import { getUserProfile } from "../../http/getUserProfile/getUserProfile";
 import AddFundsModal from "./AddFundsModal";
 import { toFixedN } from "../../utils/toFixedN";
 import AddFundsModalUPI from "./AddFundsModalUPI";
@@ -286,6 +285,7 @@ function Funds() {
       <AddFundsModalUPI
         showModal={showFundsUPIModal}
         setShowModal={setShowFundsUPIModal}
+        amount={amount}
       />
       <AddFundsResponseModal
         addFundsResponse={addFundsResponse}
