@@ -11,6 +11,7 @@
     "@mui/styles": "^5.9.2",
     "@mui/x-data-grid": "^5.15.0",
     "@reduxjs/toolkit": "^1.8.3",
+    "env-cmd": "^10.1.0",
     "flexsearch": "^0.7.21",
     "notistack": "^2.0.8",
     "react": "^18.2.0",
@@ -25,8 +26,9 @@
     "xts-marketdata-api": "^3.0.7"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "dev": "env-cmd -f .env.local react-scripts start",
+    "start": "env-cmd -f .env.prod react-scripts start",
+    "build": "env-cmd -f .env.prod react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
