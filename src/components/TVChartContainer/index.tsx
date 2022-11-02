@@ -51,7 +51,7 @@ export class TVChartContainer extends React.PureComponent<
     symbol: "",
     // symbol: "NSECM:RELIANCE",
     // symbol: `${this.instrument.DisplayName}:${this.instrument.ExchangeSegment}:${this.instrument.ExchangeInstrumentID}`;
-    interval: "D" as ResolutionString,
+    interval: "1" as ResolutionString,
     libraryPath: "/charting_library/",
     // datafeedUrl: "https://demo_feed.tradingview.com",
     // chartsStorageUrl: "https://saveload.tradingview.com",
