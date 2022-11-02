@@ -3,12 +3,40 @@ import Modal from "@mui/material/Modal";
 import { IconButton } from "@mui/material";
 import { CloseOutlined } from "@mui/icons-material";
 import { verify_vpa } from "../../http/hdfc_upi/verify_vpa";
+import { createOrder } from "../../http/hdfc_upi/createOrder";
+import { useSelector } from "react-redux";
+import { RootState } from "../../app/store";
+import { transactionCollectRequest } from "../../http/hdfc_upi/transactionCollectRequest";
 
-export default function AddFundsModalUPI({ showModal, setShowModal }) {
-  const [VPA, setVPA] = useState("");
-  const [isVPAValid, setIsVPAValid] = useState(false);
+export default function AddFundsModalUPI({ showModal, setShowModal, amount }) {
+  const [VPA, setVPA] = useState("sumit039@hdfcbank");
+  const [isVPAValid, setIsVPAValid] = useState(true);
+  const user = useSelector((state: RootState) => state.auth.user);
+  const { ClientBankInfoList } = user;
+
   const addMoney = () => {
-    // setShowModal(false);
+    // console.log(ClientBankInfoList[0].AccountNumber);
+    createOrder({
+      Client_Bank_Acno: ClientBankInfoList[0].AccountNumber,
+      Amount: amount,
+    })
+      .then((res) => {
+        // [{"COLUMNS":["IDENTITY1"],"DATA":[["Sucess :266"]]},""]
+        return res[0]["DATA"][0][0].split(":")[1];
+      })
+      .then((order) => {
+        transactionCollectRequest({
+          OrderNo: order,
+          Amount: amount,
+          SenderUPI: VPA,
+          AccountNo: ClientBankInfoList[0].AccountNumber,
+        }).then((res) => {
+          const data = res.data.split("|");
+          alert(data[3]);
+          if (data[3] === "SUCCESS") {
+          }
+        });
+      });
   };
 
   const verifyVPA = () => {
@@ -47,19 +75,20 @@ export default function AddFundsModalUPI({ showModal, setShowModal }) {
               Select Payment Mode
             </h1>
             <div
-              className={`border rounded-md p-3 flex justify-between gap-3 ${
-                isVPAValid ? "pointer-events-none" : ""
-              }`}
+            // className={`border rounded-md p-3 flex justify-between gap-3
+            //  ${isVPAValid ? "pointer-events-none" : ""}
+            // `}
             >
               <input
-                disabled={isVPAValid}
+                // disabled={isVPAValid}
+                value={VPA}
                 onChange={(e) => setVPA(e.target.value)}
                 className="border-none outline-none w-full bg-transparent"
               />
               <button
                 type="button"
                 disabled={isVPAValid}
-                onClick={verifyVPA}
+                // onClick={verifyVPA}
                 className="text-blue font-semibold text-lg cursor-pointer"
               >
                 Verify
@@ -75,9 +104,9 @@ export default function AddFundsModalUPI({ showModal, setShowModal }) {
               <button
                 type="button"
                 onClick={addMoney}
-                disabled={!isVPAValid}
+                // disabled={!isVPAValid}
                 className={`w-full bg-blue text-white py-2.5 my-2.5 text-2xl font-medium rounded-md self-stretch text-center cursor-pointer ${
-                  isVPAValid ? "" : "pointer-events-none"
+                  isVPAValid ? "" : "cursor-not-allowed"
                 }`}
               >
                 Procceed
