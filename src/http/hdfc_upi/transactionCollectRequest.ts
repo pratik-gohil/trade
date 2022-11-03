@@ -18,6 +18,10 @@ export const transactionCollectRequest = async ({
         MerchantId,
         AccountNo,
       }),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Basic ${btoa("SW76Q5JIAD:lkp@123")}`,
+      },
     }
   );
 };
