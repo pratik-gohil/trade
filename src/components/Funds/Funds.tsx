@@ -41,7 +41,7 @@ function Funds() {
 
   return (
     <>
-      <div className="p-5 flex gap-5">
+      <div className="py-5 flex justify-center gap-5">
         <div>
           <h1
             className="mb-6 text-2xl font-semibold
