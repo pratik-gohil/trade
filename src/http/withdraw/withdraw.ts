@@ -6,7 +6,7 @@ export const withdraw = async ({ amount, BankAccountNumber }) => {
   const response = await HTTP.get({
     url: `https://backoffice.lkp.net.in:8080/techexcelapi/index.cfm/payment/AddPayment?AccountCode=${localStorage.getItem(
       CLIENT_ID
-    )}&branch_code=&company_code=NSE_CASH&Amount=${amount}&BankAccountNumber=${BankAccountNumber}&BankNo=&VOUCHERDATE=&UrlDataYear=${new Date().getFullYear()}`,
+    )}&branch_code=&company_code=NSE_CASH&Amount=${amount}&BankAccountNumber=${BankAccountNumber}&BankNo=&VOUCHERDATE=&UrlDataYear=${new Date().getFullYear()}&UrlUserName=techapi&UrlPassword=TECH@123&UrlDatabase=capsfo`,
     requestOptions: {},
   });
   return response;
