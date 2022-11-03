@@ -299,6 +299,7 @@ function Funds() {
       />
       <WithdrawFundsModal
         balanceList={balanceList}
+        fetchUserBalance={fetchUserBalance}
         showModal={showWithdrawFunds}
         setShowModal={setShowWithdrawFunds}
       />

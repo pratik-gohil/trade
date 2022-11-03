@@ -1,18 +1,17 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "@mui/material/Modal";
 import { IconButton } from "@mui/material";
 import { CloseOutlined } from "@mui/icons-material";
-import useRazorpay from "react-razorpay";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { IClientBankInfoList } from "../../features/Auth/Auth";
-import { razorpayOrder } from "../../http/razorpayOrder/razorpayOrder";
 import { withdraw } from "../../http/withdraw/withdraw";
 
 export default function WithdrawFundsModal({
   showModal,
   setShowModal,
   balanceList,
+  fetchUserBalance,
 }) {
   const [account, setAccount] = useState<IClientBankInfoList | null>(null);
   const [amount, setAmount] = useState("0.00");
@@ -27,7 +26,9 @@ export default function WithdrawFundsModal({
     withdraw({
       amount,
       BankAccountNumber: ClientBankInfoList[0].AccountNumber,
-    }).then((res) => console.log(res));
+    })
+      .then((res) => console.log(res))
+      .then(() => fetchUserBalance());
   };
 
   return (
