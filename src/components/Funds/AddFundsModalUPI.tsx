@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import Modal from "@mui/material/Modal";
 import { IconButton } from "@mui/material";
-import { CloseOutlined } from "@mui/icons-material";
-import { verify_vpa } from "../../http/hdfc_upi/verify_vpa";
+import { CheckCircle, CloseOutlined } from "@mui/icons-material";
 import { createOrder } from "../../http/hdfc_upi/createOrder";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
@@ -10,12 +9,11 @@ import { transactionCollectRequest } from "../../http/hdfc_upi/transactionCollec
 
 export default function AddFundsModalUPI({ showModal, setShowModal, amount }) {
   const [VPA, setVPA] = useState("sumit039@hdfcbank");
-  const [isVPAValid, setIsVPAValid] = useState(true);
+  const [isVPAValid, setIsVPAValid] = useState(false);
   const user = useSelector((state: RootState) => state.auth.user);
   const { ClientBankInfoList } = user;
 
   const addMoney = () => {
-    // console.log(ClientBankInfoList[0].AccountNumber);
     createOrder({
       Client_Bank_Acno: ClientBankInfoList[0].AccountNumber,
       Amount: amount,
@@ -40,16 +38,7 @@ export default function AddFundsModalUPI({ showModal, setShowModal, amount }) {
   };
 
   const verifyVPA = () => {
-    verify_vpa({ VPA }).then((res) => {
-      const res_params = res.split("|");
-      const status = res_params[3];
-      // (VE=Available,
-      // VN=Not Available,
-      // F=Failed)
-      if (status === "VE") {
-        setIsVPAValid(true);
-      }
-    });
+    setIsVPAValid(true);
   };
 
   return (
@@ -75,12 +64,12 @@ export default function AddFundsModalUPI({ showModal, setShowModal, amount }) {
               Select Payment Mode
             </h1>
             <div
-            // className={`border rounded-md p-3 flex justify-between gap-3
-            //  ${isVPAValid ? "pointer-events-none" : ""}
-            // `}
+              className={`border rounded-md p-3 flex justify-between gap-3
+             ${isVPAValid ? "pointer-events-none" : ""}
+            `}
             >
               <input
-                // disabled={isVPAValid}
+                disabled={isVPAValid}
                 value={VPA}
                 onChange={(e) => setVPA(e.target.value)}
                 className="border-none outline-none w-full bg-transparent"
@@ -88,10 +77,13 @@ export default function AddFundsModalUPI({ showModal, setShowModal, amount }) {
               <button
                 type="button"
                 disabled={isVPAValid}
-                // onClick={verifyVPA}
-                className="text-blue font-semibold text-lg cursor-pointer"
+                onClick={verifyVPA}
+                className={`${
+                  isVPAValid ? "text-success" : "text-blue"
+                } font-semibold text-lg cursor-pointer min-w-fit`}
               >
                 Verify
+                {isVPAValid && <CheckCircle />}
               </button>
             </div>
             <span className="text-secondary text-xs font-light">
@@ -104,7 +96,7 @@ export default function AddFundsModalUPI({ showModal, setShowModal, amount }) {
               <button
                 type="button"
                 onClick={addMoney}
-                // disabled={!isVPAValid}
+                disabled={!isVPAValid}
                 className={`w-full bg-blue text-white py-2.5 my-2.5 text-2xl font-medium rounded-md self-stretch text-center cursor-pointer ${
                   isVPAValid ? "" : "cursor-not-allowed"
                 }`}
