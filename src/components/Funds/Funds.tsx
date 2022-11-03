@@ -7,6 +7,7 @@ import { toFixedN } from "../../utils/toFixedN";
 import AddFundsModalUPI from "./AddFundsModalUPI";
 import AddFundsResponseModal from "./AddFundsResponseModal";
 import WithdrawFundsModal from "./WithdrawFundsModal";
+import { Link } from "react-router-dom";
 
 function Funds() {
   const [balanceList, setBalanceList] = useState<any[]>([]);
@@ -239,42 +240,30 @@ function Funds() {
                   <ChevronRight color="inherit" />
                 </div>
               </div>
-              <div className="flex justify-between items-center border-b cursor-pointer">
-                <div className="text-primary py-4">View Ledger</div>
-                <div className="text-blue">
-                  <ChevronRight color="inherit" />
+              <Link to="ledger">
+                <div className="flex justify-between items-center border-b cursor-pointer">
+                  <div className="text-primary py-4">View Ledger</div>
+                  <div className="text-blue">
+                    <ChevronRight color="inherit" />
+                  </div>
                 </div>
-              </div>
-              <div className="flex justify-between items-center border-b cursor-pointer">
-                <div className="text-primary py-4">Recent Deposits</div>
-                <div className="text-blue">
-                  <ChevronRight color="inherit" />
+              </Link>
+              <Link to="deposits">
+                <div className="flex justify-between items-center border-b cursor-pointer">
+                  <div className="text-primary py-4">Recent Deposits</div>
+                  <div className="text-blue">
+                    <ChevronRight color="inherit" />
+                  </div>
                 </div>
-              </div>
-              <div className="flex justify-between items-center border-b cursor-pointer">
-                <div className="text-primary py-4">Withdraw Money</div>
-                <div className="text-blue">
-                  <ChevronRight color="inherit" />
+              </Link>
+              <Link to="withdrawals">
+                <div className="flex justify-between items-center border-b cursor-pointer">
+                  <div className="text-primary py-4">Recent Withdrawals</div>
+                  <div className="text-blue">
+                    <ChevronRight color="inherit" />
+                  </div>
                 </div>
-              </div>
-              <div className="flex justify-between items-center border-b cursor-pointer">
-                <div className="text-primary py-4">Recent Withdrawals</div>
-                <div className="text-blue">
-                  <ChevronRight color="inherit" />
-                </div>
-              </div>
-              <div className="flex justify-between items-center border-b cursor-pointer">
-                <div className="text-primary py-4">Bank Mandates</div>
-                <div className="text-blue">
-                  <ChevronRight color="inherit" />
-                </div>
-              </div>
-              <div className="flex justify-between items-center border-b cursor-pointer">
-                <div className="text-primary py-4">Pledge/Unpledge</div>
-                <div className="text-blue">
-                  <ChevronRight color="inherit" />
-                </div>
-              </div>
+              </Link>
             </div>
           </div>
         </div>
