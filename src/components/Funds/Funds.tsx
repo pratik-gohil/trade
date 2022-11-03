@@ -92,7 +92,7 @@ function Funds() {
             <div className="flex flex-col gap-5 py-6 border-b">
               <div className="flex justify-between">
                 <div className="text-lg text-secondary">Opening Balance</div>
-                <div className="text-xl text-primary">90.20</div>
+                <div className="text-xl text-primary">NA</div>
               </div>
               <div className="flex justify-between">
                 <div className="text-lg text-secondary">Payin</div>
