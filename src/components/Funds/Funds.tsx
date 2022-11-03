@@ -6,6 +6,7 @@ import AddFundsModal from "./AddFundsModal";
 import { toFixedN } from "../../utils/toFixedN";
 import AddFundsModalUPI from "./AddFundsModalUPI";
 import AddFundsResponseModal from "./AddFundsResponseModal";
+import WithdrawFundsModal from "./WithdrawFundsModal";
 
 function Funds() {
   const [balanceList, setBalanceList] = useState<any[]>([]);
@@ -15,6 +16,7 @@ function Funds() {
   const [addFundsResponse, setAddFundsResponse] = useState<
     "success" | "failed" | null
   >(null);
+  const [showWithdrawFunds, setShowWithdrawFunds] = useState(false);
 
   useEffect(() => {
     if (addFundsResponse) {
@@ -228,43 +230,46 @@ function Funds() {
               Funds Report
             </h1>
             <div className="border rounded-md px-5">
-              <div className="flex justify-between items-center border-b">
+              <div
+                className="flex justify-between items-center border-b cursor-pointer"
+                onClick={() => setShowWithdrawFunds(true)}
+              >
                 <div className="text-primary py-4">Withdraw Money</div>
                 <div className="text-blue">
                   <ChevronRight color="inherit" />
                 </div>
               </div>
-              <div className="flex justify-between items-center border-b">
+              <div className="flex justify-between items-center border-b cursor-pointer">
                 <div className="text-primary py-4">View Ledger</div>
                 <div className="text-blue">
                   <ChevronRight color="inherit" />
                 </div>
               </div>
-              <div className="flex justify-between items-center border-b">
+              <div className="flex justify-between items-center border-b cursor-pointer">
                 <div className="text-primary py-4">Recent Deposits</div>
                 <div className="text-blue">
                   <ChevronRight color="inherit" />
                 </div>
               </div>
-              <div className="flex justify-between items-center border-b">
+              <div className="flex justify-between items-center border-b cursor-pointer">
                 <div className="text-primary py-4">Withdraw Money</div>
                 <div className="text-blue">
                   <ChevronRight color="inherit" />
                 </div>
               </div>
-              <div className="flex justify-between items-center border-b">
+              <div className="flex justify-between items-center border-b cursor-pointer">
                 <div className="text-primary py-4">Recent Withdrawals</div>
                 <div className="text-blue">
                   <ChevronRight color="inherit" />
                 </div>
               </div>
-              <div className="flex justify-between items-center border-b">
+              <div className="flex justify-between items-center border-b cursor-pointer">
                 <div className="text-primary py-4">Bank Mandates</div>
                 <div className="text-blue">
                   <ChevronRight color="inherit" />
                 </div>
               </div>
-              <div className="flex justify-between items-center border-b">
+              <div className="flex justify-between items-center border-b cursor-pointer">
                 <div className="text-primary py-4">Pledge/Unpledge</div>
                 <div className="text-blue">
                   <ChevronRight color="inherit" />
@@ -291,6 +296,11 @@ function Funds() {
         addFundsResponse={addFundsResponse}
         setAddFundsResponse={setAddFundsResponse}
         amount={amount}
+      />
+      <WithdrawFundsModal
+        balanceList={balanceList}
+        showModal={showWithdrawFunds}
+        setShowModal={setShowWithdrawFunds}
       />
     </>
   );
