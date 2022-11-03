@@ -11,7 +11,8 @@ export function ClientLoginPassword({
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handlevalidateUser = async () => {
+  const handlevalidateUser = async (e) => {
+    e.preventDefault();
     const data = await validateUser({
       userID: userID,
       password: password,
@@ -28,7 +29,10 @@ export function ClientLoginPassword({
   };
 
   return (
-    <>
+    <form
+      onSubmit={handlevalidateUser}
+      className="flex flex-col gap-[30px] h-full"
+    >
       <h1 className="text-3xl text-[#41414e] font-semibold">
         Login to Trade.com
       </h1>
@@ -38,6 +42,8 @@ export function ClientLoginPassword({
         className="outline-none border border-border rounded-lg p-3 text-xl"
         value={userID}
         onChange={(e) => setUserID(e.target.value.toUpperCase())}
+        autoFocus
+        required
       />
       <PasswordInput
         placeholder="Password"
@@ -54,18 +60,19 @@ export function ClientLoginPassword({
           </div>
         )}
         <button
-          onClick={handlevalidateUser}
+          type="submit"
           className="bg-blue-gradient rounded-lg p-[10px] text-white font-semibold w-[360px]"
         >
           LOGIN
         </button>
-        <span
+        <button
+          type="button"
           onClick={() => setLoginFlowCurrentState("forgotPassword")}
           className="text-lg underline text-[#41414e] cursor-pointer"
         >
           Forgot Password?
-        </span>
+        </button>
       </div>
-    </>
+    </form>
   );
 }

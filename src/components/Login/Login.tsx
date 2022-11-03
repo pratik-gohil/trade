@@ -55,12 +55,7 @@ export function Login() {
       </h1>
       <div className="flex justify-center h-full">
         <div className="rounded-3xl shadow-custom p-10 w-[540px] max-w-[540px] h-[80%] min-h-[80%] overflow-y-auto">
-          <form
-            onSubmit={(e) => e.preventDefault()}
-            className="flex flex-col gap-[30px] h-full"
-          >
-            {LoginFlow[loginFlowCurrentState]}
-          </form>
+          {LoginFlow[loginFlowCurrentState]}
         </div>
       </div>
     </div>

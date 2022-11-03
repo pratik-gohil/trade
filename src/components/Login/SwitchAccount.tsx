@@ -7,7 +7,7 @@ export default function SwitchAccount({ setLoginFlowCurrentState }) {
   const user = useSelector((state: RootState) => state.auth.user);
 
   return (
-    <>
+    <div className="flex flex-col gap-[30px] h-full">
       <h1 className="text-3xl text-[#41414e] font-semibold">
         <span
           onClick={() => setLoginFlowCurrentState("clientLoginPIN")}
@@ -118,6 +118,6 @@ export default function SwitchAccount({ setLoginFlowCurrentState }) {
       <button className="bg-blue-gradient text-white rounded-lg p-[10px] font-semibold">
         Add Account
       </button>
-    </>
+    </div>
   );
 }

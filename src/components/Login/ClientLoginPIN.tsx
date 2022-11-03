@@ -38,7 +38,17 @@ export const ClientLoginPIN = ({ setLoginFlowCurrentState, userID }) => {
   };
 
   return (
-    <>
+    <form
+      onSubmit={async (e) => {
+        e.preventDefault();
+        await handleValidatePIN().then((res) => {
+          if (res) {
+            navigate(0);
+          }
+        });
+      }}
+      className="flex flex-col gap-[30px] h-full"
+    >
       <h1 className="text-3xl text-[#41414e] font-semibold">
         <span
           className="mr-4 cursor-pointer"
@@ -83,24 +93,19 @@ export const ClientLoginPIN = ({ setLoginFlowCurrentState, userID }) => {
           </div>
         )}
         <button
-          onClick={async () =>
-            await handleValidatePIN().then((res) => {
-              if (res) {
-                navigate(0);
-              }
-            })
-          }
+          type="submit"
           className="bg-blue-gradient rounded-lg p-[10px] text-white font-semibold w-[360px]"
         >
           LOGIN
         </button>
-        <span
+        <button
+          type="button"
           onClick={() => setLoginFlowCurrentState("forgotPIN")}
           className="text-lg underline text-[#41414e] cursor-pointer"
         >
           Forgot PIN?
-        </span>
+        </button>
       </div>
-    </>
+    </form>
   );
 };

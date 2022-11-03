@@ -14,7 +14,7 @@ export function ForgotPassword({ setLoginFlowCurrentState }) {
     setOTPVerified(true);
   };
   return (
-    <>
+    <form className="flex flex-col gap-[30px] h-full">
       <h1 className="text-3xl text-[#41414e] font-semibold">
         <span
           className="mr-4 cursor-pointer"
@@ -74,6 +74,8 @@ export function ForgotPassword({ setLoginFlowCurrentState }) {
             className="outline-none border border-border rounded-lg p-3 text-xl"
             value={userID}
             onChange={(e) => setUserID(e.target.value.toUpperCase())}
+            autoFocus
+            required
           />
           <button
             onClick={generateOTP}
@@ -83,6 +85,6 @@ export function ForgotPassword({ setLoginFlowCurrentState }) {
           </button>
         </>
       )}
-    </>
+    </form>
   );
 }
