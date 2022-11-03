@@ -79,6 +79,7 @@ export const ClientLoginPIN = ({ setLoginFlowCurrentState, userID }) => {
         onChange={(e) => {
           setPIN(e.target.value);
         }}
+        autoFocus
       />
       <div
         className="flex flex-col gap-[30px] justify-center

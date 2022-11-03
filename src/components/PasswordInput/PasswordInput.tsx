@@ -6,6 +6,7 @@ export function PasswordInput({
   value,
   onChange,
   required = true,
+  autoFocus = false,
 }) {
   const [passwordIsMasked, setPasswordIsMasked] = useState(true);
 
@@ -22,6 +23,7 @@ export function PasswordInput({
         type={passwordIsMasked ? "password" : "text"}
         onChange={onChange}
         value={value}
+        autoFocus={autoFocus}
       />
       {passwordIsMasked ? (
         <VisibilityOff
