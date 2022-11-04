@@ -121,12 +121,10 @@ export function OrderModal() {
   useEffect(() => {
     const listener = (res) => {
       const data = JSON.parse(res);
-      if (data.ExchangeInstrumentID === instrumentData.ExchangeInstrumentID) {
-        if (data.ExchangeSegment === 1) {
-          setLTP_NSE(data.LastTradedPrice);
-        } else if (data.ExchangeSegment === 11) {
-          setLTP_BSE(data.LastTradedPrice);
-        }
+      if (data.ExchangeSegment === 1) {
+        setLTP_NSE(data.LastTradedPrice);
+      } else if (data.ExchangeSegment === 11) {
+        setLTP_BSE(data.LastTradedPrice);
       }
     };
     socket.on("1512-json-full", listener);
