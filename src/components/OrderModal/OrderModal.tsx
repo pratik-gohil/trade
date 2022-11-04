@@ -582,7 +582,6 @@ export function OrderModal() {
               </RadioGroup>
               <div className="flex justify-between items-center gap-8">
                 <NumberInput
-                  autoFocus
                   label="Qty"
                   required
                   step={
