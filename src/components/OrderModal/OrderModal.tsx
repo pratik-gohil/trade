@@ -140,10 +140,11 @@ export function OrderModal() {
       exchangeSegment === "BSECM")
       ? (instrumentData as IInstrument)?.ExchangeInstrumentID
       : (instrumentData as IInstrument)?.OppositeExchangeInstrumentID;
-  const intitialPrice =
-    (isModify
-      ? (instrumentData as IOrderWithMarketDepth)?.OrderPrice
-      : (instrumentData as IInstrument)?.Touchline?.LastTradedPrice) || 0;
+  const intitialPrice = isModify
+    ? (instrumentData as IOrderWithMarketDepth)?.OrderPrice
+    : exchangeSegment === "BSECM"
+    ? LTP_BSE
+    : LTP_NSE || 0;
 
   useEffect(() => {
     if (isModify) {
@@ -170,7 +171,7 @@ export function OrderModal() {
       //   Segments[(instrumentData as IInstrument)?.ExchangeSegment]
       // );
       setOrderQuantity((instrumentData as IInstrument)?.LotSize);
-      setPrice(intitialPrice || 0);
+      setPrice(intitialPrice || 0.0);
     }
 
     getUserBalance().then((res) => {
