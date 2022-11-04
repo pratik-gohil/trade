@@ -196,3 +196,25 @@ code {
   line-height: 50px;
   text-align: center;
 }
+
+input[type="date"] {
+  max-width: 5.5rem;
+  text-align: center;
+  position: relative;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  background: transparent;
+  color: transparent;
+  cursor: pointer;
+  height: auto;
+  position: absolute;
+  inset: 0;
+  width: auto;
+}
+
+/* input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
+} */
