@@ -26,6 +26,7 @@ import { Touchline } from "../../types/interfaces/marketDepth.interfaces.types";
 import { toFixedN } from "../../utils/toFixedN";
 import { MTM } from "../../utils/MTM";
 import { Order } from "../Orders";
+import { percDiff } from "../../utils/percentageDiffrence";
 
 const headCells: readonly HeadCell[] = [
   {
@@ -491,12 +492,9 @@ export function Positions() {
                                 : "text-failure"
                             }`}
                           >
-                            {toFixedN(
-                              (((Number(row.BuyAveragePrice) -
-                                (row?.Touchline?.LastTradedPrice || 0)) /
-                                (row?.Touchline?.LastTradedPrice || 0)) *
-                                100,
-                              2) || 0
+                            {percDiff(
+                              Number(row.BuyAveragePrice),
+                              row?.Touchline?.LastTradedPrice || 0
                             )}
                             %
                           </span>
