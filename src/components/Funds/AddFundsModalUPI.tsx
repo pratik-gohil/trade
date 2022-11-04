@@ -19,8 +19,7 @@ export default function AddFundsModalUPI({ showModal, setShowModal, amount }) {
       Amount: amount,
     })
       .then((res) => {
-        // [{"COLUMNS":["IDENTITY1"],"DATA":[["Sucess :266"]]},""]
-        return res[0]["DATA"][0][0].split(":")[1];
+        return res[0].DATA[0][0].split(":")[1];
       })
       .then((order) => {
         transactionCollectRequest({
