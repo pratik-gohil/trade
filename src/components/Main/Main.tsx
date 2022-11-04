@@ -24,6 +24,7 @@ import Holdings from "../Holdings/Holdings";
 import Profile from "../Profile/Profile";
 import CorporateAction from "../Home/CorporateAction";
 import CorporateActionTable from "../Home/CorporateAction/CorporateActionTable";
+import Ledger from "../Funds/Ledger";
 
 export function Main() {
   const instrument = useSelector((state: RootState) => state.tvc.instrument);
@@ -109,6 +110,9 @@ export function Main() {
           />
           <Route path="/orders" element={<Orders />} />
           <Route path="/funds" element={<Funds />} />
+          <Route path="/funds/ledger" element={<Ledger />} />
+          <Route path="/funds/deposits" element={<></>} />
+          <Route path="/funds/withdrawals" element={<></>} />
           <Route path="/positions" element={<Positions />} />
           <Route path="/holdings" element={<Holdings />} />
           <Route path="/profile" element={<Profile />} />
