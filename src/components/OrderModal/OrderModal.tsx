@@ -60,6 +60,7 @@ export function OrderModal() {
   const [instrumentData, setInstrumentData] = useState<any>({});
   const [LTP_NSE, setLTP_NSE] = useState(0);
   const [LTP_BSE, setLTP_BSE] = useState(0);
+  const [LTP, setLTP] = useState(0);
   const [showStoploss, setShowStoploss] = useState(false);
   const [showTarget, setShowTarget] = useState(false);
   const { socket } = useContext(SocketContext) as { socket: any };
@@ -125,6 +126,8 @@ export function OrderModal() {
         setLTP_NSE(data.LastTradedPrice);
       } else if (data.ExchangeSegment === 11) {
         setLTP_BSE(data.LastTradedPrice);
+      } else {
+        setLTP(data.LastTradedPrice);
       }
     };
     socket.on("1512-json-full", listener);
@@ -140,11 +143,14 @@ export function OrderModal() {
       exchangeSegment === "BSECM")
       ? (instrumentData as IInstrument)?.ExchangeInstrumentID
       : (instrumentData as IInstrument)?.OppositeExchangeInstrumentID;
-  const intitialPrice = isModify
-    ? (instrumentData as IOrderWithMarketDepth)?.OrderPrice
-    : exchangeSegment === "BSECM"
-    ? LTP_BSE
-    : LTP_NSE || 0;
+  const intitialPrice =
+    (isModify
+      ? (instrumentData as IOrderWithMarketDepth)?.OrderPrice
+      : exchangeSegment === "BSECM"
+      ? LTP_BSE
+      : exchangeSegment === "NSECM"
+      ? LTP_NSE
+      : LTP) || 0;
 
   useEffect(() => {
     if (isModify) {
@@ -583,6 +589,7 @@ export function OrderModal() {
                     (instrumentData as IInstrument)?.LotSize ||
                     (instrumentData as IOrderWithMarketDepth)?.OrderQuantity
                   }
+                  min={(instrumentData as IInstrument)?.LotSize || 1}
                   value={orderQuantity}
                   onChange={(value) => setOrderQuantity(value)}
                 />
