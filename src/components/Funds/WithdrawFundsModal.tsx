@@ -27,8 +27,14 @@ export default function WithdrawFundsModal({
       amount,
       BankAccountNumber: ClientBankInfoList[0].AccountNumber,
     })
-      .then((res) => console.log(res))
-      .then(() => fetchUserBalance());
+      .then((res) => {
+        return Number(res[0].DATA[0][0].split(":")[1]);
+      })
+      .then((res) => {
+        if (res) {
+          fetchUserBalance();
+        }
+      });
   };
 
   return (
