@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { getLedger } from "../../http/funds/ledger";
 import DatePicker from "../DatePicker/DatePicker";
+import { mapDataColumns } from "../../utils/mapDataColumns";
 
 interface ILedger {
   COCD: string;
@@ -58,11 +59,6 @@ interface ILedger {
 function Ledger() {
   const [dateRange, setDateRange] = useState<(string | string)[]>(["", ""]);
 
-  const mapData = (columns, data) =>
-    data.map((row) =>
-      row.reduce((acc, cell, i) => ({ ...acc, [columns[i]]: cell }), {})
-    );
-
   const cols = ["Date", "Segment", "Amount", "Balance", "Description"];
   const [d, setD] = useState<ILedger[]>([]);
 
@@ -74,7 +70,7 @@ function Ledger() {
         to: new Date(to).toLocaleDateString("en-IN"),
       }).then((res) => {
         const { COLUMNS, DATA } = res[0];
-        setD(mapData(COLUMNS, DATA));
+        setD(mapDataColumns(COLUMNS, DATA));
       });
     }
   }, [dateRange]);
