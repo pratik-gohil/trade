@@ -31,45 +31,42 @@ import { percDiff } from "../../utils/percentageDiffrence";
 const headCells: readonly HeadCell[] = [
   {
     id: "scrips",
-    numeric: false,
-    disablePadding: true,
+
     label: "Scrips",
   },
   {
     id: "qty",
-    numeric: false,
-    disablePadding: false,
+
     label: "Qty",
   },
   {
     id: "product",
-    numeric: false,
-    disablePadding: false,
+
     label: "Product",
   },
   {
     id: "avgPrice",
-    numeric: true,
-    disablePadding: true,
+    alignment: "right",
+
     label: "Avg Price",
   },
   {
     id: "ltp",
-    numeric: true,
-    disablePadding: false,
+    alignment: "right",
+
     label: "LTP",
   },
   {
     id: "mtm",
-    numeric: true,
-    disablePadding: false,
+    alignment: "right",
+
     label: "MTM",
   },
 
   {
     id: "perChg",
-    numeric: true,
-    disablePadding: false,
+    alignment: "right",
+
     label: "% Chg",
   },
 ];

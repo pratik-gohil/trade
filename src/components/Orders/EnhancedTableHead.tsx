@@ -13,8 +13,7 @@ type Order = "asc" | "desc";
 export interface HeadCell {
   id: string;
   label: string;
-  disablePadding?: boolean;
-  numeric?: boolean;
+  alignment?: "right" | "left" | "center" | "inherit" | "justify";
 }
 
 interface EnhancedTableHeadProps {
@@ -64,9 +63,8 @@ export function EnhancedTableHead(props: EnhancedTableHeadProps) {
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
-            // padding={headCell.disablePadding ? "none" : "normal"}
-            sortDirection={orderBy === headCell.id ? order : false}
+            align={headCell.alignment || "left"}
+            // sortDirection={orderBy === headCell.id ? order : false}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
