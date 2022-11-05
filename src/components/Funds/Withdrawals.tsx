@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { getWithdrawals } from "../../http/funds/withdrawals";
 import DatePicker from "../DatePicker/DatePicker";
+import { mapDataColumns } from "../../utils/mapDataColumns";
 
 interface IWithdrawal {
   COCD: string;
@@ -58,11 +59,6 @@ interface IWithdrawal {
 function Withdrawals() {
   const [dateRange, setDateRange] = useState<(string | string)[]>(["", ""]);
 
-  const mapData = (columns, data) =>
-    data.map((row) =>
-      row.reduce((acc, cell, i) => ({ ...acc, [columns[i]]: cell }), {})
-    );
-
   const cols = ["Date", "Segment", "Amount", "Balance", "Description"];
   const [d, setD] = useState<IWithdrawal[]>([]);
 
@@ -74,7 +70,7 @@ function Withdrawals() {
         to: new Date(to).toLocaleDateString("en-IN"),
       }).then((res) => {
         const { COLUMNS, DATA } = res[0];
-        setD(mapData(COLUMNS, DATA));
+        setD(mapDataColumns(COLUMNS, DATA));
       });
     }
   }, [dateRange]);
