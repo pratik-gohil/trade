@@ -22,7 +22,6 @@ function Profile() {
     ClientExchangeDetailsList,
     ClientBankInfoList,
   } = user;
-
   const {
     AccountNumber,
     BankIFSCCode,
@@ -31,6 +30,10 @@ function Profile() {
     BankCity,
     BankCityPincode,
   } = ClientBankInfoList[0] || [];
+
+  const { BSE_CASH, CD_NSE, NSE_CASH, NSE_FNO } = useSelector(
+    (state: RootState) => state.kyc
+  ).reduce((acc, i) => ({ ...acc, [i.COMPANY_CODE]: i }), {});
 
   return (
     <div className="p-5">
@@ -106,18 +109,23 @@ function Profile() {
           <div className="flex gap-5 py-5">
             <div className="flex justify-between w-full gap-5">
               <span className="text-sm text-secondary">Bank</span>
-              <span className="text-lg text-primary">{BankName}</span>
+              <span className="text-lg text-primary">
+                {BSE_CASH?.BANK_NAME}
+              </span>
             </div>
             <div className="flex justify-between w-full gap-5">
               <span className="text-sm text-secondary">Account</span>
-              <span className="text-lg text-primary">{AccountNumber}</span>
+              <span className="text-lg text-primary">
+                {BSE_CASH?.BANK_ACNO}
+              </span>
             </div>
           </div>
           <div className="flex gap-5">
             <div className="flex justify-between w-full gap-5">
               <span className="text-sm text-secondary">Branch</span>
               <span className="text-lg text-primary">
-                {[BankBranchName, BankCity, BankCityPincode].join(", ")}
+                {/* {[BankBranchName, BankCity, BankCityPincode].join(", ")} */}
+                NA
               </span>
             </div>
             <div className="flex justify-between w-full gap-5">

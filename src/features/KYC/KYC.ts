@@ -1,13 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = null;
+const initialState: any[] = [];
 
 export const kycSlice = createSlice({
   name: "kyc",
   initialState,
   reducers: {
-    setKycReducer: (state, action) => {
-      state = action.payload;
+    setKycReducer: (_, action) => {
+      return action.payload;
     },
   },
 });
