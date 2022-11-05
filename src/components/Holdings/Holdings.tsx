@@ -13,61 +13,46 @@ import { subscribeInstruments } from "../../http/subscribeInstruments/subscribeI
 import { SocketContext } from "../../socket";
 import { toFixedN } from "../../utils/toFixedN";
 import { percDiff } from "../../utils/percentageDiffrence";
+import { formatCurrency } from "../../utils/formatCurrency";
 
 const headCells: readonly HeadCell[] = [
   {
     id: "scrips",
-    numeric: false,
-    disablePadding: true,
     label: "Scrips",
   },
   {
     id: "qty",
-    numeric: false,
-    disablePadding: false,
+    alignment: "center",
     label: "Qty",
   },
   {
-    id: "holding_days",
-    numeric: true,
-    disablePadding: false,
-    label: "Holding Days",
-  },
-  {
     id: "avgPrice",
-    numeric: true,
-    disablePadding: true,
+    alignment: "right",
     label: "Avg Price",
   },
   {
     id: "ltp",
-    numeric: true,
-    disablePadding: false,
+    alignment: "center",
     label: "LTP",
   },
   {
-    id: "invested",
-    numeric: true,
-    disablePadding: false,
-    label: "Invested",
-  },
-  {
     id: "current",
-    numeric: true,
-    disablePadding: false,
+    alignment: "center",
     label: "Current",
   },
   {
     id: "p&l",
-    numeric: true,
-    disablePadding: false,
+    alignment: "center",
     label: "P&L",
   },
-
+  {
+    id: "netChg",
+    alignment: "right",
+    label: "Net Chg",
+  },
   {
     id: "perChg",
-    numeric: true,
-    disablePadding: false,
+    alignment: "right",
     label: "% Chg",
   },
 ];
@@ -152,11 +137,11 @@ function Holdings() {
         <div className="bg-successHighlight flex justify-between px-6 py-3 rounded">
           <div className="text-center">
             <h3 className="text-lg font-light">Investment</h3>
-            <h1 className="text-4xl">{investment}</h1>
+            <h1 className="text-4xl">{formatCurrency(investment)}</h1>
           </div>
           <div className="text-center">
             <h3 className="text-lg font-light">Current</h3>
-            <h1 className="text-4xl">{current}</h1>
+            <h1 className="text-4xl">{formatCurrency(current)}</h1>
           </div>
           <div className="text-center">
             <h3 className="text-lg font-light">Day's P&L</h3>
@@ -165,7 +150,7 @@ function Holdings() {
                 dayPnL > 0 ? "text-success" : "text-failure"
               }`}
             >
-              {dayPnL}
+              {formatCurrency(dayPnL)}
             </h1>
           </div>
           <div className="text-center">
@@ -175,7 +160,7 @@ function Holdings() {
                 overallPnL > 0 ? "text-success" : "text-failure"
               }`}
             >
-              {overallPnL}
+              {formatCurrency(overallPnL)}
             </h1>
           </div>
         </div>
@@ -201,19 +186,25 @@ function Holdings() {
                   return (
                     <TableRow tabIndex={-1} key={index.toString()}>
                       <TableCell>NA</TableCell>
-                      <TableCell>{holding.HoldingQuantity}</TableCell>
-                      <TableCell>
+                      <TableCell align="center">
+                        {holding.HoldingQuantity}
+                      </TableCell>
+                      {/* <TableCell>
                         {toFixedN(
                           (Date.now() -
                             (new Date(holding.LastUpdateTime * 1000) as any)) /
                             (1000 * 60 * 60 * 24)
                         )}
+                      </TableCell> */}
+                      <TableCell align="right">
+                        {toFixedN(holding.BuyAvgPrice)}
                       </TableCell>
-                      <TableCell>{toFixedN(holding.BuyAvgPrice)}</TableCell>
-                      <TableCell>{toFixedN(holding.LastTradedPrice)}</TableCell>
-                      <TableCell>{toFixedN(invested)}</TableCell>
-                      <TableCell>{toFixedN(current)}</TableCell>
-                      <TableCell>
+                      <TableCell align="center">
+                        {toFixedN(holding.LastTradedPrice)}
+                      </TableCell>
+                      {/* <TableCell>{toFixedN(invested)}</TableCell> */}
+                      <TableCell align="center">{toFixedN(current)}</TableCell>
+                      <TableCell align="center">
                         <span
                           className={`${
                             Number(percDiff(current, invested)) > 0
@@ -226,7 +217,7 @@ function Holdings() {
                             : "") + toFixedN(current - invested)}
                         </span>
                       </TableCell>
-                      <TableCell>
+                      <TableCell align="right">
                         <span
                           className={`${
                             Number(percDiff(current, invested)) > 0
@@ -235,6 +226,19 @@ function Holdings() {
                           }`}
                         >
                           {percDiff(current, invested)}%
+                        </span>
+                      </TableCell>
+                      <TableCell align="right">
+                        <span
+                          className={`${
+                            Number(
+                              percDiff(holding.LastTradedPrice, invested)
+                            ) > 0
+                              ? "text-success"
+                              : "text-failure"
+                          }`}
+                        >
+                          {percDiff(holding.LastTradedPrice, invested)}%
                         </span>
                       </TableCell>
                     </TableRow>

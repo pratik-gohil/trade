@@ -14,44 +14,39 @@ import OrderDetailsModal from "./OrderDetailsModal";
 const headCells: readonly HeadCell[] = [
   {
     id: "time",
-    numeric: false,
-    disablePadding: true,
+
     label: "Time",
   },
   {
     id: "action",
-    numeric: false,
-    disablePadding: false,
+
     label: "Action",
   },
   {
     id: "scrips",
-    numeric: false,
-    disablePadding: false,
+
     label: "Scrips",
   },
   {
     id: "qty",
-    numeric: false,
-    disablePadding: false,
+
     label: "Qty",
   },
   {
     id: "product",
-    numeric: false,
-    disablePadding: false,
+
     label: "Product",
   },
   {
     id: "orderPrice",
-    numeric: true,
-    disablePadding: false,
+    alignment: "right",
+
     label: "Order Price",
   },
   {
     id: "ltp",
-    numeric: true,
-    disablePadding: false,
+    alignment: "right",
+
     label: "LTP",
   },
 ];
