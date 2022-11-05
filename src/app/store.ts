@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authSlice from "../features/Auth/Auth";
+import kycSlice from "../features/KYC/KYC";
 import orderModalSlice from "../features/orderModal/orderModal";
 import tvcSlice from "./../features/TVChart/TVChart";
 
@@ -8,6 +9,7 @@ export const store = configureStore({
     orderModal: orderModalSlice,
     auth: authSlice,
     tvc: tvcSlice,
+    kyc: kycSlice,
   },
 });
 

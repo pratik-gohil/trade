@@ -23,6 +23,9 @@ import Logout from "./components/Logout/Logout";
 import { asyncLocalStorage } from "./utils/asyncLocalStorage";
 import { RootState } from "./app/store";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
+import { getKycMaster } from "./http/kycMaster/kycMaster";
+import { mapDataColumns } from "./utils/mapDataColumns";
+import { setKycReducer } from "./features/KYC/KYC";
 const { TOKEN } = constants;
 
 declare module "@mui/material/styles" {
@@ -62,24 +65,39 @@ export default function App() {
   };
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    (async () => {
-      if (localStorage.getItem(TOKEN)) {
-        const userProfile = await getUserProfile();
-        if (
-          (userProfile.type === "error" &&
-            userProfile.description === "Invalid Token") ||
-          userProfile.description === "Token/Authorization not found"
-        ) {
-          asyncLocalStorage.clear().then(() => {
-            window.location.href = "/";
-          });
-        }
-        if (userProfile.type === "success") {
-          dispatch(setUserReducer(userProfile.result));
-        }
+  const setKycMaster = async () => {
+    getKycMaster()
+      .then((res) => {
+        const { COLUMNS, DATA } = res[0];
+
+        return mapDataColumns(COLUMNS, DATA);
+      })
+      .then((kyc) => {
+        dispatch(setKycReducer(kyc));
+      });
+  };
+
+  const setUserProfile = async () => {
+    if (localStorage.getItem(TOKEN)) {
+      const userProfile = await getUserProfile();
+      if (
+        (userProfile.type === "error" &&
+          userProfile.description === "Invalid Token") ||
+        userProfile.description === "Token/Authorization not found"
+      ) {
+        asyncLocalStorage.clear().then(() => {
+          window.location.href = "/";
+        });
       }
-    })();
+      if (userProfile.type === "success") {
+        dispatch(setUserReducer(userProfile.result));
+      }
+    }
+  };
+
+  useEffect(() => {
+    setUserProfile();
+    setKycMaster();
   }, [dispatch]);
 
   const [theme] = useState(() =>
