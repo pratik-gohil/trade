@@ -1,3 +1,4 @@
+import { KeyboardArrowDown } from "@mui/icons-material";
 import {
   Box,
   Checkbox,
@@ -47,7 +48,7 @@ export function EnhancedTableHead(props: EnhancedTableHeadProps) {
     <TableHead>
       <TableRow>
         {allowSelection && (
-          <TableCell padding="checkbox">
+          <TableCell padding="none" sx={{ padding: "0 !important" }}>
             <Checkbox
               color="secondary"
               indeterminate={
@@ -64,12 +65,21 @@ export function EnhancedTableHead(props: EnhancedTableHeadProps) {
           <TableCell
             key={headCell.id}
             align={headCell.alignment || "left"}
-            // sortDirection={orderBy === headCell.id ? order : false}
+            sortDirection={orderBy === headCell.id ? order : false}
+            // padding="none"
+            sx={{ padding: "7px" }}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
               direction={orderBy === headCell.id ? order : "asc"}
               onClick={createSortHandler(headCell.id)}
+              IconComponent={KeyboardArrowDown}
+              sx={(theme) => ({
+                color: "red",
+                "& .MuiSvgIcon-root": {
+                  color: `${theme.palette.blue.main} !important`,
+                },
+              })}
             >
               <span className="text-primary text-xs">{headCell.label}</span>
               {orderBy === headCell.id ? (

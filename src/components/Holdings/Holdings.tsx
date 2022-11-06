@@ -22,7 +22,7 @@ const headCells: readonly HeadCell[] = [
   },
   {
     id: "qty",
-    alignment: "center",
+    alignment: "right",
     label: "Qty",
   },
   {
@@ -32,17 +32,17 @@ const headCells: readonly HeadCell[] = [
   },
   {
     id: "ltp",
-    alignment: "center",
+    alignment: "right",
     label: "LTP",
   },
   {
     id: "current",
-    alignment: "center",
+    alignment: "right",
     label: "Current",
   },
   {
     id: "p&l",
-    alignment: "center",
+    alignment: "right",
     label: "P&L",
   },
   {
@@ -165,8 +165,8 @@ function Holdings() {
           </div>
         </div>
         <Box sx={{ width: "100%" }}>
-          <TableContainer>
-            <Table>
+          <TableContainer sx={{ maxHeight: 350 }}>
+            <Table stickyHeader>
               <EnhancedTableHead
                 headCells={headCells}
                 order={order}
@@ -186,7 +186,7 @@ function Holdings() {
                   return (
                     <TableRow tabIndex={-1} key={index.toString()}>
                       <TableCell>NA</TableCell>
-                      <TableCell align="center">
+                      <TableCell align="right">
                         {holding.HoldingQuantity}
                       </TableCell>
                       {/* <TableCell>
@@ -199,12 +199,13 @@ function Holdings() {
                       <TableCell align="right">
                         {toFixedN(holding.BuyAvgPrice)}
                       </TableCell>
-                      <TableCell align="center">
+                      <TableCell align="right">
                         {toFixedN(holding.LastTradedPrice)}
                       </TableCell>
-                      {/* <TableCell>{toFixedN(invested)}</TableCell> */}
-                      <TableCell align="center">{toFixedN(current)}</TableCell>
-                      <TableCell align="center">
+                      <TableCell align="right">
+                        {formatCurrency(current)}
+                      </TableCell>
+                      <TableCell align="right">
                         <span
                           className={`${
                             Number(percDiff(current, invested)) > 0
@@ -214,7 +215,7 @@ function Holdings() {
                         >
                           {(Number(toFixedN(current - invested)) > 0
                             ? "+"
-                            : "") + toFixedN(current - invested)}
+                            : "") + formatCurrency(current - invested)}
                         </span>
                       </TableCell>
                       <TableCell align="right">

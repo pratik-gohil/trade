@@ -218,3 +218,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   display: none;
   -webkit-appearance: none;
 } */
+
+.MuiTableCell-root {
+  padding: 18px 7px !important
+}

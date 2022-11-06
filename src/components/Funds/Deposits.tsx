@@ -82,8 +82,8 @@ function Deposits() {
         <DatePicker onChange={(range) => setDateRange(range)} />
       </div>
       <Box sx={{ width: "100%" }}>
-        <TableContainer>
-          <Table>
+        <TableContainer sx={{ maxHeight: 440 }}>
+          <Table stickyHeader>
             <TableHead>
               {cols.map((col) => (
                 <TableCell>

@@ -20,7 +20,7 @@ import { getNetPositions } from "../../http/getNetPositions/getNetPositions";
 import { EnhancedTableHead, HeadCell } from "../Orders/EnhancedTableHead";
 import { subscribeInstruments } from "../../http/subscribeInstruments/subscribeInstruments";
 import { unsubscribeInstruments } from "../../http/unsubscribeInstruments/unsubscribeInstruments";
-import { Segments } from "../../types/enums/segment.enums.types";
+import { Segments, Series } from "../../types/enums/segment.enums.types";
 import { SocketContext } from "../../socket";
 import { Touchline } from "../../types/interfaces/marketDepth.interfaces.types";
 import { toFixedN } from "../../utils/toFixedN";
@@ -31,42 +31,38 @@ import { percDiff } from "../../utils/percentageDiffrence";
 const headCells: readonly HeadCell[] = [
   {
     id: "scrips",
-
+    alignment: "left",
     label: "Scrips",
   },
   {
     id: "qty",
-
+    alignment: "right",
     label: "Qty",
   },
   {
     id: "product",
-
+    alignment: "right",
     label: "Product",
   },
   {
     id: "avgPrice",
     alignment: "right",
-
     label: "Avg Price",
   },
   {
     id: "ltp",
     alignment: "right",
-
     label: "LTP",
   },
   {
     id: "mtm",
     alignment: "right",
-
     label: "MTM",
   },
 
   {
     id: "perChg",
     alignment: "right",
-
     label: "% Chg",
   },
 ];
@@ -388,8 +384,12 @@ export function Positions() {
             numSelected={selected.length}
             PandL={PandL}
           />
-          <TableContainer>
-            <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
+          <TableContainer sx={{ maxHeight: 440 }}>
+            <Table
+              stickyHeader
+              sx={{ minWidth: 750 }}
+              aria-labelledby="tableTitle"
+            >
               <EnhancedTableHead
                 headCells={headCells}
                 order={order}
@@ -422,7 +422,10 @@ export function Positions() {
                         selected={isItemSelected}
                       >
                         {allowSelection && (
-                          <TableCell padding="checkbox">
+                          <TableCell
+                            padding="none"
+                            sx={{ padding: "0 !important" }}
+                          >
                             <Checkbox
                               color="secondary"
                               checked={isItemSelected}
@@ -436,12 +439,15 @@ export function Positions() {
                           component="th"
                           id={labelId}
                           scope="row"
-                          padding="none"
+                          className="whitespace-nowrap"
                         >
                           {row.TradingSymbol}
+                          <span className="text-xs text-secondary ml-1">
+                            {Series[Segments[row.ExchangeSegment]]}
+                          </span>
                         </TableCell>
-                        <TableCell>{row.Quantity}</TableCell>
-                        <TableCell>
+                        <TableCell align="right">{row.Quantity}</TableCell>
+                        <TableCell align="right">
                           <span
                             className={`${
                               row.ProductType === "MIS" ||

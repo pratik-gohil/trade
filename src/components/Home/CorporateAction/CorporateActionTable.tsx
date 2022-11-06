@@ -58,8 +58,8 @@ function CorporateActionTable({ type, instrument }) {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <TableContainer>
-        <Table>
+      <TableContainer sx={{ maxHeight: 440 }}>
+        <Table stickyHeader>
           <EnhancedTableHead
             headCells={headCells}
             order={order}

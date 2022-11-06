@@ -98,7 +98,7 @@ export const OrderTableRow = ({
       selected={isSelected(row.AppOrderID)}
     >
       {allowSelection && (
-        <TableCell padding="checkbox">
+        <TableCell padding="none" sx={{ padding: "0 !important" }}>
           <Checkbox
             onClick={(event) => {
               handleClick(event, row.AppOrderID);
@@ -111,11 +111,7 @@ export const OrderTableRow = ({
           />
         </TableCell>
       )}
-      <TableCell
-        id={`enhanced-table-checkbox-${index}`}
-        scope="row"
-        padding="none"
-      >
+      <TableCell id={`enhanced-table-checkbox-${index}`} scope="row">
         <span className="text-base">
           {row.ExchangeTransactTime.split(" ")[1]}
         </span>
