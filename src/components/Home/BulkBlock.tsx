@@ -77,8 +77,8 @@ function BulkBlock({ instrument }) {
         </NavLink>
       </h1> */}
       <div className="max-h-[calc(100vh-4rem-40px-45px-2.5rem-3rem)] overflow-y-scroll">
-        <TableContainer>
-          <Table>
+        <TableContainer sx={{ maxHeight: 440 }}>
+          <Table stickyHeader>
             <TableHead>
               <TableRow>
                 {deals.headers.map((header) => (

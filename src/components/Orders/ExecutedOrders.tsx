@@ -130,7 +130,7 @@ export default function ExecutedOrders({ orders }: IExecutedOrders) {
     }
   };
 
-  if (!(executedOrders.length > 0)) return null;
+  // if (!(executedOrders.length > 0)) return null;
 
   return (
     <div>
@@ -140,8 +140,8 @@ export default function ExecutedOrders({ orders }: IExecutedOrders) {
           search={search}
           setSearch={setSearch}
         />
-        <TableContainer>
-          <Table sx={{ minWidth: 750 }}>
+        <TableContainer sx={{ maxHeight: 440 }}>
+          <Table stickyHeader sx={{ minWidth: 750 }}>
             <EnhancedTableHead
               headCells={headCells}
               order={order}

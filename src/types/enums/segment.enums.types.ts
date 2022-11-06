@@ -12,6 +12,10 @@ export enum Segments {
 export enum Series {
   NSECM = "NSE",
   BSECM = "BSE",
+  NSEFO = "FUT",
+  NSECD = "",
+  BSEFO = "FUT",
+  MCXFO = "FUT",
   FUTSTK = "FUT",
   OPTIDX = "OPT",
   OPTSTK = "OPT",

@@ -167,120 +167,116 @@ export default function GTTOrders({ fetchOrders }) {
           search={search}
           setSearch={setSearch}
         />
-        <TableContainer>
-          <TableContainer sx={{ minWidth: 750 }}>
-            <EnhancedTableHead
-              headCells={headCells}
-              allowSelection={allowSelection}
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={(e) => handleSelectAllClick(e, orders)}
-              onRequestSort={handleRequestSort}
-              rowCount={orders.length}
-            />
-            <TableBody className="max-h-28 overflow-auto">
-              {orders
-                .sort(handleSort)
+        <TableContainer sx={{ maxHeight: 440 }}>
+          <EnhancedTableHead
+            headCells={headCells}
+            allowSelection={allowSelection}
+            numSelected={selected.length}
+            order={order}
+            orderBy={orderBy}
+            onSelectAllClick={(e) => handleSelectAllClick(e, orders)}
+            onRequestSort={handleRequestSort}
+            rowCount={orders.length}
+          />
+          <TableBody className="max-h-28 overflow-auto">
+            {orders
+              .sort(handleSort)
 
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.AppOrderID);
-                  const labelId = `enhanced-table-checkbox-${index}`;
-                  return (
-                    <TableRow
-                      hover
-                      // onClick={(event) => {
-                      //   setAllowSelection(true);
-                      //   handleClick(event, row.AppOrderID);
-                      // }}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.AppOrderID}
-                      selected={isItemSelected}
-                    >
-                      {allowSelection && (
-                        <TableCell padding="checkbox">
-                          <Checkbox
-                            color="secondary"
-                            checked={isItemSelected}
-                            inputProps={{
-                              "aria-labelledby": labelId,
-                            }}
-                          />
-                        </TableCell>
-                      )}
+              .map((row, index) => {
+                const isItemSelected = isSelected(row.AppOrderID);
+                const labelId = `enhanced-table-checkbox-${index}`;
+                return (
+                  <TableRow
+                    hover
+                    // onClick={(event) => {
+                    //   setAllowSelection(true);
+                    //   handleClick(event, row.AppOrderID);
+                    // }}
+                    role="checkbox"
+                    aria-checked={isItemSelected}
+                    tabIndex={-1}
+                    key={row.AppOrderID}
+                    selected={isItemSelected}
+                  >
+                    {allowSelection && (
                       <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
                         padding="none"
+                        sx={{ padding: "0 !important" }}
                       >
-                        <span className="text-base">
-                          {row.ExchangeTransactTime.split(" ")[1]}
-                        </span>
+                        <Checkbox
+                          color="secondary"
+                          checked={isItemSelected}
+                          inputProps={{
+                            "aria-labelledby": labelId,
+                          }}
+                        />
                       </TableCell>
-                      <TableCell className="!flex !gap-2">
-                        <span
-                          className={`${
-                            row.OrderStatus === "Filled"
-                              ? "text-success bg-successHighlight"
-                              : row.OrderStatus === "Rejected"
-                              ? "text-failure bg-failureHighlight"
-                              : "text-warning bg-warningHighlight"
-                          } text-xs rounded-[4px] py-[5px] px-[6px] font-medium`}
-                        >
-                          {row.OrderStatus === "Filled"
-                            ? "Executed"
-                            : row.OrderStatus}
-                        </span>
-                        <span
-                          className={`${
-                            row.OrderSide === "BUY"
-                              ? "text-success bg-successHighlight"
-                              : "text-failure bg-failureHighlight"
-                          } text-xs rounded-[4px] py-[5px] px-[6px] font-medium`}
-                        >
-                          {row.OrderSide}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-base text-primary">
-                          {row.TradingSymbol}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-[#a9a9a9] text-base">
-                          {row.OrderQuantity}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span
-                          className={`${
-                            row.ProductType === "MIS" ||
-                            row.ProductType === "INTRA"
-                              ? "text-purple bg-purpleHighlight"
-                              : "text-blue bg-blueHighlight"
-                          } text-xs rounded-[4px] py-[5px] px-[6px]`}
-                        >
-                          {row.ProductType}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-primary text-base">
-                          {row.OrderPrice}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-primary text-base">
-                          {toFixedN(row?.Touchline?.LastTradedPrice || 0)}
-                        </span>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-            </TableBody>
-          </TableContainer>
+                    )}
+                    <TableCell component="th" id={labelId} scope="row">
+                      <span className="text-base">
+                        {row.ExchangeTransactTime.split(" ")[1]}
+                      </span>
+                    </TableCell>
+                    <TableCell className="!flex !gap-2">
+                      <span
+                        className={`${
+                          row.OrderStatus === "Filled"
+                            ? "text-success bg-successHighlight"
+                            : row.OrderStatus === "Rejected"
+                            ? "text-failure bg-failureHighlight"
+                            : "text-warning bg-warningHighlight"
+                        } text-xs rounded-[4px] py-[5px] px-[6px] font-medium`}
+                      >
+                        {row.OrderStatus === "Filled"
+                          ? "Executed"
+                          : row.OrderStatus}
+                      </span>
+                      <span
+                        className={`${
+                          row.OrderSide === "BUY"
+                            ? "text-success bg-successHighlight"
+                            : "text-failure bg-failureHighlight"
+                        } text-xs rounded-[4px] py-[5px] px-[6px] font-medium`}
+                      >
+                        {row.OrderSide}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-base text-primary">
+                        {row.TradingSymbol}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-[#a9a9a9] text-base">
+                        {row.OrderQuantity}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <span
+                        className={`${
+                          row.ProductType === "MIS" ||
+                          row.ProductType === "INTRA"
+                            ? "text-purple bg-purpleHighlight"
+                            : "text-blue bg-blueHighlight"
+                        } text-xs rounded-[4px] py-[5px] px-[6px]`}
+                      >
+                        {row.ProductType}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-primary text-base">
+                        {row.OrderPrice}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-primary text-base">
+                        {toFixedN(row?.Touchline?.LastTradedPrice || 0)}
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+          </TableBody>
         </TableContainer>
       </Box>
     </div>

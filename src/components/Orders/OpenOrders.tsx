@@ -186,7 +186,7 @@ export default function OpenOrders({ orders, fetchOrders }) {
     }
   };
 
-  if (!(openOrders.length > 0)) return null;
+  // if (!(openOrders.length > 0)) return null;
 
   return (
     <div>
@@ -199,8 +199,8 @@ export default function OpenOrders({ orders, fetchOrders }) {
           search={search}
           setSearch={setSearch}
         />
-        <TableContainer>
-          <Table sx={{ minWidth: 750 }}>
+        <TableContainer sx={{ maxHeight: 440 }}>
+          <Table stickyHeader sx={{ minWidth: 750 }}>
             <EnhancedTableHead
               headCells={headCells}
               allowSelection={allowSelection}
@@ -298,8 +298,8 @@ export default function OpenOrders({ orders, fetchOrders }) {
             </span>
           </div>
           <Box sx={{ width: "100%" }}>
-            <TableContainer>
-              <Table>
+            <TableContainer sx={{ maxHeight: 440 }}>
+              <Table stickyHeader>
                 <EnhancedTableHead
                   headCells={[
                     {
