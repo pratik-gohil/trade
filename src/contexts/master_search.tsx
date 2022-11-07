@@ -40,37 +40,35 @@ export interface IMasterInstrument {
 }
 
 const MasterSearchContextProvider = ({ children }) => {
-  const [search, setSearch] = useState<any>(null);
+  const [search, _] = useState(
+    new Document({
+      charset: "latin",
+      lang: "en",
+      id: "ex_id",
+      index: [
+        {
+          field: "d_nm",
+          tokenize: "full",
+        },
+      ],
+      store: true,
+    })
+  );
 
   useEffect(() => {
     (async () => {
-      if (!search) {
-        const _search = new Document({
-          charset: "latin",
-          lang: "en",
-          id: "ex_id",
-          index: [
-            {
-              field: "d_nm",
-              tokenize: "full",
-            },
-          ],
-          store: true,
-        });
-        setSearch(_search);
-      } else {
-        const response = await getMaster(["NSECM", "BSECM", "NSECD", "NSEFO"]);
+      const response = await getMaster(["NSECM", "BSECM", "NSECD", "NSEFO"]);
 
-        response.data.map(({ ex_id, d_nm, ex }) => {
-          search.add({
-            ex_id,
-            d_nm,
-            ex,
-          });
+      response.data.map(({ ex_id, d_nm, ex, s }) => {
+        search.add({
+          ex_id,
+          d_nm,
+          ex,
+          s,
         });
-      }
+      });
     })();
-  }, [search]);
+  }, []);
 
   return (
     <MastersSearchContext.Provider value={{ search }}>
