@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@mui/material";
 import { getWithdrawals } from "../../http/funds/withdrawals";
-import DatePicker from "../DatePicker/DatePicker";
+import { DatePicker } from "../DatePicker";
 import { mapDataColumns } from "../../utils/mapDataColumns";
 
 interface IWithdrawal {

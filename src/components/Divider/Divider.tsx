@@ -1,6 +1,6 @@
 import React from "react";
 
-const Divider = ({ margin = "20px" }) => {
+export const Divider = ({ margin = "20px" }) => {
   return (
     <div
       style={{ margin: `${margin} 0` }}
@@ -8,5 +8,3 @@ const Divider = ({ margin = "20px" }) => {
     ></div>
   );
 };
-
-export default Divider;

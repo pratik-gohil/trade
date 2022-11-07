@@ -19,7 +19,7 @@ import { Header } from "./components/Header";
 import { getUserProfile } from "./http/getUserProfile/getUserProfile";
 import { setUserReducer } from "./features/Auth/Auth";
 import { constants } from "./constants/global";
-import Logout from "./components/Logout/Logout";
+import { Logout } from "./components/Logout";
 import { asyncLocalStorage } from "./utils/asyncLocalStorage";
 import { RootState } from "./app/store";
 import { SnackbarProvider, VariantType, useSnackbar } from "notistack";

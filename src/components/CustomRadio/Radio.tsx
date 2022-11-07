@@ -1,7 +1,7 @@
 import { Radio } from "@mui/material";
 import React from "react";
 
-export default function CustomRadio(props) {
+export function CustomRadio(props) {
   return (
     <Radio
       {...props}

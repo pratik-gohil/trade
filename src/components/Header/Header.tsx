@@ -23,7 +23,7 @@ import {
   Settings,
   SettingsPhone,
 } from "@mui/icons-material";
-import Divider from "../Divider/Divider";
+import { Divider } from "../Divider";
 
 const links = [
   // {

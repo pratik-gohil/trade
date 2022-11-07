@@ -1,7 +1,7 @@
 import { Checkbox } from "@mui/material";
 import React from "react";
 
-export default function CustomCheckbox(props) {
+export function CustomCheckbox(props) {
   return (
     <Checkbox
       {...props}
