@@ -472,7 +472,9 @@ export function WatchList() {
                     </div>
                     <div className="text-right">
                       <div className="text-secondary bg-secondaryHighlight text-xs p-1 rounded-[4px]">
-                        {instrument.ex}
+                        {instrument.ex === "NSECM" || instrument.ex === "BSECM"
+                          ? Series[instrument.ex]
+                          : Series[instrument.s] || instrument.s}
                       </div>
                     </div>
                     <div className="absolute right-0 top-1 bottom-1 bg-white items-center gap-2 pr-2 hidden group-hover:flex text-base">
@@ -708,9 +710,10 @@ export function WatchList() {
                         {instrument.DisplayName}
                       </div>
                       <div className="text-secondary text-xs">
-                        {instrument.Series === "EQ"
+                        {Segments[instrument.ExchangeSegment] === "NSECM" ||
+                        Segments[instrument.ExchangeSegment] === "BSECM"
                           ? Series[Segments[instrument.ExchangeSegment]]
-                          : Series[instrument.Series]}
+                          : Series[instrument.Series] || instrument.Series}
                       </div>
                     </div>
                     <div className="text-right">

@@ -19,4 +19,5 @@ export enum Series {
   FUTSTK = "FUT",
   OPTIDX = "OPT",
   OPTSTK = "OPT",
+  OPTCUR = "OPT",
 }
