@@ -3,7 +3,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { ClientExchangeDetailsList } from "../../features/Auth/Auth";
-import Divider from "../Divider/Divider";
+import { Divider } from "../Divider";
 
 const getEnabledSegments = (segments: ClientExchangeDetailsList | {}) => {
   return Object.keys(segments)
@@ -11,7 +11,7 @@ const getEnabledSegments = (segments: ClientExchangeDetailsList | {}) => {
     .join(", ");
 };
 
-function Profile() {
+export function Profile() {
   const user = useSelector((state: RootState) => state.auth.user);
   const {
     ClientName,
@@ -138,5 +138,3 @@ function Profile() {
     </div>
   );
 }
-
-export default Profile;

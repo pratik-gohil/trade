@@ -57,7 +57,7 @@ const headCells: readonly HeadCell[] = [
   },
 ];
 
-function Holdings() {
+export function Holdings() {
   const [holdings, setHoldings] = useState<any>([]);
   const [order, setOrder] = React.useState<Order>("desc");
   const [orderBy, setOrderBy] = React.useState<any>("scrips");
@@ -253,5 +253,3 @@ function Holdings() {
     </>
   );
 }
-
-export default Holdings;

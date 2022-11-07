@@ -1,7 +1,7 @@
 import { DateRange } from "@mui/icons-material";
 import React, { useState, useEffect } from "react";
 
-function DatePicker({ onChange }) {
+export function DatePicker({ onChange }) {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
 
@@ -35,5 +35,3 @@ function DatePicker({ onChange }) {
     </div>
   );
 }
-
-export default DatePicker;

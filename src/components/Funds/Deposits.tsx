@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@mui/material";
 import { getDeposits } from "../../http/funds/deposits";
-import DatePicker from "../DatePicker/DatePicker";
+import { DatePicker } from "../DatePicker";
 import { mapDataColumns } from "../../utils/mapDataColumns";
 
 interface IDeposit {

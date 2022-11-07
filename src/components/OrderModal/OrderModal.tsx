@@ -16,7 +16,7 @@ import { NumberInput } from "../NumberInput";
 import { CustomSwitch } from "../Switch";
 import { RootState } from "../../app/store";
 import { useTheme, Theme, FormControlLabel, RadioGroup } from "@mui/material";
-import CustomRadio from "../Radio/Radio";
+import { CustomRadio } from "../CustomRadio";
 import { orderEntry } from "../../http/orderEntry/orderEntry";
 import { constants } from "../../constants/global";
 import { getUserBalance } from "../../http/userBalance/userBalance";
@@ -30,7 +30,7 @@ import { SocketContext } from "../../contexts/socket";
 import { subscribeInstruments } from "../../http/subscribeInstruments/subscribeInstruments";
 import { unsubscribeInstruments } from "../../http/unsubscribeInstruments/unsubscribeInstruments";
 import { getDecimal } from "../../utils/getDecimal";
-import CustomCheckbox from "../Checkbox/Checkbox";
+import { CustomCheckbox } from "../Checkbox";
 const { USER_ID, CLIENT_ID } = constants;
 
 let margin = 50;

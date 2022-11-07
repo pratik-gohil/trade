@@ -9,7 +9,7 @@ import AddFundsResponseModal from "./AddFundsResponseModal";
 import WithdrawFundsModal from "./WithdrawFundsModal";
 import { Link } from "react-router-dom";
 
-function Funds() {
+export function Funds() {
   const [balanceList, setBalanceList] = useState<any[]>([]);
   const [showAddFundsModal, setShowAddFundsModal] = useState(false);
   const [showFundsUPIModal, setShowFundsUPIModal] = useState(false);
@@ -295,5 +295,3 @@ function Funds() {
     </>
   );
 }
-
-export default Funds;
