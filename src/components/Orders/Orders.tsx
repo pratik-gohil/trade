@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useMemo, useState } from "react";
 import { getOrders } from "../../http/getOrders/getOrders";
 import { subscribeInstruments } from "../../http/subscribeInstruments/subscribeInstruments";
 import { Segments } from "../../types/enums/segment.enums.types";
-import { SocketContext } from "../../socket";
+import { SocketContext } from "../../contexts/socket";
 import { IMarketDepth } from "../../types/interfaces/marketDepth.interfaces.types";
 import { unsubscribeInstruments } from "../../http/unsubscribeInstruments/unsubscribeInstruments";
 import { useSelector } from "react-redux";

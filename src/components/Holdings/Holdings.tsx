@@ -10,7 +10,7 @@ import { EnhancedTableHead, HeadCell } from "../Orders/EnhancedTableHead";
 import { Order } from "../Orders";
 import { getHoldings } from "../../http/holdings/getHoldings";
 import { subscribeInstruments } from "../../http/subscribeInstruments/subscribeInstruments";
-import { SocketContext } from "../../socket";
+import { SocketContext } from "../../contexts/socket";
 import { toFixedN } from "../../utils/toFixedN";
 import { percDiff } from "../../utils/percentageDiffrence";
 import { formatCurrency } from "../../utils/formatCurrency";

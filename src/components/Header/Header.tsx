@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { subscribeInstruments } from "../../http/subscribeInstruments/subscribeInstruments";
 import { searchInstruments } from "../../http/searchInstruments/searchInstruments";
-import { SocketContext } from "../../socket";
+import { SocketContext } from "../../contexts/socket";
 import { percDiff } from "../../utils/percentageDiffrence";
 import { IInstrument } from "../../types/interfaces/instrument.interfaces.types";
 import trade from "../../assets/trade.png";

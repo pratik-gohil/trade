@@ -6,7 +6,7 @@ import {
   Routes,
   Navigate,
 } from "react-router-dom";
-import WebSocketProvider from "./socket";
+import WebSocketProvider from "./contexts/socket";
 import { OrderModal } from "./components/OrderModal";
 import {
   createTheme,
@@ -26,6 +26,7 @@ import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 import { getKycMaster } from "./http/kycMaster/kycMaster";
 import { mapDataColumns } from "./utils/mapDataColumns";
 import { setKycReducer } from "./features/KYC/KYC";
+import { MasterSearchContextProvider } from "./contexts/master_search";
 const { TOKEN } = constants;
 
 declare module "@mui/material/styles" {
@@ -131,27 +132,29 @@ export default function App() {
     >
       <ThemeProvider theme={theme}>
         <WebSocketProvider>
-          <Router>
-            <Routes>
-              <Route path="/" element={<Navigate to="/profile" />}></Route>
-              <Route
-                path="/home"
-                element={<Navigate to="/home/chart" />}
-              ></Route>
-              <Route
-                path="*"
-                element={loginRequired(
-                  <>
-                    <Header />
-                    <Main />
-                    {isOpen && <OrderModal />}
-                  </>
-                )}
-              />
-              <Route path="/login" element={<Login />} />
-              <Route path="/logout" element={<Logout />} />
-            </Routes>
-          </Router>
+          <MasterSearchContextProvider>
+            <Router>
+              <Routes>
+                <Route path="/" element={<Navigate to="/profile" />}></Route>
+                <Route
+                  path="/home"
+                  element={<Navigate to="/home/chart" />}
+                ></Route>
+                <Route
+                  path="*"
+                  element={loginRequired(
+                    <>
+                      <Header />
+                      <Main />
+                      {isOpen && <OrderModal />}
+                    </>
+                  )}
+                />
+                <Route path="/login" element={<Login />} />
+                <Route path="/logout" element={<Logout />} />
+              </Routes>
+            </Router>
+          </MasterSearchContextProvider>
         </WebSocketProvider>
       </ThemeProvider>
     </SnackbarProvider>

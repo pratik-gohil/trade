@@ -26,7 +26,7 @@ import { Segments } from "../../types/enums/segment.enums.types";
 import { modifyOrder } from "../../http/modifyOrder/modifyOrder";
 import { toFixedN } from "../../utils/toFixedN";
 import { searchInstruments } from "../../http/searchInstruments/searchInstruments";
-import { SocketContext } from "../../socket";
+import { SocketContext } from "../../contexts/socket";
 import { subscribeInstruments } from "../../http/subscribeInstruments/subscribeInstruments";
 import { unsubscribeInstruments } from "../../http/unsubscribeInstruments/unsubscribeInstruments";
 import { getDecimal } from "../../utils/getDecimal";

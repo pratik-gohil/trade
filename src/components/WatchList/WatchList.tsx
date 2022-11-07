@@ -6,7 +6,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Document } from "flexsearch";
 import {
   SettingsOutlined,
   EditOutlined,
@@ -25,7 +24,7 @@ import { visiblityReducer } from "../../features/orderModal/orderModal";
 import { useDispatch } from "react-redux";
 import { getGroups } from "../../http/getGroups/getGroups";
 import { getGroupSymbols } from "../../http/getGroupSymbols/getGroupSymbols";
-import { SocketContext } from "../../socket";
+import { SocketContext } from "../../contexts/socket";
 import { subscribeInstruments } from "../../http/subscribeInstruments/subscribeInstruments";
 import { unsubscribeInstruments } from "../../http/unsubscribeInstruments/unsubscribeInstruments";
 import { searchInstruments } from "../../http/searchInstruments/searchInstruments";
@@ -38,34 +37,16 @@ import { FormControlLabel, FormGroup, RadioGroup } from "@mui/material";
 import CustomRadio from "../Radio/Radio";
 import { percDiff } from "../../utils/percentageDiffrence";
 import CustomCheckbox from "../Checkbox/Checkbox";
-import { mapMaster } from "./masters";
 import useDebounce from "../../hooks/useDebouce";
 import { toFixedN } from "../../utils/toFixedN";
 import { filterObject } from "../../utils/filterObject";
 import { tvcReducer } from "../../features/TVChart/TVChart";
 import { useNavigate } from "react-router-dom";
+import {
+  IMasterInstrument,
+  MastersSearchContext,
+} from "../../contexts/master_search";
 const { USER_ID } = constants;
-
-interface IMasterInstrument {
-  exchangeSegment: string;
-  exchangeInstrumentID: string;
-  instrumentType: string;
-  name: string;
-  description: string;
-  series: string;
-  nameWithSeries: string;
-  instrumentID: string;
-  highPriceBand: string;
-  lowPriceBand: string;
-  freezeQty: string;
-  tickSize: string;
-  lotSize: string;
-  multiplier: string;
-  underlyingInstrumentId: string;
-  contractExpiration: string;
-  strikePrice: string;
-  optionType: string;
-}
 
 interface IGroup {
   isDefault: boolean;
@@ -85,7 +66,6 @@ export const maxWatchlistSize = 50;
 
 export function WatchList() {
   const navigate = useNavigate();
-  const [search, setSearch] = useState<any>(null);
   const [selectedIndiceType, setSelectedIndiceType] = useState("Indian");
   const [selectedGroup, setSelectedGroup] = useState("Indices");
   const instrumentSearchRef = useRef<HTMLInputElement>(null);
@@ -142,10 +122,15 @@ export function WatchList() {
   );
   const dispatch = useDispatch();
   const { socket } = useContext(SocketContext) as { socket: any };
+  const { search } = useContext(MastersSearchContext) as { search: any };
 
-  const masterSearchResult = useMemo(() => {
+  const masterSearchResult = useMemo<
+    { id: number; doc: IMasterInstrument }[]
+  >(() => {
+    console.log(instrumentSearch);
     if (search !== null && instrumentSearch !== "") {
       const result = search.search(instrumentSearch, { enrich: true });
+      console.log(result);
       return result?.[0]?.result || [];
     }
   }, [instrumentSearch]);
@@ -242,32 +227,6 @@ export function WatchList() {
       unsubscribeInstruments({ instruments: groupSymbols });
     };
   }, []);
-
-  useEffect(() => {
-    (async () => {
-      if (!search) {
-        const _search = new Document({
-          charset: "latin",
-          lang: "en",
-          id: "exchangeInstrumentID",
-          index: [
-            {
-              field: "DisplayName",
-              tokenize: "full",
-            },
-          ],
-          store: true,
-        });
-        setSearch(_search);
-      } else {
-        const response = await mapMaster(["NSECM", "BSECM", "NSECD", "NSEFO"]);
-
-        response.map((doc) => {
-          search.add(doc);
-        });
-      }
-    })();
-  }, [search]);
 
   const [expandedInstruments, setExpandedInstruments] = useState<any>({});
   const [expandedSearchResultInstruments, setExpandedSearchResultInstruments] =
@@ -500,20 +459,20 @@ export function WatchList() {
             {masterSearchResult.map(({ id, doc: instrument }) => {
               const inWatchlist = groupSymbols
                 .map((e) => e.exchangeInstrumentID)
-                .includes(instrument.exchangeInstrumentID);
+                .includes(instrument.ex_id);
               const instrumentMarketDepth =
-                instrumentsMarketDepth[instrument.exchangeInstrumentID];
+                instrumentsMarketDepth[instrument.ex_id];
               return (
                 <div key={id} className="w-full group">
                   <div className="w-full relative border-border border-b p-5 flex justify-between items-center">
                     <div>
                       <div className="text-primary text-sm">
-                        {instrument.DisplayName}
+                        {instrument.d_nm}
                       </div>
                     </div>
                     <div className="text-right">
                       <div className="text-secondary bg-secondaryHighlight text-xs p-1 rounded-[4px]">
-                        {instrument.exchangeSegment}
+                        {instrument.ex}
                       </div>
                     </div>
                     <div className="absolute right-0 top-1 bottom-1 bg-white items-center gap-2 pr-2 hidden group-hover:flex text-base">
@@ -525,10 +484,8 @@ export function WatchList() {
                               order: {
                                 orderSide: "BUY",
                                 instrument: {
-                                  exchangeInstrumentID:
-                                    instrument.exchangeInstrumentID,
-                                  exchangeSegment:
-                                    Segments[instrument.exchangeSegment],
+                                  exchangeInstrumentID: instrument.ex_id,
+                                  exchangeSegment: Segments[instrument.ex],
                                 },
                               },
                             })
@@ -546,10 +503,8 @@ export function WatchList() {
                               order: {
                                 orderSide: "SELL",
                                 instrument: {
-                                  exchangeInstrumentID:
-                                    instrument.exchangeInstrumentID,
-                                  exchangeSegment:
-                                    Segments[instrument.exchangeSegment],
+                                  exchangeInstrumentID: instrument.ex_id,
+                                  exchangeSegment: Segments[instrument.ex],
                                 },
                               },
                             })
@@ -562,8 +517,8 @@ export function WatchList() {
                       <div
                         onClick={() =>
                           handleSearchResultInstrumentExpand(
-                            instrument.exchangeInstrumentID,
-                            instrument.exchangeSegment
+                            instrument.ex_id,
+                            instrument.ex
                           )
                         }
                         className="rounded-sm overflow-hidden cursor-pointer w-8 h-8 flex justify-center items-center bg-white text-primary border border-primary"
@@ -576,10 +531,9 @@ export function WatchList() {
                           handleAddInstrument({
                             userID: localStorage.getItem(USER_ID),
                             groupName: selectedGroup,
-                            exchangeSegment: instrument.exchangeSegment,
-                            exchangeInstrumentID:
-                              instrument.exchangeInstrumentID,
-                            symbolExpiry: instrument.ExDate,
+                            exchangeSegment: instrument.ex,
+                            exchangeInstrumentID: instrument.ex_id,
+                            // symbolExpiry: instrument.ExDate,
                           })
                         }
                         className={`${
@@ -592,7 +546,7 @@ export function WatchList() {
                   </div>
 
                   {expandedSearchResultInstruments.includes(
-                    instrument.exchangeInstrumentID
+                    Number(instrument.ex_id)
                   ) && (
                     <div className="w-full">
                       <table className="w-full text-center">
@@ -711,15 +665,13 @@ export function WatchList() {
                             <span className="text-secondary">LO/UP Cir.</span>
                             <span className="text-primary">
                               {
-                                searchInstrumentData[
-                                  instrument.exchangeInstrumentID
-                                ]?.PriceBand.Low
+                                searchInstrumentData[instrument.ex_id]
+                                  ?.PriceBand.Low
                               }
                               /
                               {
-                                searchInstrumentData[
-                                  instrument.exchangeInstrumentID
-                                ]?.PriceBand.High
+                                searchInstrumentData[instrument.ex_id]
+                                  ?.PriceBand.High
                               }
                             </span>
                           </div>

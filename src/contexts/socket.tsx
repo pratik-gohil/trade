@@ -1,6 +1,6 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext } from "react";
 import io from "socket.io-client";
-import { constants } from "./constants/global";
+import { constants } from "../constants/global";
 const { TOKEN, USER_ID } = constants;
 
 export const socket = io(process.env.REACT_APP_API_BASE_URL || "", {
