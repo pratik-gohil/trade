@@ -1,6 +1,6 @@
 import { Segments } from "./../../../../types/enums/segment.enums.types";
 import { subscribeInstruments } from "../../../../http/subscribeInstruments/subscribeInstruments";
-import { socket } from "../../../../socket";
+import { socket } from "../../../../contexts/socket";
 import { unsubscribeInstruments } from "../../../../http/unsubscribeInstruments/unsubscribeInstruments";
 
 const channelToSubscription = new Map();

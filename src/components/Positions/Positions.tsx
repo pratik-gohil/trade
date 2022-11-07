@@ -21,7 +21,7 @@ import { EnhancedTableHead, HeadCell } from "../Orders/EnhancedTableHead";
 import { subscribeInstruments } from "../../http/subscribeInstruments/subscribeInstruments";
 import { unsubscribeInstruments } from "../../http/unsubscribeInstruments/unsubscribeInstruments";
 import { Segments, Series } from "../../types/enums/segment.enums.types";
-import { SocketContext } from "../../socket";
+import { SocketContext } from "../../contexts/socket";
 import { Touchline } from "../../types/interfaces/marketDepth.interfaces.types";
 import { toFixedN } from "../../utils/toFixedN";
 import { MTM } from "../../utils/MTM";
