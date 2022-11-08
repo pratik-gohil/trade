@@ -14,6 +14,8 @@ import { SocketContext } from "../../contexts/socket";
 import { toFixedN } from "../../utils/toFixedN";
 import { percDiff } from "../../utils/percentageDiffrence";
 import { formatCurrency } from "../../utils/formatCurrency";
+import { searchInstruments } from "../../http/searchInstruments/searchInstruments";
+import { Segments, Series } from "../../types/enums/segment.enums.types";
 
 const headCells: readonly HeadCell[] = [
   {
@@ -68,7 +70,7 @@ export function Holdings() {
   const { socket } = useContext(SocketContext) as { socket: any };
 
   useEffect(() => {
-    getHoldings().then((res) => {
+    getHoldings().then(async (res) => {
       const instruments = res.result.holdingsList.map((holding) => ({
         exchangeSegment: 1,
         exchangeInstrumentID: holding.ExchangeNSEInstrumentId,
@@ -76,7 +78,18 @@ export function Holdings() {
 
       subscribeInstruments({ instruments, xtsMessageCode: 1512 });
 
-      setHoldings(res.result.holdingsList);
+      const holdingInstrumentInfo = await searchInstruments(instruments);
+
+      const populatedHoldings = res.result.holdingsList.map((holding) => {
+        const info = holdingInstrumentInfo.result.find(
+          (i) => i.ExchangeInstrumentID === holding.ExchangeNSEInstrumentId
+        );
+        return { ...holding, ...info };
+      });
+
+      console.log(populatedHoldings);
+
+      setHoldings(populatedHoldings);
     });
   }, []);
 
@@ -185,7 +198,15 @@ export function Holdings() {
                     holding.HoldingQuantity * holding.LastTradedPrice;
                   return (
                     <TableRow tabIndex={-1} key={index.toString()}>
-                      <TableCell>NA</TableCell>
+                      <TableCell>
+                        {holding.DisplayName}
+                        <span className="text-xxxs text-secondary ml-[6px]">
+                          {Segments[holding.ExchangeSegment] === "NSECM" ||
+                          Segments[holding.ExchangeSegment] === "BSECM"
+                            ? Series[Segments[holding.ExchangeSegment]]
+                            : Series[holding.Series] || holding.Series}
+                        </span>
+                      </TableCell>
                       <TableCell align="right">
                         {holding.HoldingQuantity}
                       </TableCell>
