@@ -27,6 +27,7 @@ import { toFixedN } from "../../utils/toFixedN";
 import { MTM } from "../../utils/MTM";
 import { Order } from "../Orders";
 import { percDiff } from "../../utils/percentageDiffrence";
+import { positions } from "@mui/system";
 
 const headCells: readonly HeadCell[] = [
   {
@@ -316,6 +317,8 @@ export function Positions() {
   };
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
+
+  console.log(filteredNetPositions);
 
   const [filterType, setFilterType] = useState("All");
   const filters = [

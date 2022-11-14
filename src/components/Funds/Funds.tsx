@@ -8,6 +8,7 @@ import AddFundsModalUPI from "./AddFundsModalUPI";
 import AddFundsResponseModal from "./AddFundsResponseModal";
 import WithdrawFundsModal from "./WithdrawFundsModal";
 import { Link } from "react-router-dom";
+import WithdrawFundsResponseModal from "./WithdrawFundsResponseModal";
 
 export function Funds() {
   const [balanceList, setBalanceList] = useState<any[]>([]);
@@ -15,6 +16,9 @@ export function Funds() {
   const [showFundsUPIModal, setShowFundsUPIModal] = useState(false);
   const [amount, setAmount] = useState("0.00");
   const [addFundsResponse, setAddFundsResponse] = useState<
+    "success" | "failed" | null
+  >(null);
+  const [withdrawFundsResponse, setWithdrawFundsResponse] = useState<
     "success" | "failed" | null
   >(null);
   const [showWithdrawFunds, setShowWithdrawFunds] = useState(false);
@@ -152,7 +156,9 @@ export function Funds() {
               <div className="flex justify-between">
                 <div className="text-lg text-secondary">Total collateral</div>
                 <div className="text-xl text-primary">
-                  {balanceList[0]?.limitObject?.RMSSubLimits?.collateral}
+                  {toFixedN(
+                    balanceList[0]?.limitObject?.RMSSubLimits?.collateral
+                  )}
                 </div>
               </div>
             </div>
@@ -291,6 +297,12 @@ export function Funds() {
         fetchUserBalance={fetchUserBalance}
         showModal={showWithdrawFunds}
         setShowModal={setShowWithdrawFunds}
+        setWithdrawFundsResponse={setWithdrawFundsResponse}
+      />
+      <WithdrawFundsResponseModal
+        withdrawFundsResponse={withdrawFundsResponse}
+        setWithdrawFundsResponse={setWithdrawFundsResponse}
+        amount={amount}
       />
     </>
   );
