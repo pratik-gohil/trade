@@ -127,10 +127,8 @@ export function WatchList() {
   const masterSearchResult = useMemo<
     { id: number; doc: IMasterInstrument }[]
   >(() => {
-    console.log(instrumentSearch);
     if (search !== null && instrumentSearch !== "") {
       const result = search.search(instrumentSearch, { enrich: true });
-      console.log(result);
       return result?.[0]?.result || [];
     }
   }, [instrumentSearch]);
@@ -472,9 +470,7 @@ export function WatchList() {
                     </div>
                     <div className="text-right">
                       <div className="text-secondary bg-secondaryHighlight text-xs p-1 rounded-[4px]">
-                        {instrument.ex === "NSECM" || instrument.ex === "BSECM"
-                          ? Series[instrument.ex]
-                          : Series[instrument.s] || instrument.s}
+                        {Series[instrument.ex]}
                       </div>
                     </div>
                     <div className="absolute right-0 top-1 bottom-1 bg-white items-center gap-2 pr-2 hidden group-hover:flex text-base">

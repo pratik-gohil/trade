@@ -12,6 +12,7 @@ export default function WithdrawFundsModal({
   setShowModal,
   balanceList,
   fetchUserBalance,
+  setWithdrawFundsResponse,
 }) {
   const [account, setAccount] = useState<IClientBankInfoList | null>(null);
   const [amount, setAmount] = useState("0.00");
@@ -23,6 +24,10 @@ export default function WithdrawFundsModal({
   }, [user]);
 
   const withdrawMoney = () => {
+    if (!ClientBankInfoList[0]?.AccountNumber) {
+      alert("no account no.");
+      return;
+    }
     withdraw({
       amount,
       BankAccountNumber: ClientBankInfoList[0].AccountNumber,
@@ -32,6 +37,8 @@ export default function WithdrawFundsModal({
       })
       .then((res) => {
         if (res) {
+          setWithdrawFundsResponse("success");
+          setShowModal(false);
           fetchUserBalance();
         }
       });
@@ -111,7 +118,7 @@ export default function WithdrawFundsModal({
             </div>
           </div>
           <div className="flex justify-between items-center gap-3 py-6">
-            <div className="w-full border py-2.5 my-2.5 text-2xl font-medium rounded-md self-stretch text-center cursor-pointer">
+            <div className="w-full border py-2.5 my-2.5 text-2xl font-medium rounded-md self-stretch text-center cursor-pointer text-secondary">
               Cancel
             </div>
             <button

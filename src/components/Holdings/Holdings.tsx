@@ -53,9 +53,9 @@ const headCells: readonly HeadCell[] = [
     label: "Net Chg",
   },
   {
-    id: "perChg",
+    id: "dayChg",
     alignment: "right",
-    label: "% Chg",
+    label: "Day Chg",
   },
 ];
 
@@ -127,6 +127,63 @@ export function Holdings() {
     setOverallPnL(Number(toFixedN(overallPnL)));
   }, [holdings]);
 
+  //  id: "scrips",
+  //   id: "qty",
+  //   id: "avgPrice",
+  //   id: "ltp",
+  //   id: "current",
+  //   id: "p&l",
+  //   id: "netChg",
+  //   id: "dayChg",
+  const handleSort = (a, b) => {
+    let key;
+    switch (orderBy) {
+      case "scrips":
+        key = "DisplayName";
+        break;
+      case "qty":
+        key = "HoldingQuantity";
+        break;
+      case "avgPrice":
+        key = "BuyAvgPrice";
+        break;
+      case "ltp":
+        key = "LastTradedPrice";
+        break;
+      case "current":
+        key = "current";
+        break;
+      case "pnl":
+        key = "pnl";
+        break;
+      case "netChg":
+        key = "netChg";
+        break;
+      case "dayChg":
+        key = "dayChg";
+        break;
+      default:
+        key = undefined;
+    }
+
+    if (key !== undefined) {
+      if (key === "")
+        if (typeof a[key] === "number" && typeof b[key] === "number") {
+          if (order === "asc") {
+            return a[key] - b[key];
+          } else {
+            return b[key] - a[key];
+          }
+        } else if (typeof a[key] === "string" && typeof b[key] === "string") {
+          if (order === "asc") {
+            return a[key].localeCompare(b[key]);
+          } else {
+            return b[key].localeCompare(a[key]);
+          }
+        }
+    }
+  };
+
   useEffect(() => {
     let investment = 0;
     holdings.forEach((holding) => {
@@ -136,7 +193,14 @@ export function Holdings() {
     setInvestment(investment);
   }, [holdings]);
 
-  const handleRequestSort = () => {};
+  const handleRequestSort = (
+    event: React.MouseEvent<unknown>,
+    property: string
+  ) => {
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
+    setOrderBy(property);
+  };
 
   return (
     <>
@@ -191,7 +255,7 @@ export function Holdings() {
                 sx={{ minWidth: 750 }}
                 className="max-h-28 overflow-auto"
               >
-                {holdings?.map((holding, index) => {
+                {holdings?.sort(handleSort).map((holding, index) => {
                   const invested =
                     holding.BuyAvgPrice * holding.HoldingQuantity;
                   const current =
