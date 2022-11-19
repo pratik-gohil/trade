@@ -87,8 +87,6 @@ export function Holdings() {
         return { ...holding, ...info };
       });
 
-      console.log(populatedHoldings);
-
       setHoldings(populatedHoldings);
     });
   }, []);

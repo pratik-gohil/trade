@@ -222,3 +222,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .MuiTableCell-root {
   padding: 18px 7px !important
 }
+
+th {
+  white-space: nowrap;
+}

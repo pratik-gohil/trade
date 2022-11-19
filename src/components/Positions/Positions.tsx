@@ -318,8 +318,6 @@ export function Positions() {
 
   const isSelected = (name: string) => selected.indexOf(name) !== -1;
 
-  console.log(filteredNetPositions);
-
   const [filterType, setFilterType] = useState("All");
   const filters = [
     { name: "All", filter: "All" },

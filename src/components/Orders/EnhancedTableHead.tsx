@@ -15,6 +15,8 @@ export interface HeadCell {
   id: string;
   label: string;
   alignment?: "right" | "left" | "center" | "inherit" | "justify";
+  sort?: boolean;
+  className?: string;
 }
 
 interface EnhancedTableHeadProps {
@@ -48,7 +50,11 @@ export function EnhancedTableHead(props: EnhancedTableHeadProps) {
     <TableHead>
       <TableRow>
         {allowSelection && (
-          <TableCell padding="none" sx={{ padding: "0 !important" }}>
+          <TableCell
+            padding="none"
+            className="!pl-10"
+            sx={{ padding: "0 !important" }}
+          >
             <Checkbox
               color="secondary"
               indeterminate={
@@ -69,25 +75,33 @@ export function EnhancedTableHead(props: EnhancedTableHeadProps) {
             // padding="none"
             sx={{ padding: "7px" }}
           >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={createSortHandler(headCell.id)}
-              IconComponent={KeyboardArrowDown}
-              sx={(theme) => ({
-                color: "red",
-                "& .MuiSvgIcon-root": {
-                  color: `${theme.palette.blue.main} !important`,
-                },
-              })}
-            >
+            {headCell.sort || headCell.sort === undefined ? (
+              <TableSortLabel
+                active={orderBy === headCell.id}
+                direction={orderBy === headCell.id ? order : "asc"}
+                onClick={createSortHandler(headCell.id)}
+                IconComponent={KeyboardArrowDown}
+                sx={(theme) => ({
+                  color: "red",
+                  "& .MuiSvgIcon-root": {
+                    color: `${theme.palette.blue.main} !important`,
+                  },
+                })}
+              >
+                <span className={`text-primary text-xs ${headCell.className}`}>
+                  {headCell.label}
+                </span>
+                {orderBy === headCell.id ? (
+                  <Box component="span" sx={visuallyHidden}>
+                    {order === "desc"
+                      ? "sorted descending"
+                      : "sorted ascending"}
+                  </Box>
+                ) : null}
+              </TableSortLabel>
+            ) : (
               <span className="text-primary text-xs">{headCell.label}</span>
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
-                </Box>
-              ) : null}
-            </TableSortLabel>
+            )}
           </TableCell>
         ))}
       </TableRow>
