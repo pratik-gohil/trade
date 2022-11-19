@@ -26,7 +26,7 @@ function TVCFooter() {
           to={`/home/${link.path}`}
           key={link.path}
         >
-          <a href={`/home/${link.path}`}>{link.label}</a>
+          <span>{link.label}</span>
         </NavLink>
       ))}
     </div>

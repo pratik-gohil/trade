@@ -1,4 +1,4 @@
-import React, { Fragment, useMemo, useState } from "react";
+import React, { Fragment, useEffect, useMemo, useState } from "react";
 
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
@@ -11,51 +11,45 @@ import { Data, IOrderWithMarketDepth, Order } from "./Orders";
 import { deleteOrder } from "../../http/deleteOrder/deleteOrder";
 import { OrderTableRow } from "./OrderTableRow";
 import OrderDetailsModal from "./OrderDetailsModal";
-import { Modal, TableHead, TableRow } from "@mui/material";
+import { Modal, TableCell, TableHead, TableRow } from "@mui/material";
 import { useSnackbar } from "notistack";
 
 const headCells: readonly HeadCell[] = [
   {
     id: "time",
-
     label: "Time",
   },
   {
     id: "action",
-
     label: "Action",
   },
   {
     id: "scrips",
-
     label: "Scrips",
   },
   {
     id: "qty",
-
+    alignment: "right",
     label: "Qty",
   },
   {
     id: "product",
-
+    alignment: "right",
     label: "Product",
   },
   {
     id: "orderPrice",
     alignment: "right",
-
     label: "Order Price",
   },
   {
     id: "ltp",
     alignment: "right",
-
     label: "LTP",
   },
 ];
 
 export default function OpenOrders({ orders, fetchOrders }) {
-  const [allowSelection, setAllowSelection] = useState(false);
   const [order, setOrder] = React.useState<Order>("desc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("time");
   const [selected, setSelected] = React.useState<readonly number[]>([]);
@@ -91,7 +85,7 @@ export default function OpenOrders({ orders, fetchOrders }) {
   const { enqueueSnackbar } = useSnackbar();
 
   const showCancelOrderSnackbar = ({ id }) => {
-    const order = orders.find((n) => n.AppOrderID);
+    const order = orders.find((n) => n.AppOrderID == id);
     enqueueSnackbar(
       <div>
         <h1 className="text-failure text-2xl font-semibold">Cancelled</h1>
@@ -127,6 +121,28 @@ export default function OpenOrders({ orders, fetchOrders }) {
 
   const handleCancel = (id) => {
     cancelOrder(id);
+  };
+
+  const handleClick = (event: React.MouseEvent<unknown>, name: number) => {
+    if (!selected || !setSelected) return;
+
+    const selectedIndex = selected.indexOf(name);
+    let newSelected: readonly number[] = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, name);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1)
+      );
+    }
+
+    setSelected(newSelected);
   };
 
   const handleSelectAllClick = (
@@ -168,7 +184,6 @@ export default function OpenOrders({ orders, fetchOrders }) {
       default:
         key = undefined;
     }
-
     if (key !== undefined) {
       if (typeof a[key] === "number" && typeof b[key] === "number") {
         if (order === "asc") {
@@ -186,6 +201,16 @@ export default function OpenOrders({ orders, fetchOrders }) {
     }
   };
 
+  useEffect(() => {
+    if (
+      openOrders.filter(
+        (row) => !!selected && selected.indexOf(row.AppOrderID) !== -1
+      ).length === 0
+    ) {
+      setShowCancelModal(false);
+    }
+  }, [selected, openOrders]);
+
   // if (!(openOrders.length > 0)) return null;
 
   return (
@@ -193,86 +218,97 @@ export default function OpenOrders({ orders, fetchOrders }) {
       <Box sx={{ width: "100%" }}>
         <EnhancedTableToolbar
           heading="Open Orders"
-          allowSelection={allowSelection}
-          setAllowSelection={setAllowSelection}
-          numSelected={selected.length}
           search={search}
           setSearch={setSearch}
+          numOrders={openOrders.length}
         />
         <TableContainer sx={{ maxHeight: 440 }}>
           <Table stickyHeader sx={{ minWidth: 750 }}>
             <EnhancedTableHead
               headCells={headCells}
-              allowSelection={allowSelection}
+              allowSelection={true}
               numSelected={selected.length}
+              onSelectAllClick={(e) => handleSelectAllClick(e, openOrders)}
               order={order}
               orderBy={orderBy}
-              onSelectAllClick={(e) => handleSelectAllClick(e, openOrders)}
               onRequestSort={handleRequestSort}
               rowCount={openOrders.length}
             />
             <TableBody className="max-h-28 overflow-auto">
-              {openOrders
-                .sort(handleSort)
-
-                .map((row, index) => {
-                  return (
-                    <Fragment key={row.AppOrderID}>
-                      <OrderTableRow
-                        row={row}
-                        index={index}
-                        setShowDetails={setShowDetails}
-                        allowSelection={allowSelection}
-                        selectedOption={selectedOption}
-                        setSelectedOption={setSelectedOption}
-                        selected={selected}
-                        setSelected={setSelected}
-                      />
-                      {selectedOption.id === row.AppOrderID.toString() && (
-                        <tr
-                          className={`${
-                            selectedOption.type === "delete"
-                              ? "table-row"
-                              : "hidden"
-                          }`}
+              {openOrders.sort(handleSort).map((row, index) => {
+                const isDeleteSelected =
+                  selectedOption.id === row.AppOrderID.toString() &&
+                  selectedOption.type === "delete";
+                return (
+                  <Fragment key={row.AppOrderID}>
+                    <OrderTableRow
+                      row={row}
+                      index={index}
+                      setShowDetails={setShowDetails}
+                      allowSelection={true}
+                      selectedOption={selectedOption}
+                      setSelectedOption={setSelectedOption}
+                      selected={selected}
+                      setSelected={setSelected}
+                      isDeleteSelected={isDeleteSelected}
+                      handleCancel={handleCancel}
+                      fetchOrders={fetchOrders}
+                    />
+                    {isDeleteSelected && (
+                      <tr
+                        className={`${
+                          selectedOption.type === "delete"
+                            ? "table-row"
+                            : "hidden"
+                        } bg-black bg-opacity-[0.04]`}
+                      >
+                        <td
+                          colSpan={8}
+                          className={`text-center py-6 border-b border-border`}
                         >
-                          <td
-                            colSpan={7}
-                            className="text-center py-6 border-b border-border"
+                          <span className="mr-4 text-lg font-medium text-primary">
+                            Are you sure you want to cancel {row.TradingSymbol}
+                            order?
+                          </span>
+                          <button
+                            onClick={() => handleCancel(row.AppOrderID)}
+                            className="mr-4 bg-failure text-white px-3 py-1 rounded-lg text-lg font-medium min-w-[114px]"
                           >
-                            <span className="mr-4 text-lg font-medium text-primary">
-                              Are you sure you want to cancel{" "}
-                              {row.TradingSymbol} order?
-                            </span>
-                            <button
-                              onClick={() => handleCancel(row.AppOrderID)}
-                              className="mr-4 bg-failure text-white px-3 py-1 rounded-lg text-lg font-medium min-w-[114px]"
-                            >
-                              Cancel Order
-                            </button>
-                            <button
-                              onClick={() =>
-                                setSelectedOption({ type: "", id: "" })
-                              }
-                              className="text-secondary border border-secondary px-3 py-1 rounded-lg text-lg font-medium min-w-[114px]"
-                            >
-                              Close
-                            </button>
-                          </td>
-                        </tr>
-                      )}
-                    </Fragment>
-                  );
-                })}
+                            Cancel Order
+                          </button>
+                          <button
+                            onClick={() =>
+                              setSelectedOption({ type: "", id: "" })
+                            }
+                            className="text-secondary border border-secondary px-3 py-1 rounded-lg text-lg font-medium min-w-[114px]"
+                          >
+                            Close
+                          </button>
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
+                );
+              })}
             </TableBody>
           </Table>
         </TableContainer>
       </Box>
       <div className="flex gap-[10px] mt-[10px]">
         <button
-          onClick={() => setShowCancelModal(true)}
+          onClick={() =>
+            openOrders.filter(
+              (row) => !!selected && selected.indexOf(row.AppOrderID) !== -1
+            ).length > 0 && setShowCancelModal(true)
+          }
           type="button"
-          className="text-white bg-red-gradient px-2 py-1 rounded-md text-lg font-medium"
+          className={`text-white bg-red-gradient px-2 py-1 rounded-md text-lg font-medium ${
+            openOrders.filter(
+              (row) => !!selected && selected.indexOf(row.AppOrderID) !== -1
+            ).length > 0
+              ? ""
+              : "cursor-not-allowed"
+          }`}
         >
           Cancel Orders
         </button>
@@ -280,16 +316,14 @@ export default function OpenOrders({ orders, fetchOrders }) {
           Push to Market
         </button>
       </div>
-
       <OrderDetailsModal
         setShowDetails={setShowDetails}
         showDetails={showDetails}
       />
-
       <Modal open={showCancelModal} onClose={() => setShowCancelModal(false)}>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg w-fit min-w-[418px] overflow-hidden">
           <div
-            className="bg-neutral-gradient px-5 py-2.5 flex items-center
+            className="bg-neutral-gradient px-10 py-5 flex items-center
             w-full justify-between
           "
           >
@@ -304,38 +338,91 @@ export default function OpenOrders({ orders, fetchOrders }) {
                   headCells={[
                     {
                       label: "Scrip",
+                      className: "pl-10",
                       id: "scrip",
                     },
                     {
                       label: "Quantity",
+                      alignment: "right",
                       id: "quantity",
                     },
                     {
                       label: "Price",
+                      alignment: "right",
                       id: "price",
                     },
                     {
-                      label: "Time",
-                      id: "time",
+                      label: "Type",
+                      alignment: "right",
+                      id: "type",
                     },
                     {
                       label: "Product",
+                      alignment: "right",
                       id: "product",
                     },
-                    // {
-                    //   label: "",
-                    //   id: "",
-                    // },
+                    {
+                      label: "",
+                      id: "remove",
+                      className: "pr-10",
+                      sort: false,
+                    },
                   ]}
                   order={order}
                   orderBy={orderBy}
                   onRequestSort={() => {}}
-                  rowCount={orders.length}
+                  rowCount={openOrders.length}
                 />
                 <TableBody>
-                  {[].map((row, index) => {
-                    return <TableRow></TableRow>;
-                  })}
+                  {openOrders
+                    .filter(
+                      (row) =>
+                        !!selected && selected.indexOf(row.AppOrderID) !== -1
+                    )
+                    .map((row) => {
+                      return (
+                        <TableRow id={row.AppOrderID}>
+                          <TableCell className="!text-xl !font-medium">
+                            <span className="!pl-10 whitespace-nowrap">
+                              {row.TradingSymbol}
+                            </span>
+                          </TableCell>
+                          <TableCell
+                            className="!text-xl !font-medium"
+                            align="right"
+                          >
+                            {row.OrderQuantity}
+                          </TableCell>
+                          <TableCell
+                            className="!text-xl !font-medium"
+                            align="right"
+                          >
+                            {row.OrderPrice}
+                          </TableCell>
+                          <TableCell
+                            className="!text-xl !font-medium"
+                            align="right"
+                          >
+                            {row.OrderType}
+                          </TableCell>
+                          <TableCell
+                            className="!text-xl !font-medium"
+                            align="right"
+                          >
+                            {row.ProductType}
+                          </TableCell>
+                          <TableCell
+                            className="!text-xl !font-medium"
+                            align="right"
+                            onClick={(e) => handleClick(e, row.AppOrderID)}
+                          >
+                            <span className="text-blue cursor-pointer font-medium text-xl !pr-10">
+                              Remove
+                            </span>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -343,11 +430,14 @@ export default function OpenOrders({ orders, fetchOrders }) {
           <div className="flex gap-6 justify-center py-6">
             <button
               onClick={() => setShowCancelModal(false)}
-              className="w-[180px] py-2 border rounded-md text-secondary h-10"
+              className="w-[180px] py-2 border rounded-md text-secondary text-2xl font-medium"
             >
               Close
             </button>
-            <button className="w-[180px] py-2 border rounded-md text-white bg-failure h-10">
+            <button
+              onClick={handleCancelAll}
+              className="w-[180px] py-2 border rounded-md text-white bg-failure text-2xl font-medium"
+            >
               Cancel Orders
             </button>
           </div>

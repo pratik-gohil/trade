@@ -68,28 +68,33 @@ export function OrderModal() {
   useEffect(() => {
     let _instrument;
     if (instrument) {
-      if (exchangeSegment === null) {
-        setExchangeSegment(Segments[instrument.exchangeSegment]);
+      if (isModify) {
+        setInstrumentData(instrument);
       } else {
-        subscribeInstruments({
-          instruments: [instrument],
-          xtsMessageCode: 1512,
-        });
-        searchInstruments([instrument]).then((res) => {
-          _instrument = res.result[0];
-
-          setInstrumentData(_instrument);
-
+        if (exchangeSegment === null) {
+          setExchangeSegment(Segments[instrument.exchangeSegment]);
+        } else {
           subscribeInstruments({
-            instruments: [
-              {
-                exchangeInstrumentID: _instrument.OppositeExchangeInstrumentID,
-                exchangeSegment: _instrument.OppositeExchangeSegment,
-              },
-            ],
+            instruments: [instrument],
             xtsMessageCode: 1512,
           });
-        });
+          searchInstruments([instrument]).then((res) => {
+            _instrument = res.result[0];
+
+            setInstrumentData(_instrument);
+
+            subscribeInstruments({
+              instruments: [
+                {
+                  exchangeInstrumentID:
+                    _instrument.OppositeExchangeInstrumentID,
+                  exchangeSegment: _instrument.OppositeExchangeSegment,
+                },
+              ],
+              xtsMessageCode: 1512,
+            });
+          });
+        }
       }
     }
 
@@ -122,16 +127,24 @@ export function OrderModal() {
   useEffect(() => {
     const listener = (res) => {
       const data = JSON.parse(res);
-      if (data.ExchangeSegment === 1) {
-        setLTP_NSE(data.LastTradedPrice);
-      } else if (data.ExchangeSegment === 11) {
-        setLTP_BSE(data.LastTradedPrice);
-      } else {
-        setLTP(data.LastTradedPrice);
+      if (instrument !== null) {
+        if (data.ExchangeInstrumentID == instrument.exchangeInstrumentID) {
+          // console.log(data);
+          if (data.ExchangeSegment == 1) {
+            setLTP_NSE(data.LastTradedPrice);
+          } else if (data.ExchangeSegment == 11) {
+            setLTP_BSE(data.LastTradedPrice);
+          } else {
+            setLTP(data.LastTradedPrice);
+          }
+        }
       }
     };
+
     socket.on("1512-json-full", listener);
-  }, []);
+
+    return () => socket.off("1512-json-full");
+  }, [instrument]);
 
   const isCM =
     Segments[(instrumentData as IInstrument)?.ExchangeSegment] === "NSECM" ||
@@ -143,14 +156,32 @@ export function OrderModal() {
       exchangeSegment === "BSECM")
       ? (instrumentData as IInstrument)?.ExchangeInstrumentID
       : (instrumentData as IInstrument)?.OppositeExchangeInstrumentID;
-  const intitialPrice =
-    (isModify
-      ? (instrumentData as IOrderWithMarketDepth)?.OrderPrice
-      : exchangeSegment === "BSECM"
-      ? LTP_BSE
-      : exchangeSegment === "NSECM"
-      ? LTP_NSE
-      : LTP) || 0;
+  // const intitialPrice =
+  //   (isModify
+  //     ? (instrumentData as IOrderWithMarketDepth)?.OrderPrice
+  // : exchangeSegment === "BSECM"
+  // ? LTP_BSE
+  // : exchangeSegment === "NSECM"
+  // ? LTP_NSE
+  // : LTP) || 0;
+
+  // const [initialPrice, setInitialPrice] = useState<null | number>(null);
+
+  useEffect(() => {
+    if (price !== 0) {
+    } else {
+      const price =
+        (exchangeSegment === "BSECM"
+          ? LTP_BSE
+          : exchangeSegment === "NSECM"
+          ? LTP_NSE
+          : LTP) || 0;
+
+      if (price !== 0) {
+        setPrice(price);
+      }
+    }
+  }, [exchangeSegment, LTP_BSE, LTP_NSE, LTP]);
 
   useEffect(() => {
     if (isModify) {
@@ -160,7 +191,7 @@ export function OrderModal() {
         (instrumentData as IOrderWithMarketDepth).OrderDisclosedQuantity
       );
       setOrderType(
-        (instrumentData as IOrderWithMarketDepth).OrderType.toUpperCase()
+        (instrumentData as IOrderWithMarketDepth)?.OrderType?.toUpperCase()
       );
       setTimeInForce((instrumentData as IOrderWithMarketDepth).TimeInForce);
       setPrice((instrumentData as IOrderWithMarketDepth).OrderPrice);
@@ -177,7 +208,7 @@ export function OrderModal() {
       //   Segments[(instrumentData as IInstrument)?.ExchangeSegment]
       // );
       setOrderQuantity((instrumentData as IInstrument)?.LotSize);
-      setPrice(intitialPrice || 0.0);
+      setPrice((instrumentData as IOrderWithMarketDepth)?.OrderPrice || 0.0);
     }
 
     getUserBalance().then((res) => {
@@ -848,7 +879,7 @@ export function OrderModal() {
                 <div className="flex gap-6">
                   <div>Approx. Margin</div>
                   <div className="flex gap-2 translate-x-[29px]">
-                    <div>{toFixedN(intitialPrice * orderQuantity, 2)}</div>
+                    <div>{toFixedN(price * orderQuantity, 2)}</div>
                     <Replay
                       className="text-blue cursor-pointer"
                       fontSize="small"

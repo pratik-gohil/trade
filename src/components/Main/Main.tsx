@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { RootState } from "../../app/store";
-import { Orders } from "../Orders";
+import { AllOrders, Orders } from "../Orders";
 import { Positions } from "../Positions";
 import { TVChartContainer } from "../TVChartContainer";
 import { WatchList } from "../WatchList";
@@ -27,6 +27,7 @@ import CorporateActionTable from "../Home/CorporateAction/CorporateActionTable";
 import Ledger from "../Funds/Ledger";
 import Deposits from "../Funds/Deposits";
 import Withdrawals from "../Funds/Withdrawals";
+import GTTOrders from "../Orders/GTTOrders";
 
 export function Main() {
   const instrument = useSelector((state: RootState) => state.tvc.instrument);
@@ -110,7 +111,10 @@ export function Main() {
               </div>
             }
           />
-          <Route path="/orders" element={<Orders />} />
+          <Route path="/orders" element={<Orders />}>
+            <Route index element={<AllOrders />} />
+            <Route path="GTT" element={<GTTOrders />} />
+          </Route>
           <Route path="/funds" element={<Funds />} />
           <Route path="/funds/ledger" element={<Ledger />} />
           <Route path="/funds/deposits" element={<Deposits />} />

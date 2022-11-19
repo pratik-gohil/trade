@@ -4,7 +4,7 @@ import { toFixedN } from "../../utils/toFixedN";
 
 export function NumberInput({
   label,
-  value,
+  value = 0,
   onChange,
   disabled = false,
   autoFocus = false,

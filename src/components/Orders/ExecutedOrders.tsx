@@ -14,49 +14,47 @@ import OrderDetailsModal from "./OrderDetailsModal";
 const headCells: readonly HeadCell[] = [
   {
     id: "time",
-
     label: "Time",
   },
   {
     id: "action",
-
     label: "Action",
   },
   {
     id: "scrips",
-
     label: "Scrips",
   },
   {
     id: "qty",
-
+    alignment: "right",
     label: "Qty",
   },
   {
     id: "product",
-
+    alignment: "right",
     label: "Product",
   },
   {
     id: "orderPrice",
     alignment: "right",
-
-    label: "Order Price",
+    label: "Avg Price",
   },
   {
     id: "ltp",
     alignment: "right",
-
     label: "LTP",
   },
 ];
 
 interface IExecutedOrders {
   orders: IOrderWithMarketDepth[];
-  fetchOrders?: () => void;
+  fetchOrders: () => void;
 }
 
-export default function ExecutedOrders({ orders }: IExecutedOrders) {
+export default function ExecutedOrders({
+  orders,
+  fetchOrders,
+}: IExecutedOrders) {
   const [order, setOrder] = React.useState<Order>("desc");
   const [orderBy, setOrderBy] = React.useState<keyof Data>("time");
 
@@ -139,6 +137,7 @@ export default function ExecutedOrders({ orders }: IExecutedOrders) {
           heading="Executed Orders"
           search={search}
           setSearch={setSearch}
+          numOrders={executedOrders.length}
         />
         <TableContainer sx={{ maxHeight: 440 }}>
           <Table stickyHeader sx={{ minWidth: 750 }}>
@@ -150,23 +149,21 @@ export default function ExecutedOrders({ orders }: IExecutedOrders) {
               rowCount={executedOrders.length}
             />
             <TableBody className="max-h-28 overflow-auto">
-              {executedOrders
-                .sort(handleSort)
-
-                .map((row, index) => {
-                  return (
-                    <OrderTableRow
-                      isExecuted
-                      showOrderStatus
-                      key={index}
-                      row={row}
-                      index={index}
-                      setShowDetails={setShowDetails}
-                      selectedOption={selectedOption}
-                      setSelectedOption={setSelectedOption}
-                    />
-                  );
-                })}
+              {executedOrders.sort(handleSort).map((row, index) => {
+                return (
+                  <OrderTableRow
+                    isExecuted
+                    showOrderStatus
+                    key={index}
+                    row={row}
+                    index={index}
+                    setShowDetails={setShowDetails}
+                    selectedOption={selectedOption}
+                    setSelectedOption={setSelectedOption}
+                    fetchOrders={fetchOrders}
+                  />
+                );
+              })}
             </TableBody>
           </Table>
         </TableContainer>

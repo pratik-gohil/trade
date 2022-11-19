@@ -61,59 +61,66 @@ export default function OrderDetailsModal({ showDetails, setShowDetails }) {
             flex flex-col gap-2
           px-10 py-6"
         >
-          <div
-            className="
+          <div className="flex justify-between gap-10">
+            <div className="w-full flex flex-col gap-2">
+              <div
+                className="
             flex justify-between"
-          >
-            <span className="text-sm text-secondary">Qty</span>
-            <span className="text-lg text-primary font-medium">
-              {showDetails?.OrderQuantity}
-            </span>
-          </div>
-          <div
-            className="
+              >
+                <span className="text-sm text-secondary">Qty</span>
+                <span className="text-lg text-primary font-medium">
+                  {showDetails?.OrderQuantity}
+                </span>
+              </div>
+              <div
+                className="
             flex justify-between"
-          >
-            <span className="text-sm text-secondary">Price</span>
-            <span className="text-lg text-primary font-medium">
-              {showDetails?.OrderPrice}
-            </span>
-          </div>
-          <div
-            className="
+              >
+                <span className="text-sm text-secondary">Price</span>
+                <span className="text-lg text-primary font-medium">
+                  {showDetails?.OrderPrice}
+                </span>
+              </div>
+              <div
+                className="
             flex justify-between"
-          >
-            <span className="text-sm text-secondary">Avg. Price</span>
-            <span className="text-lg text-primary font-medium">
-              {showDetails?.AverageTradedPrice}
-            </span>
-          </div>
-          <div
-            className="
+              >
+                <span className="text-sm text-secondary">Avg. Price</span>
+                <span className="text-lg text-primary font-medium">
+                  {showDetails?.AverageTradedPrice}
+                </span>
+              </div>
+            </div>
+            <div className="w-[1px] self-stretch bg-border"></div>
+            <div className="w-full flex flex-col gap-2">
+              <div
+                className="
             flex justify-between"
-          >
-            <span className="text-sm text-secondary">Trigger Price</span>
-            <span className="text-lg text-primary font-medium">
-              {showDetails?.OrderStopPrice}
-            </span>
-          </div>
-          <div
-            className="
+              >
+                <span className="text-sm text-secondary">Trigger Price</span>
+                <span className="text-lg text-primary font-medium">
+                  {showDetails?.OrderStopPrice}
+                </span>
+              </div>
+              <div
+                className="
             flex justify-between"
-          >
-            <span className="text-sm text-secondary">Order Type</span>
-            <span className="text-lg text-primary font-medium">
-              {showDetails?.OrderType}
-            </span>
-          </div>
-          <div
-            className="
+              >
+                <span className="text-sm text-secondary">Order Type</span>
+                <span className="text-lg text-primary font-medium">
+                  {showDetails?.OrderType}
+                </span>
+              </div>
+              <div
+                className="
             flex justify-between"
-          >
-            <span className="text-sm text-secondary">Product</span>
-            <span className="text-lg text-primary font-medium">
-              {showDetails?.ProductType}
-            </span>
+              >
+                <span className="text-sm text-secondary">Product</span>
+                <span className="text-lg text-primary font-medium">
+                  {showDetails?.ProductType}
+                </span>
+              </div>
+            </div>
           </div>
           <div
             className="
@@ -169,9 +176,15 @@ export default function OrderDetailsModal({ showDetails, setShowDetails }) {
               {showDetails?.ClientID}
             </span>
           </div>
-          <div className="self-center">
-            <button className="m-auto bg-blue text-white rounded-lg px-6 py-2">
-              View History
+          <div className="text-lg text-failure">
+            {showDetails?.CancelRejectReason}
+          </div>
+          <div
+            className="self-center w-[160px]"
+            onClick={() => setShowDetails(false)}
+          >
+            <button className="w-full m-auto text-secondary border border-secondary rounded-lg px-6 py-2 mt-[22px]">
+              Close
             </button>
           </div>
         </div>

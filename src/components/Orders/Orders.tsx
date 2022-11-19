@@ -11,6 +11,7 @@ import { RootState } from "../../app/store";
 import OpenOrders from "./OpenOrders";
 import ExecutedOrders from "./ExecutedOrders";
 import GTTOrders from "./GTTOrders";
+import { NavLink, Outlet } from "react-router-dom";
 
 export interface Data {
   id: string;
@@ -72,20 +73,19 @@ export interface IOrderWithMarketDepth extends IOrder, IMarketDepth {
   ExchangeSegment: any;
 }
 
-const filters = [
-  { name: "Orders", filter: "Orders" },
-  { name: "GTT", filter: "GTT" },
-  { name: "Basket", filter: "Basket" },
-  { name: "SIP", filter: "SIP" },
-  { name: "Alerts", filter: "Alerts" },
-  { name: "IPO", filter: "IPO" },
+const tabs = [
+  { name: "Orders", path: "" },
+  { name: "GTT", path: "GTT" },
+  { name: "Basket", path: "basket" },
+  { name: "SIP", path: "SIP" },
+  { name: "Alerts", path: "alerts" },
+  { name: "IPO", path: "IPO" },
 ];
 
-export function Orders() {
+export function AllOrders() {
   const [orders, setOrders] = useState<IOrderWithMarketDepth[]>([]);
   const { socket } = useContext(SocketContext) as { socket: any };
   const isOpen = useSelector((state: RootState) => state.orderModal.visible);
-  const [filterType, setFilterType] = useState("All");
 
   const fetchOrders = async () => {
     let orderIds;
@@ -138,23 +138,33 @@ export function Orders() {
   }, []);
 
   return (
+    <>
+      <OpenOrders orders={orders} fetchOrders={fetchOrders} />
+      <ExecutedOrders orders={orders} fetchOrders={fetchOrders} />
+    </>
+  );
+}
+
+export function Orders() {
+  return (
     <div className="h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] overflow-hidden flex flex-col">
       <div className="p-5 flex-1 overflow-y-scroll flex flex-col gap-5">
-        <OpenOrders orders={orders} fetchOrders={fetchOrders} />
-        <ExecutedOrders orders={orders} fetchOrders={fetchOrders} />
-        <GTTOrders fetchOrders={fetchOrders} />
+        <Outlet />
       </div>
       <div className="sticky flex gap-4 bottom-0 w-full border-t px-5 py-2 bg-white">
-        {filters.map((filter) => (
-          <div
-            key={filter.name}
-            className={`${
-              filter.filter === filterType ? "selected-tab" : "text-secondary"
-            } py-1 px-2 rounded cursor-pointer text-lg`}
-            onClick={() => setFilterType(filter.filter)}
+        {tabs.map((tab) => (
+          <NavLink
+            end
+            to={tab.path}
+            key={tab.name}
+            className={({ isActive }) =>
+              `${
+                isActive ? "selected-tab" : "text-secondary"
+              } py-1 px-2 rounded cursor-pointer text-lg`
+            }
           >
-            {filter.name}
-          </div>
+            {tab.name}
+          </NavLink>
         ))}
       </div>
     </div>
