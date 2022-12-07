@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
@@ -16,6 +16,7 @@ import { percDiff } from "../../utils/percentageDiffrence";
 import { formatCurrency } from "../../utils/formatCurrency";
 import { searchInstruments } from "../../http/searchInstruments/searchInstruments";
 import { Segments, Series } from "../../types/enums/segment.enums.types";
+import { Description, Menu, PictureAsPdf, Search } from "@mui/icons-material";
 
 const headCells: readonly HeadCell[] = [
   {
@@ -67,7 +68,40 @@ export function Holdings() {
   const [current, setCurrent] = useState(0);
   const [dayPnL, setDayPnL] = useState(0);
   const [overallPnL, setOverallPnL] = useState(0);
+  const [search, setSearch] = useState("");
   const { socket } = useContext(SocketContext) as { socket: any };
+  const csvLink = useRef<HTMLAnchorElement | null>(null);
+
+  useEffect(() => {
+    let str =
+      "Name,Quantity,Average Price,Last Traded Price,Current,P&L,Net Change,Day Change\r\n";
+
+    for (let i = 0; i < holdings.length; i++) {
+      let line = new Array();
+
+      let keys = [
+        "DisplayName",
+        "HoldingQuantity",
+        "BuyAvgPrice",
+        "LastTradedPrice",
+      ];
+
+      keys.map((k) => {
+        line.push(holdings[i][k]);
+      });
+
+      str += line.join(",");
+      str += "\r\n";
+    }
+
+    const file = new Blob([str], { type: "text/csv" });
+
+    if (csvLink.current) {
+      csvLink.current.href = URL.createObjectURL(file);
+
+      csvLink.current.download = "holdings.csv";
+    }
+  }, [holdings]);
 
   useEffect(() => {
     getHoldings().then(async (res) => {
@@ -207,9 +241,13 @@ export function Holdings() {
           className="mb-6 text-2xl font-semibold
         "
         >
-          Holdings
+          Equity Portfolio ({holdings.length})
         </h1>
-        <div className="bg-successHighlight flex justify-between px-6 py-3 rounded">
+        <div
+          className={`${
+            overallPnL > 0 ? "bg-successHighlight" : "bg-failureHighlight"
+          } flex justify-between px-6 py-3 rounded`}
+        >
           <div className="text-center">
             <h3 className="text-lg font-light">Investment</h3>
             <h1 className="text-4xl">{formatCurrency(investment)}</h1>
@@ -239,6 +277,29 @@ export function Holdings() {
             </h1>
           </div>
         </div>
+        <div className="flex justify-between items-end py-5">
+          <div className="border border-secondary py-1 rounded text-base text-secondary">
+            <Search className="text-inherit mx-1.5" fontSize="small" />
+            <input
+              type="text"
+              className="outline-none"
+              placeholder="Search in Holdings"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <div className="flex gap-5">
+            <span className="text-blue text-base underline">
+              Detailed Holdings
+            </span>
+            <span className="text-blue text-base underline">Authorization</span>
+            <PictureAsPdf />
+
+            <a ref={csvLink}>
+              <Description />
+            </a>
+          </div>
+        </div>
         <Box sx={{ width: "100%" }}>
           <TableContainer sx={{ maxHeight: 350 }}>
             <Table stickyHeader>
@@ -253,81 +314,90 @@ export function Holdings() {
                 sx={{ minWidth: 750 }}
                 className="max-h-28 overflow-auto"
               >
-                {holdings?.sort(handleSort).map((holding, index) => {
-                  const invested =
-                    holding.BuyAvgPrice * holding.HoldingQuantity;
-                  const current =
-                    holding.HoldingQuantity * holding.LastTradedPrice;
-                  return (
-                    <TableRow tabIndex={-1} key={index.toString()}>
-                      <TableCell>
-                        {holding.DisplayName}
-                        <span className="text-xxxs text-secondary ml-[6px]">
-                          {Segments[holding.ExchangeSegment] === "NSECM" ||
-                          Segments[holding.ExchangeSegment] === "BSECM"
-                            ? Series[Segments[holding.ExchangeSegment]]
-                            : Series[holding.Series] || holding.Series}
-                        </span>
-                      </TableCell>
-                      <TableCell align="right">
-                        {holding.HoldingQuantity}
-                      </TableCell>
-                      {/* <TableCell>
+                {holdings
+                  ?.sort(handleSort)
+                  .filter((holding) =>
+                    holding.DisplayName.includes(search.toUpperCase())
+                  )
+                  .map((holding, index) => {
+                    const invested =
+                      holding.BuyAvgPrice * holding.HoldingQuantity;
+                    const current =
+                      holding.HoldingQuantity * holding.LastTradedPrice;
+                    return (
+                      <TableRow tabIndex={-1} key={index.toString()} hover>
+                        <TableCell className="border-r relative group">
+                          {holding.DisplayName}
+                          <span className="text-xxxs text-secondary ml-[6px]">
+                            {Segments[holding.ExchangeSegment] === "NSECM" ||
+                            Segments[holding.ExchangeSegment] === "BSECM"
+                              ? Series[Segments[holding.ExchangeSegment]]
+                              : Series[holding.Series] || holding.Series}
+                          </span>
+
+                          <span className="bg-white border text-primary absolute right-3 invisible group-hover:visible cursor-pointer w-5 h-5 inline-flex justify-center items-center rounded">
+                            <Menu fontSize="inherit" />
+                          </span>
+                        </TableCell>
+                        <TableCell align="right">
+                          {holding.HoldingQuantity}
+                        </TableCell>
+                        {/* <TableCell>
                         {toFixedN(
                           (Date.now() -
                             (new Date(holding.LastUpdateTime * 1000) as any)) /
                             (1000 * 60 * 60 * 24)
                         )}
                       </TableCell> */}
-                      <TableCell align="right">
-                        {toFixedN(holding.BuyAvgPrice)}
-                      </TableCell>
-                      <TableCell align="right">
-                        {toFixedN(holding.LastTradedPrice)}
-                      </TableCell>
-                      <TableCell align="right">
-                        {formatCurrency(current)}
-                      </TableCell>
-                      <TableCell align="right">
-                        <span
-                          className={`${
-                            Number(percDiff(current, invested)) > 0
-                              ? "text-success"
-                              : "text-failure"
-                          }`}
-                        >
-                          {(Number(toFixedN(current - invested)) > 0
-                            ? "+"
-                            : "") + formatCurrency(current - invested)}
-                        </span>
-                      </TableCell>
-                      <TableCell align="right">
-                        <span
-                          className={`${
-                            Number(percDiff(current, invested)) > 0
-                              ? "text-success"
-                              : "text-failure"
-                          }`}
-                        >
-                          {percDiff(current, invested)}%
-                        </span>
-                      </TableCell>
-                      <TableCell align="right">
-                        <span
-                          className={`${
-                            Number(
-                              percDiff(holding.LastTradedPrice, invested)
-                            ) > 0
-                              ? "text-success"
-                              : "text-failure"
-                          }`}
-                        >
-                          {percDiff(holding.LastTradedPrice, invested)}%
-                        </span>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
+                        <TableCell align="right">
+                          {toFixedN(holding.BuyAvgPrice)}
+                        </TableCell>
+                        <TableCell align="right">
+                          {toFixedN(holding.LastTradedPrice)}
+                        </TableCell>
+                        <TableCell align="right">
+                          {formatCurrency(current)}
+                        </TableCell>
+                        <TableCell align="right">
+                          <span
+                            className={`${
+                              Number(percDiff(current, invested)) > 0
+                                ? "text-success"
+                                : "text-failure"
+                            }`}
+                          >
+                            {(Number(toFixedN(current - invested)) > 0
+                              ? "+"
+                              : "") + formatCurrency(current - invested)}
+                          </span>
+                        </TableCell>
+                        <TableCell align="right">
+                          <span
+                            className={`${
+                              Number(percDiff(current, invested)) > 0
+                                ? "text-success"
+                                : "text-failure"
+                            }`}
+                          >
+                            {percDiff(current, invested)}%
+                          </span>
+                        </TableCell>
+                        <TableCell align="right">
+                          <span
+                            className={`${
+                              Number(
+                                percDiff(holding.LastTradedPrice, invested)
+                              ) > 0
+                                ? "text-success"
+                                : "text-failure"
+                            }`}
+                          >
+                            {percDiff(holding.LastTradedPrice, invested)}%
+                          </span>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
               </TableBody>
             </Table>
           </TableContainer>
