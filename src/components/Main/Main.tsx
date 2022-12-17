@@ -1,10 +1,10 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { useSelector } from "react-redux";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { RootState } from "../../app/store";
 import { AllOrders, Orders } from "../Orders";
 import { Positions } from "../Positions";
-import { TVChartContainer } from "../TVChartContainer";
+const TVChartContainer = lazy(() => import("../TVChartContainer"));
 import { WatchList } from "../WatchList";
 import Home from "../Home/Home";
 import News from "../Home/News";
@@ -40,7 +40,11 @@ export function Main() {
           <Route path="home" element={<Home instrument={instrument} />}>
             <Route
               path="chart"
-              element={<TVChartContainer instrument={instrument} />}
+              element={
+                <Suspense fallback={<div>Loading...</div>}>
+                  <TVChartContainer instrument={instrument} />
+                </Suspense>
+              }
             />
             <Route path="fundamentals" element={<Fundamentals />}>
               <Route path="overview" element={<Overview />} />

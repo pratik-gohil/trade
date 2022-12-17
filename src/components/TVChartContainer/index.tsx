@@ -39,7 +39,7 @@ function getLanguageFromURL(): LanguageCode | null {
     : (decodeURIComponent(results[1].replace(/\+/g, " ")) as LanguageCode);
 }
 
-export class TVChartContainer extends React.PureComponent<
+export default class TVChartContainer extends React.PureComponent<
   Partial<ChartContainerProps>,
   ChartContainerState
 > {
