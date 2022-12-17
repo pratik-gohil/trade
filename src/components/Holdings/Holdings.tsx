@@ -16,7 +16,20 @@ import { percDiff } from "../../utils/percentageDiffrence";
 import { formatCurrency } from "../../utils/formatCurrency";
 import { searchInstruments } from "../../http/searchInstruments/searchInstruments";
 import { Segments, Series } from "../../types/enums/segment.enums.types";
-import { Description, Menu, PictureAsPdf, Search } from "@mui/icons-material";
+import {
+  AccessAlarm,
+  CandlestickChartOutlined,
+  Description,
+  Menu as MenuIcon,
+  MoreVert,
+  NotificationsOutlined,
+  PictureAsPdf,
+  Search,
+} from "@mui/icons-material";
+import { ListItemIcon, Menu, MenuItem, MenuList } from "@mui/material";
+import { CustomListItemText } from "../Orders/OrderTableRow";
+import { visiblityReducer } from "../../features/orderModal/orderModal";
+import { useDispatch } from "react-redux";
 
 const headCells: readonly HeadCell[] = [
   {
@@ -71,6 +84,13 @@ export function Holdings() {
   const [search, setSearch] = useState("");
   const { socket } = useContext(SocketContext) as { socket: any };
   const csvLink = useRef<HTMLAnchorElement | null>(null);
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const toggleShowShowOptions = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     let str =
@@ -335,9 +355,111 @@ export function Holdings() {
                               : Series[holding.Series] || holding.Series}
                           </span>
 
-                          <span className="bg-white border text-primary absolute right-3 invisible group-hover:visible cursor-pointer w-5 h-5 inline-flex justify-center items-center rounded">
-                            <Menu fontSize="inherit" />
+                          <span
+                            id={holding.ExchangeInstrumentID}
+                            onClick={(e) => {
+                              toggleShowShowOptions(e);
+                            }}
+                            className="bg-white border text-primary absolute right-3 invisible group-hover:visible cursor-pointer w-5 h-5 inline-flex justify-center items-center rounded"
+                          >
+                            <MenuIcon fontSize="inherit" />
                           </span>
+
+                          <Menu
+                            anchorEl={anchorEl}
+                            open={holding.ExchangeInstrumentID == anchorEl?.id}
+                            onClose={() => {
+                              setAnchorEl(null);
+                            }}
+                            sx={{ width: 320, maxWidth: "100%" }}
+                          >
+                            <MenuList>
+                              <MenuItem
+                                onClick={() => {
+                                  dispatch(
+                                    visiblityReducer({
+                                      visible: true,
+                                      order: {
+                                        orderSide: "BUY",
+                                        instrument: {
+                                          exchangeInstrumentID:
+                                            holding.ExchangeInstrumentID,
+                                          exchangeSegment:
+                                            holding.ExchangeSegment,
+                                        },
+                                      },
+                                    })
+                                  );
+
+                                  setAnchorEl(null);
+                                }}
+                              >
+                                <ListItemIcon>B</ListItemIcon>
+                                <CustomListItemText>Add</CustomListItemText>
+                              </MenuItem>
+                              <MenuItem
+                                onClick={() => {
+                                  dispatch(
+                                    visiblityReducer({
+                                      visible: true,
+                                      order: {
+                                        orderSide: "SELL",
+                                        instrument: {
+                                          exchangeInstrumentID:
+                                            holding.ExchangeInstrumentID,
+                                          exchangeSegment:
+                                            holding.ExchangeSegment,
+                                        },
+                                      },
+                                    })
+                                  );
+
+                                  setAnchorEl(null);
+                                }}
+                              >
+                                <ListItemIcon>S</ListItemIcon>
+                                <CustomListItemText>Exit</CustomListItemText>
+                              </MenuItem>
+                              <MenuItem>
+                                <ListItemIcon>
+                                  <MoreVert fontSize="small" />
+                                </ListItemIcon>
+                                <CustomListItemText>
+                                  View Breakdown
+                                </CustomListItemText>
+                              </MenuItem>
+                              <MenuItem>
+                                <ListItemIcon>
+                                  <AccessAlarm fontSize="small" />
+                                </ListItemIcon>
+                                <CustomListItemText>
+                                  Create GTT
+                                </CustomListItemText>
+                              </MenuItem>
+                              <MenuItem>
+                                <ListItemIcon>
+                                  <NotificationsOutlined fontSize="small" />
+                                </ListItemIcon>
+                                <CustomListItemText>
+                                  Create Alert
+                                </CustomListItemText>
+                              </MenuItem>
+                              <MenuItem>
+                                <ListItemIcon>5</ListItemIcon>
+                                <CustomListItemText>
+                                  Market Depth
+                                </CustomListItemText>
+                              </MenuItem>
+                              <MenuItem>
+                                <ListItemIcon>
+                                  <CandlestickChartOutlined fontSize="small" />
+                                </ListItemIcon>
+                                <CustomListItemText>
+                                  Stock Profile
+                                </CustomListItemText>
+                              </MenuItem>
+                            </MenuList>
+                          </Menu>
                         </TableCell>
                         <TableCell align="right">
                           {holding.HoldingQuantity}

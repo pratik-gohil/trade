@@ -31,7 +31,7 @@ import { orderEntry } from "../../http/orderEntry/orderEntry";
 import { constants } from "../../constants/global";
 const { CLIENT_ID, USER_ID } = constants;
 
-const CustomListItemText = ({ children }) => {
+export const CustomListItemText = ({ children }) => {
   return (
     <ListItemText
       sx={(theme) => ({
